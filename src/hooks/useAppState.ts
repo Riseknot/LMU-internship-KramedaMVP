@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { User, Assignment, AvailabilitySlot, ChatMessage, TodoItem, CareFinance, CostEntry } from '../types';
-import { mockUsers, mockAssignments, mockAvailabilitySlots, mockChatMessages, mockTodos } from '../services/mockData';
+import { useState } from 'react';
+import { User, Assignment, AvailabilitySlot, ChatMessage, TodoItem, CareFinance, CostEntry, HelperEarning, SocialFundContribution, BuddyRelationship } from '../types';
+import { mockUsers, mockAssignments, mockAvailabilitySlots, mockChatMessages, mockTodos, mockHelperEarnings, mockSocialFundContributions, mockBuddyRelationships } from '../services/mockData';
 
 export function useAppState() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -12,6 +12,9 @@ export function useAppState() {
   const [todos, setTodos] = useState<TodoItem[]>(mockTodos);
   const [finances, setFinances] = useState<CareFinance[]>([]);
   const [costEntries, setCostEntries] = useState<CostEntry[]>([]);
+  const [helperEarnings, setHelperEarnings] = useState<HelperEarning[]>(mockHelperEarnings);
+  const [socialFundContributions, setSocialFundContributions] = useState<SocialFundContribution[]>(mockSocialFundContributions);
+  const [buddyRelationships, setBuddyRelationships] = useState<BuddyRelationship[]>(mockBuddyRelationships);
 
   const login = (user: User) => {
     setCurrentUser(user);
@@ -130,6 +133,9 @@ export function useAppState() {
     todos,
     finances,
     costEntries,
+    helperEarnings,
+    socialFundContributions,
+    buddyRelationships,
     login,
     register,
     logout,

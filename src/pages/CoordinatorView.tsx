@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { User, Assignment, AvailabilitySlot, ChatMessage, TodoItem, CareFinance, CostEntry } from '../types';
+import React, { useState, useEffect } from 'react';
+import { User, Assignment, AvailabilitySlot, ChatMessage, TodoItem, CareFinance, CostEntry, CareGrade, SocialFundContribution, BuddyRelationship } from '../types';
 import { AssignmentCard } from '../components/AssignmentCard';
 import { CreateAssignmentForm } from '../components/CreateAssignmentForm';
 import { ChatModal } from '../components/ChatModal';
@@ -7,8 +7,14 @@ import { TodoModal } from '../components/TodoModal';
 import { CareFinanceOverview } from '../components/CareFinanceOverview';
 import { MapView } from '../components/MapView';
 import { HelperRecommendations } from '../components/HelperRecommendations';
+import { HelperListView } from '../components/HelperListView';
+import { GamificationPanel } from '../components/GamificationPanel';
+import { CareGradeProfile } from '../components/CareGradeProfile';
+import { NeedsCalculator } from '../components/NeedsCalculator';
+import { SocialFundOverview } from '../components/SocialFundOverview';
+import { BuddyManagement } from '../components/BuddyManagement';
 import { MobileSidebar } from '../components/MobileSidebar';
-import { ClipboardList, Plus, Menu, Euro, Map, Calendar, User as UserIcon, CheckCircle } from 'lucide-react';
+import { ClipboardList, Plus, Menu, Euro, Map, Calendar, User as UserIcon, CheckCircle, Users, List, Calculator, Shield, Heart, UserCheck } from 'lucide-react';
 
 interface CoordinatorViewProps {
   user: User;
@@ -19,6 +25,8 @@ interface CoordinatorViewProps {
   todos: TodoItem[];
   finances: CareFinance[];
   costEntries: CostEntry[];
+  socialFundContributions: SocialFundContribution[];
+  buddyRelationships: BuddyRelationship[];
   onCreateAssignment: (assignment: Assignment) => void;
   onSendMessage: (assignmentId: string, message: string) => void;
   onAddTodo: (assignmentId: string, text: string) => void;
@@ -28,6 +36,8 @@ interface CoordinatorViewProps {
   onAddCostEntry: (entry: CostEntry) => void;
   onAssignHelper: (assignmentId: string, helperId: string) => void;
   onLogout: () => void;
+  activePage: string;
+  onNavigate: (page: string) => void;
 }
 
 export function CoordinatorView({
@@ -39,6 +49,8 @@ export function CoordinatorView({
   todos,
   finances,
   costEntries,
+  socialFundContributions,
+  buddyRelationships,
   onCreateAssignment,
   onSendMessage,
   onAddTodo,
@@ -48,13 +60,20 @@ export function CoordinatorView({
   onAddCostEntry,
   onAssignHelper,
   onLogout,
+  activePage,
+  onNavigate,
 }: CoordinatorViewProps) {
   const [chatModalOpen, setChatModalOpen] = useState(false);
   const [todoModalOpen, setTodoModalOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activePage, setActivePage] = useState('assignments');
   const [selectedAssignmentId, setSelectedAssignmentId] = useState<string | null>(null);
   const [showRecommendations, setShowRecommendations] = useState<string | null>(null);
+  const [helperViewMode, setHelperViewMode] = useState<'map' | 'list'>('list');
+
+  // Sync with activePage prop
+  useEffect(() => {
+    // activePage is already controlled from parent
+  }, [activePage]);
 
   const helpers = users.filter(u => u.role === 'helper');
 
@@ -84,6 +103,75 @@ export function CoordinatorView({
 
   const renderContent = () => {
     switch (activePage) {
+      case 'buddies':
+        return (
+          <BuddyManagement
+            currentUser={user}
+            buddyRelationships={buddyRelationships}
+            users={users}
+            onAcceptBuddy={(buddyId) => {
+              console.log('Accept buddy:', buddyId);
+              alert('Buddy-Anfrage wurde akzeptiert!');
+            }}
+            onPauseBuddy={(buddyId) => {
+              console.log('Pause buddy:', buddyId);
+              alert('Buddy-Beziehung wurde pausiert.');
+            }}
+            onResumeBuddy={(buddyId) => {
+              console.log('Resume buddy:', buddyId);
+              alert('Buddy-Beziehung wurde fortgesetzt.');
+            }}
+            onEndBuddy={(buddyId) => {
+              console.log('End buddy:', buddyId);
+              if (confirm('Möchten Sie diese Buddy-Beziehung wirklich beenden?')) {
+                alert('Buddy-Beziehung wurde beendet.');
+              }
+            }}
+            onToggleAutoAssign={(buddyId, enabled) => {
+              console.log('Toggle auto-assign:', buddyId, enabled);
+              alert(`Automatische Zuweisung wurde ${enabled ? 'aktiviert' : 'deaktiviert'}.`);
+            }}
+          />
+        );
+
+      case 'sozialfond':
+        return (
+          <SocialFundOverview
+            coordinatorId={user.id}
+            contributions={socialFundContributions}
+            users={users}
+            onViewProfile={(userId) => {
+              console.log('View profile:', userId);
+              // In einer echten App würde hier das Profil geöffnet
+              alert(`Profil-Ansicht für User ${userId} würde hier geöffnet werden`);
+            }}
+          />
+        );
+
+      case 'pflegegrad':
+        return (
+          <CareGradeProfile
+            careGrade={user.careGrade}
+            onUpdateCareGrade={(grade: CareGrade) => {
+              // In a real app, this would update the user in the database
+              console.log('Update care grade to:', grade);
+              // For now, we'll just show it works
+              alert(`Pflegegrad ${grade} wurde gespeichert`);
+            }}
+          />
+        );
+
+      case 'bedarfsermittlung':
+        return (
+          <NeedsCalculator
+            careGrade={user.careGrade}
+            onApplyAllocation={(allocation) => {
+              console.log('Apply allocation:', allocation);
+              alert('Zahlungsaufteilung wurde übernommen! Sie können diese nun bei der Auftragserstellung verwenden.');
+            }}
+          />
+        );
+
       case 'finance':
         return (
           <CareFinanceOverview
@@ -93,6 +181,66 @@ export function CoordinatorView({
             onUpdateFinance={onUpdateFinance}
             onAddCostEntry={onAddCostEntry}
           />
+        );
+
+      case 'gamification':
+        return user.gamification ? (
+          <GamificationPanel 
+            gamification={user.gamification}
+            userName={user.name}
+          />
+        ) : (
+          <div className="bg-white rounded-xl border border-neutral-200 p-8 text-center">
+            <p className="text-neutral-500">Gamification-Daten nicht verfügbar</p>
+          </div>
+        );
+
+      case 'helpers':
+        return (
+          <div>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold">Helper Übersicht</h2>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setHelperViewMode('list')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+                    helperViewMode === 'list'
+                      ? 'bg-primary-600 text-white'
+                      : 'bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50'
+                  }`}
+                >
+                  <Users className="w-4 h-4" />
+                  Liste
+                </button>
+                <button
+                  onClick={() => setHelperViewMode('map')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+                    helperViewMode === 'map'
+                      ? 'bg-primary-600 text-white'
+                      : 'bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50'
+                  }`}
+                >
+                  <Map className="w-4 h-4" />
+                  Karte
+                </button>
+              </div>
+            </div>
+
+            {helperViewMode === 'list' ? (
+              <HelperListView
+                helpers={helpers}
+                currentUser={user}
+                onSendMessage={(helperId) => console.log('Send message to:', helperId)}
+                onProposeAssignment={(helperId) => console.log('Propose assignment to:', helperId)}
+              />
+            ) : (
+              <MapView
+                currentUser={user}
+                helpers={helpers}
+                assignments={assignments}
+              />
+            )}
+          </div>
         );
 
       case 'map':
@@ -106,35 +254,57 @@ export function CoordinatorView({
 
       case 'profile':
         return (
-          <div className="bg-white rounded-xl border border-neutral-200 p-6">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center">
-                <UserIcon className="w-10 h-10 text-primary-600" />
+          <div className="space-y-6">
+            <div className="bg-white rounded-xl border border-neutral-200 p-6">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center">
+                  <UserIcon className="w-10 h-10 text-primary-600" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-neutral-900">{user.name}</h2>
+                  <p className="text-neutral-600">Koordinator</p>
+                  {user.gamification && (
+                    <p className="text-sm text-primary-600 font-medium mt-1">
+                      Level {user.gamification.level} · {user.gamification.points} XP
+                    </p>
+                  )}
+                </div>
               </div>
-              <div>
-                <h2 className="text-2xl font-bold text-neutral-900">{user.name}</h2>
-                <p className="text-neutral-600">Koordinator</p>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-neutral-600">E-Mail</label>
+                  <p className="text-neutral-900">{user.email}</p>
+                </div>
+                {user.phone && (
+                  <div>
+                    <label className="text-sm font-medium text-neutral-600">Telefon</label>
+                    <p className="text-neutral-900">{user.phone}</p>
+                  </div>
+                )}
+                {user.zipCode && (
+                  <div>
+                    <label className="text-sm font-medium text-neutral-600">PLZ</label>
+                    <p className="text-neutral-900">{user.zipCode}</p>
+                  </div>
+                )}
+                {user.bio && (
+                  <div>
+                    <label className="text-sm font-medium text-neutral-600">Bio</label>
+                    <p className="text-neutral-900">{user.bio}</p>
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-neutral-600">E-Mail</label>
-                <p className="text-neutral-900">{user.email}</p>
+            {user.gamification && (
+              <div className="bg-white rounded-xl border border-neutral-200 p-6">
+                <GamificationPanel 
+                  gamification={user.gamification}
+                  userName={user.name}
+                />
               </div>
-              {user.phone && (
-                <div>
-                  <label className="text-sm font-medium text-neutral-600">Telefon</label>
-                  <p className="text-neutral-900">{user.phone}</p>
-                </div>
-              )}
-              {user.zipCode && (
-                <div>
-                  <label className="text-sm font-medium text-neutral-600">PLZ</label>
-                  <p className="text-neutral-900">{user.zipCode}</p>
-                </div>
-              )}
-            </div>
+            )}
           </div>
         );
 
@@ -261,35 +431,29 @@ export function CoordinatorView({
 
   return (
     <>
-      {/* Mobile Menu Button */}
-      <button
-        onClick={() => setSidebarOpen(true)}
-        className="fixed bottom-6 right-6 lg:hidden z-30 p-4 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg transition-colors"
-      >
-        <Menu className="w-6 h-6" />
-      </button>
-
-      {/* Mobile Sidebar */}
-      <MobileSidebar
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        currentUser={user}
-        onNavigate={setActivePage}
-        onLogout={onLogout}
-        activePage={activePage}
-      />
-
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-4 sm:py-8 pb-24 lg:pb-8">
+      <div className="max-w-7xl mx-auto px-4 py-4 sm:py-8">
         <div className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold mb-2">
+            {activePage === 'buddies' && 'Buddy-Management'}
+            {activePage === 'sozialfond' && 'Sozialfond'}
+            {activePage === 'pflegegrad' && 'Pflegegrad'}
+            {activePage === 'bedarfsermittlung' && 'Bedarfsermittlung'}
             {activePage === 'finance' && 'Kostenübersicht'}
+            {activePage === 'gamification' && 'Gamification'}
+            {activePage === 'helpers' && 'Helper Übersicht'}
             {activePage === 'map' && 'GPS Karte'}
             {activePage === 'profile' && 'Mein Profil'}
             {activePage === 'assignments' && `Willkommen, ${user.name}`}
           </h1>
           <p className="text-sm sm:text-base text-neutral-600">
+            {activePage === 'buddies' && 'Verwalten Sie Ihre Buddy-Beziehungen'}
+            {activePage === 'sozialfond' && 'Übersicht über Sozialfond-Beiträge'}
+            {activePage === 'pflegegrad' && 'Pflegegrad festlegen'}
+            {activePage === 'bedarfsermittlung' && 'Bedarfsanalyse durchführen'}
             {activePage === 'finance' && 'Verwalten Sie Ihr Pflegebudget'}
+            {activePage === 'gamification' && 'Gamification-Daten'}
+            {activePage === 'helpers' && 'Finden Sie die passenden Helper für Ihre Aufträge'}
             {activePage === 'map' && 'Übersicht über Helper in Ihrer Nähe'}
             {activePage === 'profile' && 'Ihre persönlichen Informationen'}
             {activePage === 'assignments' && 'Koordination und Verwaltung von Pflegeaufträgen'}
