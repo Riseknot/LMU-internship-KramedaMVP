@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-primary-50: #e6f0ff;
+  --color-primary-100: #cce0ff;
+  --color-primary-200: #99c2ff;
+  --color-primary-300: #66a3ff;
+  --color-primary-400: #3385ff;
+  --color-primary-500: #0066ff;
+  --color-primary-600: #0052cc;
+  --color-primary-700: #003d99;
+  --color-primary-800: #002966;
+  --color-primary-900: #001433;
+
+  --color-accent-50: #fff5e6;
+  --color-accent-100: #ffebcc;
+  --color-accent-200: #ffd699;
+  --color-accent-300: #ffc266;
+  --color-accent-400: #ffad33;
+  --color-accent-500: #ff9900;
+  --color-accent-600: #cc7a00;
+  --color-accent-700: #995c00;
+  --color-accent-800: #663d00;
+  --color-accent-900: #331f00;
+
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+
+  /* Neutral colors */
+  --color-neutral-50: #f9fafb;
+  --color-neutral-100: #f3f4f6;
+  --color-neutral-200: #e5e7eb;
+  --color-neutral-300: #d1d5db;
+  --color-neutral-400: #9ca3af;
+  --color-neutral-500: #6b7280;
+  --color-neutral-600: #4b5563;
+  --color-neutral-700: #374151;
+  --color-neutral-800: #1f2937;
+  --color-neutral-900: #111827;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-neutral-50);
+  color: var(--color-neutral-900);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  line-height: 1.3;
+}
+
+button {
+  font-family: inherit;
+}
+
+input, textarea, select {
+  font-family: inherit;
+}
+
+/* Modal animations */
+@keyframes slide-in-from-bottom {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-left {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes zoom-in-95 {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-in {
+  animation-duration: 200ms;
+  animation-fill-mode: both;
+}
+
+.slide-in-from-bottom {
+  animation-name: slide-in-from-bottom;
+}
+
+.slide-in-from-left {
+  animation-name: slide-in-from-left;
+  animation-duration: 300ms;
+}
+
+.zoom-in-95 {
+  animation-name: zoom-in-95;
+}
+
+/* Mobile responsive utilities */
+@media (max-width: 640px) {
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
