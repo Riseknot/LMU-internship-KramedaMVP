@@ -207,7 +207,7 @@ export function HelperView({
           <div className="space-y-6">
             <div className="bg-white rounded-xl border border-neutral-200 p-6">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-20 h-20 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                <div className="w-20 h-20 bg-linear-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
                   {user.avatarUrl ? (
                     <img src={user.avatarUrl} alt={user.name} className="w-full h-full rounded-full object-cover" />
                   ) : (
@@ -328,7 +328,7 @@ export function HelperView({
           messages={chatMessages}
           currentUserId={user.id}
           currentUserName={user.name}
-          onSendMessage={(msg) => onSendMessage(selectedAssignmentId, msg)}
+          onSendMessage={(msg) => onSendMessage(selectedAssignmentId!, msg)}
           onClose={() => setChatModalOpen(false)}
         />
       )}
