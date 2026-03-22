@@ -34,12 +34,17 @@ export function RegisterPage({ onRegister, onBackToLogin }: RegisterPageProps) {
     e.preventDefault();
     setLoading(true);
     await new Promise(r => setTimeout(r, 1000));
-    onRegister({
-      name: form.name, email: form.email, role,
-      phone: form.phone || undefined,
-      zipCode: form.zipCode || undefined,
-      skills: role === 'helper' ? form.skills : undefined,
-    });
+    // onRegister({
+    //   name: form.name, email: form.email, role,
+    //   phone: form.phone || undefined,
+    //   zipCode: form.zipCode || undefined,
+    //   skills: role === 'helper' ? form.skills : undefined,
+    // });
+    fetch("/api/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: form.name, email: form.email, password: form.password, role }),
+  });
     setLoading(false);
   };
 

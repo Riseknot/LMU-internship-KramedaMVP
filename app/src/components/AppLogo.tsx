@@ -1,9 +1,12 @@
-import logo from "../assets/Lumi_Logo_Blue.png";
+import Image from "next/image";
+import LumiLogo from "@/src/assets/Lumi_Logo_Blue.png";
 
-export function AppLogo(){
-    const logoSrc = typeof logo === 'string' ? logo : logo.src;
-
-    return(
-            <img src={logoSrc} alt="Logo of the App"  />
-    )
+export function AppLogo() {
+  return (
+    <Image
+      src={LumiLogo}
+      alt="Logo of the App"
+    priority={true}   
+    />
+  );
 }
