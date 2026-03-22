@@ -11,5 +11,6 @@ coverage
 # Ignore build artifacts
 build
 out
+.next
 # Ignore test coverage reports
 coverage

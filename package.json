@@ -29,13 +29,16 @@
             "@radix-ui/react-toggle": "^1.1.2",
             "@radix-ui/react-toggle-group": "^1.1.2",
             "@radix-ui/react-tooltip": "^1.1.8",
+            "bcryptjs": "^3.0.3",
             "class-variance-authority": "^0.7.1",
             "clsx": "*",
             "cmdk": "^1.1.1",
             "embla-carousel-react": "^8.6.0",
             "input-otp": "^1.4.2",
             "lucide-react": "^0.487.0",
+            "mongoose": "^9.3.1",
             "motion": "*",
+            "next": "^16.2.1",
             "next-themes": "^0.4.6",
             "react": "^18.3.1",
             "react-day-picker": "^8.10.1",
@@ -52,15 +55,15 @@
             "@types/d3": "^7.4.3",
             "@types/d3-scale": "^4.0.9",
             "@types/d3-shape": "^3.1.8",
-            "@types/node": "^20.10.0",
-            "@types/react": "^19.2.13",
+            "@types/node": "^20.19.37",
+            "@types/react": "^19.2.14",
             "@types/react-dom": "^19.2.3",
-            "@vitejs/plugin-react-swc": "^3.10.2",
             "esbuild": "^0.27.3",
-            "vite": "6.3.5"
+            "typescript": "^5.9.3"
       },
       "scripts": {
-            "dev": "vite",
-            "build": "vite build"
+            "dev": "next dev",
+            "build": "next build",
+            "start": "next start"
       }
 }
