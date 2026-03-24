@@ -21,6 +21,17 @@ export function useAppState() {
     setIsAuthenticated(true);
   };
 
+  const restoreSession = (user: User | null) => {
+    if (!user) {
+      setCurrentUser(null);
+      setIsAuthenticated(false);
+      return;
+    }
+
+    setCurrentUser(user);
+    setIsAuthenticated(true);
+  };
+
   const register = (userData: Omit<User, 'id'>) => {
     const newUser: User = {
       ...userData,
@@ -137,6 +148,7 @@ export function useAppState() {
     socialFundContributions,
     buddyRelationships,
     login,
+    restoreSession,
     register,
     logout,
     switchUser,

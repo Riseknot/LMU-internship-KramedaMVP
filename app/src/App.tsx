@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppState } from './hooks/useAppState';
 import { LoginPage } from './pages/signIn & signUp/LoginPage';
 import { RegisterPage } from './pages/signIn & signUp/RegisterPage';
@@ -8,8 +8,8 @@ import { CoordinatorView } from './pages/CoordinatorView';
 import { LoginAnimation } from './pages/signIn & signUp/LoginAnimation';
 import { DesktopSidebar } from './components/DesktopSidebar';
 import { MobileSidebar } from './components/MobileSidebar';
-import { Assignment } from './types';
-import { Heart, LogOut, Menu, X } from 'lucide-react';
+import { Assignment, User } from './types';
+import { Heart, Menu, X } from 'lucide-react';
 
 export default function App() {
   const [showRegister, setShowRegister] = useState(false);
@@ -17,7 +17,10 @@ export default function App() {
   const [activePage, setActivePage] = useState('assignments');
   const [desktopSidebarOpen, setDesktopSidebarOpen] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [isRestoringSession, setIsRestoringSession] = useState(true);
   
+
+
   const {
     currentUser,
     isAuthenticated,
@@ -32,7 +35,7 @@ export default function App() {
     socialFundContributions,
     buddyRelationships,
     login,
-    register,
+    restoreSession,
     logout,
     switchUser,
     updateAssignment,
@@ -46,12 +49,66 @@ export default function App() {
     assignHelper,
   } = useAppState();
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const restoreAuthSession = async () => {
+      try {
+        const res = await fetch('/api/auth/me', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!res.ok) {
+          if (isMounted) {
+            restoreSession(null);
+          }
+          return;
+        }
+
+        const data = (await res.json()) as { user?: User };
+        if (isMounted) {
+          restoreSession(data.user ?? null);
+        }
+      } catch {
+        if (isMounted) {
+          restoreSession(null);
+        }
+      } finally {
+        if (isMounted) {
+          setIsRestoringSession(false);
+        }
+      }
+    };
+
+    restoreAuthSession();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const handleLogin = (user: any) => {
     setShowLoginAnimation(true);
     // Wait for animation, then actually login
     setTimeout(() => {
       login(user);
     }, 3500);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    } finally {
+      logout();
+    }
   };
 
   const handleAcceptAssignment = (id: string) => {
@@ -104,12 +161,23 @@ export default function App() {
     });
   };
 
+  if (isRestoringSession) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-neutral-600">Sitzung wird geladen...</p>
+        </div>
+      </div>
+    );
+  }
+
   // Show register page
   if (!isAuthenticated && showRegister) {
     return (
       <RegisterPage
-        onRegister={(userData) => {
-          register(userData);
+        onRegister={(user) => {
+          login(user);
           setShowRegister(false);
         }}
         onBackToLogin={() => setShowRegister(false)}
@@ -126,7 +194,6 @@ export default function App() {
         )}
         {!showLoginAnimation && (
           <LoginPage
-            users={users}
             onLogin={handleLogin}
             onShowRegister={() => setShowRegister(true)}
           />
@@ -153,7 +220,7 @@ export default function App() {
         <DesktopSidebar
           currentUser={currentUser}
           onNavigate={setActivePage}
-          onLogout={logout}
+          onLogout={handleLogout}
           activePage={activePage}
           isOpen={desktopSidebarOpen}
           onToggle={setDesktopSidebarOpen}
@@ -165,7 +232,7 @@ export default function App() {
         <MobileSidebar
           currentUser={currentUser}
           onNavigate={setActivePage}
-          onLogout={logout}
+          onLogout={handleLogout}
           activePage={activePage}
           isOpen={mobileSidebarOpen}
           onToggle={setMobileSidebarOpen}
@@ -175,11 +242,11 @@ export default function App() {
       {/* Main Layout with Sidebar Offset */}
       <div className={`transition-all duration-300 ${desktopSidebarOpen ? 'lg:pl-72' : 'lg:pl-0'}`}>
         {/* Header */}
-        <header className="bg-gradient-to-r from-primary-700 via-primary-800 to-primary-900 text-white sticky top-0 z-40 shadow-xl border-b border-primary-900/20">
+        <header className="bg-linear-to-r from-primary-700 via-primary-800 to-primary-900 text-white sticky top-0 z-40 shadow-xl border-b border-primary-900/20">
           <div className="max-w-7xl mx-auto px-4 py-3 sm:py-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 sm:gap-3 lg:hidden">
-                <div className="p-2 sm:p-2.5 bg-gradient-to-br from-accent-400 to-accent-500 rounded-xl shadow-lg">
+                <div className="p-2 sm:p-2.5 bg-linear-to-br from-accent-400 to-accent-500 rounded-xl shadow-lg">
                   <Heart className="w-6 h-6 sm:w-7 sm:h-7" />
                 </div>
                 <div>
@@ -239,7 +306,7 @@ export default function App() {
               onAddTodo={addTodo}
               onToggleTodo={toggleTodo}
               onDeleteTodo={deleteTodo}
-              onLogout={logout}
+              onLogout={handleLogout}
               activePage={activePage}
               onNavigate={setActivePage}
             />
@@ -265,7 +332,7 @@ export default function App() {
               onUpdateFinance={updateFinance}
               onAddCostEntry={addCostEntry}
               onAssignHelper={assignHelper}
-              onLogout={logout}
+              onLogout={handleLogout}
               activePage={activePage}
               onNavigate={setActivePage}
             />

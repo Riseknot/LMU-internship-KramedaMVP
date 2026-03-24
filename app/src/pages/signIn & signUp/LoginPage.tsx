@@ -6,12 +6,24 @@ import { Slogan } from '../../components/Slogan';
 
 
 interface LoginPageProps {
-  users: User[];
   onLogin: (user: User) => void;
   onShowRegister: () => void;
 }
 
-export function LoginPage({ users, onLogin, onShowRegister }: LoginPageProps) {
+type LoginApiResponse = {
+  message?: string;
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+    role: User['role'];
+    phone?: string;
+    zipCode?: string;
+    skills?: string[];
+  };
+};
+
+export function LoginPage({ onLogin, onShowRegister }: LoginPageProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -22,33 +34,38 @@ export function LoginPage({ users, onLogin, onShowRegister }: LoginPageProps) {
     e.preventDefault();
     setError('');
     setIsLoading(true);
+    console.log('Attempting login with:', { email, password });
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 800));
+      const data = (await res.json()) as LoginApiResponse;
 
-    // Find user by email
-    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+      if (!res.ok) {
+        setError(data.message || 'Login fehlgeschlagen. Bitte versuchen Sie es erneut.');
+        return;
+      }
 
-    if (user) {
-      // In a real app, password would be validated
-      // For demo purposes, any password works
-      onLogin(user);
-    } else {
-      setError('Benutzer nicht gefunden. Bitte überprüfen Sie Ihre E-Mail-Adresse.');
+      if (!data.user) {
+        setError('Ungültige Antwort vom Server. Bitte versuchen Sie es erneut.');
+        return;
+      }
+
+      onLogin(data.user);
+    } catch (err) {
+      setError('Server nicht erreichbar. Bitte versuchen Sie es erneut.');
     }
 
     setIsLoading(false);
   };
 
-  const handleDemoLogin = (userEmail: string) => {
-    const user = users.find(u => u.email === userEmail);
-    if (user) {
-      onLogin(user);
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-primary-700 via-primary-800 to-primary-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo and Header */}
         <div className="text-center mb-6">
@@ -143,50 +160,6 @@ export function LoginPage({ users, onLogin, onShowRegister }: LoginPageProps) {
             </p>
           </div>
 
-          {/* Divider */}
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-neutral-200"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-neutral-500">Demo-Zugang</span>
-            </div>
-          </div>
-
-          {/* Demo Login Buttons */}
-          <div className="space-y-2">
-            <button
-              type="button"
-              onClick={() => handleDemoLogin('anna.schmidt@care.de')}
-              className="w-full px-4 py-2.5 border-2 border-neutral-200 hover:border-primary-300 hover:bg-primary-50 rounded-lg text-sm font-medium text-neutral-700 transition-all"
-            >
-              Als Koordinator anmelden
-            </button>
-            <button
-              type="button"
-              onClick={() => handleDemoLogin('max.mueller@care.de')}
-              className="w-full px-4 py-2.5 border-2 border-neutral-200 hover:border-primary-300 hover:bg-primary-50 rounded-lg text-sm font-medium text-neutral-700 transition-all"
-            >
-              Als Helper anmelden
-            </button>
-          </div>
-
-          {/* Help Text */}
-          <div className="mt-6 text-center">
-            <p className="text-xs text-neutral-500">
-              <strong>Tipp:</strong> Nutzen Sie eine der E-Mail-Adressen von den Demo-Buttons
-            </p>
-          </div>
-        </div>
-
-        {/* Available Test Accounts Info */}
-        <div className="mt-6 bg-white/10 backdrop-blur-sm rounded-xl p-4">
-          <p className="text-sm text-white font-medium mb-2">Verfügbare Test-Accounts:</p>
-          <div className="space-y-1 text-xs text-primary-100">
-            <div>• anna.schmidt@care.de (Koordinator)</div>
-            <div>• max.mueller@care.de (Helper)</div>
-            <div>• sophie.weber@care.de (Helper)</div>
-          </div>
         </div>
       </div>
     </div>
