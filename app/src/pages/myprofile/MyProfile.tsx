@@ -73,24 +73,36 @@ type AboutField = {
   displayValue?: string;
 };
 
-const REVIEW_THEMES: Record<ReviewTheme, { card: string; line: string; orb: string; glow: string }> = {
+const REVIEW_THEMES: Record<
+  ReviewTheme,
+  { card: string; line: string; orb: string; glow: string; badge: string; avatarRing: string; star: string }
+> = {
   primary: {
-    card: "border-primary-200 bg-linear-to-br from-primary-50 via-white to-primary-100/70",
-    line: "from-primary-500 to-primary-300",
-    orb: "from-primary-300/65 to-primary-100/20",
-    glow: "shadow-[0_12px_25px_rgba(0,82,204,0.15)]",
+    card: "border-primary-300/70 bg-linear-to-br from-primary-50 via-white to-primary-100/80",
+    line: "from-primary-700 via-primary-500 to-primary-300",
+    orb: "from-primary-400/55 to-primary-100/10",
+    glow: "shadow-[0_14px_30px_rgba(0,82,204,0.18)]",
+    badge: "bg-primary-700 text-white",
+    avatarRing: "ring-primary-300/80",
+    star: "text-primary-600",
   },
   accent: {
-    card: "border-accent-200 bg-linear-to-br from-accent-50 via-white to-accent-100/75",
-    line: "from-accent-500 to-accent-300",
-    orb: "from-accent-300/70 to-accent-100/25",
-    glow: "shadow-[0_12px_25px_rgba(255,153,0,0.16)]",
+    card: "border-primary-300/70 bg-linear-to-br from-primary-50/95 via-white to-primary-100/80",
+    line: "from-primary-800 via-primary-600 to-primary-400",
+    orb: "from-primary-500/45 to-primary-100/10",
+    glow: "shadow-[0_14px_30px_rgba(0,82,204,0.16)]",
+    badge: "bg-primary-600 text-white",
+    avatarRing: "ring-primary-300/80",
+    star: "text-primary-700",
   },
   mixed: {
-    card: "border-primary-100 bg-linear-to-br from-primary-50/80 via-white to-accent-100/65",
-    line: "from-primary-500 via-accent-500 to-accent-300",
-    orb: "from-primary-300/55 via-accent-300/45 to-accent-100/25",
-    glow: "shadow-[0_12px_28px_rgba(20,75,170,0.14)]",
+    card: "border-primary-300/65 bg-linear-to-br from-primary-50/95 via-white to-primary-100/70",
+    line: "from-primary-700 via-primary-500 to-primary-300",
+    orb: "from-primary-400/50 via-primary-300/30 to-primary-100/10",
+    glow: "shadow-[0_14px_32px_rgba(24,88,180,0.17)]",
+    badge: "bg-primary-700 text-white",
+    avatarRing: "ring-primary-300/75",
+    star: "text-primary-600",
   },
 };
 
@@ -129,15 +141,16 @@ function ReviewCard({ name, text, period, theme, score, satisfaction, isVerified
   const initials = name.slice(0, 1).toUpperCase();
 
   return (
-    <article className={`relative overflow-hidden rounded-2xl border p-5 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.01] ${themeStyle.card} ${themeStyle.glow}`}>
-      <div className={`pointer-events-none absolute -top-7 -right-8 h-24 w-24 rounded-full bg-linear-to-br ${themeStyle.orb}`} />
-      <div className="pointer-events-none absolute right-3 bottom-3 text-neutral-300/70">
+    <article className={`relative overflow-hidden rounded-2xl border p-5 ring-1 ring-white/80 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.01] ${themeStyle.card} ${themeStyle.glow}`}>
+      <div className={`pointer-events-none absolute -top-8 -right-9 h-28 w-28 rounded-full bg-linear-to-br ${themeStyle.orb}`} />
+      <div className={`mb-4 h-1.5 w-20 rounded-full bg-linear-to-r ${themeStyle.line}`} />
+      <div className="pointer-events-none absolute right-3 bottom-3 text-neutral-300/80">
         <Quote className="h-4 w-4" />
       </div>
 
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="relative flex h-16 w-16 items-center justify-center rounded-full border border-white/70 bg-white/80 text-sm font-bold text-primary-700">
+          <div className={`relative flex h-16 w-16 items-center justify-center rounded-full border border-white/80 bg-white/90 text-sm font-bold text-primary-700 ring-2 ${themeStyle.avatarRing}`}>
             {initials}
             {isVerified && (
               <span className="absolute right-0 bottom-0 translate-x-1/4 translate-y-1/4 rounded-full border border-white bg-primary-600 p-0.5 text-white shadow-sm">
@@ -150,20 +163,28 @@ function ReviewCard({ name, text, period, theme, score, satisfaction, isVerified
             <p className="text-xs text-neutral-500">{period}</p>
           </div>
         </div>
+        <div className="flex flex-col items-end gap-1">
+          <span className="rounded-full border border-white/70 bg-white/80 px-2 py-0.5 text-[10px] font-semibold text-neutral-700 shadow-sm">
+            {score.toFixed(1)} / 5
+          </span>
+          <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${themeStyle.badge}`}>
+            verifiziert
+          </span>
+        </div>
       </div>
 
-      <div className="mt-3 flex items-center gap-1 text-accent-500">
+      <div className={`mt-3 flex items-center gap-1 ${themeStyle.star}`}>
         {Array.from({ length: STAR_COUNT }).map((_, i) => (
           <Star key={i} className="h-3.5 w-3.5 fill-current" />
         ))}
-        <span className="ml-1 text-xs font-semibold text-neutral-600">{score.toFixed(1)}</span>
+        <span className="ml-1 text-xs font-semibold text-neutral-600">Top bewertet</span>
       </div>
 
       <p className="mt-3 text-sm leading-6 text-neutral-700">{text}</p>
 
-      <div className="mt-4">
+      <div className="mt-4 rounded-xl border border-white/80 bg-white/70 p-2.5">
         <p className="mb-1 text-[11px] font-medium uppercase tracking-wide text-neutral-500">Zufriedenheit</p>
-        <div className="h-1.5 overflow-hidden rounded-full bg-white/70">
+        <div className="h-1.5 overflow-hidden rounded-full bg-white/80">
           <div
             className={`h-full rounded-full bg-linear-to-r ${themeStyle.line}`}
             style={{ width: `${satisfaction}%` }}
@@ -398,7 +419,7 @@ export default function MyProfile({
               </label>
 
               <div className="flex-1 border-l border-neutral-200 pl-4">
-                <div className="grid grid-cols-3 gap-2 text-center">
+                <div className="grid grid-rows-3 gap-2 text-center">
                   <StatTile value={reviewCount} label="Reviews" />
                   <StatTile value={ratingValue} label="Rating" />
                   <StatTile value={hostingYears} label="Jahre" />
@@ -408,14 +429,35 @@ export default function MyProfile({
 
             <div className="mt-5 border-t border-neutral-200 pt-4">
               <h2 className="text-2xl font-bold leading-tight tracking-tight text-neutral-900 sm:text-3xl">{firstName}</h2>
-              <p className="mt-1 text-sm font-medium text-primary-700">{roleLabel}</p>
-              <p className="mt-2 text-sm text-neutral-600">{profile.email}</p>
+              <p className="mt-1 text-xl font-medium text-primary-700">{roleLabel}</p>
+              <p className="mt-2 text-base text-neutral-600">{profile.email}</p>
+
+              {/* Role Switcher */}
+              <div className="mt-4">
+                <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-neutral-400">Rolle wechseln</p>
+                <div className="flex gap-0.5 rounded-xl border border-primary-200 bg-primary-50/70 p-0.5">
+                  {(["helper", "coordinator"] as const).map((r) => (
+                    <button
+                      key={r}
+                      onClick={() => r !== user.role && onUserUpdate?.({ role: r })}
+                      className={`flex-1 rounded-lg py-1.5 px-2 text-[11px] font-semibold transition-all duration-200 ${
+                        user.role === r
+                          ? "bg-primary-700 text-white shadow-sm"
+                          : "text-primary-600 hover:bg-primary-100"
+                      }`}
+                    >
+                      {r === "helper" ? "Helfer:in" : "Koordinator:in"}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </aside>
 
           <section className="space-y-4 rounded-2xl border border-primary-100 bg-primary-50/40 p-4 sm:p-5">
             <div>
               <h3 className="text-2xl font-bold leading-tight tracking-tight text-neutral-900 sm:text-3xl lg:text-4xl">Über {firstName}</h3>
+                      <div className="mt-3 h-1.5 w-36 rounded-full bg-linear-to-r from-primary-800 via-primary-600 to-primary-300" />
             </div>
 
             <div className="space-y-3">
@@ -452,13 +494,15 @@ export default function MyProfile({
         </div>
       </div>
 
-      <div className="relative overflow-hidden border-primary-100 bg-linear-to-br from-primary-50/50 via-white to-accent-50/65 p-6 sm:p-7">
-        <div className="pointer-events-none absolute -top-20 left-8 h-40 w-40 rounded-full bg-primary-200/35 blur-2xl" />
-        <div className="pointer-events-none absolute -bottom-24 right-10 h-52 w-52 rounded-full bg-accent-200/35 blur-3xl" />
+      <div className="relative overflow-hidden rounded-3xl p-6 sm:p-7">
+        <div className="pointer-events-none absolute -top-20 left-8 h-40 w-40 rounded-full" />
+        <div className="pointer-events-none absolute -bottom-24 right-10 h-52 w-52 rounded-full" />
+        <div className="pointer-events-none absolute inset-0 opacity-[0.08]"  />
 
         <div className="relative">
-          <h4 className="text-xl font-bold tracking-tight text-neutral-900 sm:text-2xl">Was andere sagen ueber {firstName}</h4>
-          <div className="mt-2 h-1.5 w-28 rounded-full bg-linear-to-r from-primary-600 to-accent-500" />
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-800/80">Rezensionen</p>
+          <h4 className="mt-1 text-xl font-bold tracking-tight text-neutral-900 sm:text-2xl">Was andere sagen über {firstName}</h4>
+          <div className="mt-3 h-1.5 w-36 rounded-full bg-linear-to-r from-primary-800 via-primary-600 to-primary-300" />
           <div className="mt-7 grid gap-4 md:grid-cols-3 lg:gap-5">
             {REVIEWS.map((review) => (
               <ReviewCard
@@ -476,11 +520,14 @@ export default function MyProfile({
         </div>
       </div>
 
-      <div className="rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm">
-        <CertificationManager
+      <div className="relative overflow-hidden rounded-3xl p-6 sm:p-7">
+        <div className="pointer-events-none absolute -top-20 left-8 h-40 w-40 rounded-full" />
+        <div className="pointer-events-none absolute -bottom-24 right-10 h-52 w-52 rounded-full" />
+        <div className="pointer-events-none absolute inset-0 opacity-[0.08]"  />        <CertificationManager
           certifications={certifications}
           isOwnProfile={true}
           onUpload={handleCertificationUpload}
+          firstName={firstName}
         />
       </div>
 

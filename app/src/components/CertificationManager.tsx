@@ -7,12 +7,15 @@ interface CertificationManagerProps {
   certifications: Certification[];
   onUpload?: (cert: Omit<Certification, 'id' | 'uploadedAt' | 'verified'>) => void | Promise<void>;
   isOwnProfile?: boolean;
+  firstName: string;
 }
 
 export function CertificationManager({ 
   certifications = [], 
   onUpload,
-  isOwnProfile = false 
+  isOwnProfile = false,
+  firstName = '',
+
 }: CertificationManagerProps) {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [newCertName, setNewCertName] = useState('');
@@ -97,16 +100,22 @@ export function CertificationManager({
   return (
     <div className="space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Shield className="w-5 h-5 text-primary-600" />
-          <h3 className="font-semibold text-neutral-900">Zertifizierungen</h3>
-          {verifiedCount > 0 && (
-            <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
-              {verifiedCount} verifiziert
-            </span>
-          )}
+      <div className="flex auto-col items-center justify-between">
+       <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-3">
+        <Shield className="w-5 h-5 text-primary-600" />
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary-800/80">Zertifizierungen</p>
         </div>
+          <h4 className="mt-1 text-xl font-bold tracking-tight text-neutral-900 sm:text-2xl">{firstName} bringt folgende Qualifikationen mit:</h4>
+
+    {verifiedCount > 0 && (
+      <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+        {verifiedCount} verifiziert
+      </span>
+    )}
+  {/* Linie unter der Überschrift */}
+  <div className="h-1.5 w-36 rounded-full bg-gradient-to-r from-primary-800 via-primary-600 to-primary-300" />
+</div>
         {isOwnProfile && onUpload && (
           <button
             onClick={() => setShowUploadModal(true)}

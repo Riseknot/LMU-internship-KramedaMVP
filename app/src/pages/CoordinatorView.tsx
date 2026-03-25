@@ -15,6 +15,7 @@ import { SocialFundOverview } from '../components/SocialFundOverview';
 import { BuddyManagement } from '../components/BuddyManagement';
 import { MobileSidebar } from '../components/MobileSidebar';
 import { ClipboardList, Plus, Menu, Euro, Map, Calendar, User as UserIcon, CheckCircle, Users, List, Calculator, Shield, Heart, UserCheck } from 'lucide-react';
+import MyProfile from './myprofile/MyProfile';
 
 interface CoordinatorViewProps {
   user: User;
@@ -36,6 +37,7 @@ interface CoordinatorViewProps {
   onAddCostEntry: (entry: CostEntry) => void;
   onAssignHelper: (assignmentId: string, helperId: string) => void;
   onLogout: () => void;
+  onUserUpdate?: (updates: Partial<User>) => void;
   activePage: string;
   onNavigate: (page: string) => void;
 }
@@ -60,6 +62,7 @@ export function CoordinatorView({
   onAddCostEntry,
   onAssignHelper,
   onLogout,
+  onUserUpdate,
   activePage,
   onNavigate,
 }: CoordinatorViewProps) {
@@ -254,58 +257,7 @@ export function CoordinatorView({
 
       case 'profile':
         return (
-          <div className="space-y-6">
-            <div className="bg-white rounded-xl border border-neutral-200 p-6">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center">
-                  <UserIcon className="w-10 h-10 text-primary-600" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-neutral-900">{user.name}</h2>
-                  <p className="text-neutral-600">Koordinator</p>
-                  {user.gamification && (
-                    <p className="text-sm text-primary-600 font-medium mt-1">
-                      Level {user.gamification.level} · {user.gamification.points} XP
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-neutral-600">E-Mail</label>
-                  <p className="text-neutral-900">{user.email}</p>
-                </div>
-                {user.phone && (
-                  <div>
-                    <label className="text-sm font-medium text-neutral-600">Telefon</label>
-                    <p className="text-neutral-900">{user.phone}</p>
-                  </div>
-                )}
-                {user.zipCode && (
-                  <div>
-                    <label className="text-sm font-medium text-neutral-600">PLZ</label>
-                    <p className="text-neutral-900">{user.zipCode}</p>
-                  </div>
-                )}
-                {user.bio && (
-                  <div>
-                    <label className="text-sm font-medium text-neutral-600">Bio</label>
-                    <p className="text-neutral-900">{user.bio}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {user.gamification && (
-              <div className="bg-white rounded-xl border border-neutral-200 p-6">
-                <GamificationPanel 
-                  gamification={user.gamification}
-                  userName={user.name}
-                />
-              </div>
-            )}
-          </div>
+          <MyProfile user={user} onLogout={onLogout} onUserUpdate={onUserUpdate} />
         );
 
       case 'assignments':

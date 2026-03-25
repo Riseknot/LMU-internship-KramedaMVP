@@ -3,7 +3,10 @@ import { User } from '../../types';
 import { Heart, Lock, Mail, Eye, EyeOff } from 'lucide-react';
 import { AppLogo } from '../../components/AppLogo';
 import { Slogan } from '../../components/Slogan';
-
+import { Badge } from '@/src/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/src/components/ui/tooltip';
+import { AlertDescription } from '@/src/components/ui/alert';
+import { Button } from '@/src/components/ui/button';
 
 interface LoginPageProps {
   onLogin: (user: User) => void;
@@ -65,7 +68,7 @@ export function LoginPage({ onLogin, onShowRegister }: LoginPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-600 to-primary-700 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-primary-600 to-primary-700 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo and Header */}
         <div className="text-center mb-6">
@@ -75,7 +78,24 @@ export function LoginPage({ onLogin, onShowRegister }: LoginPageProps) {
 
         {/* Login Form */}
         <div className="bg-white rounded-2xl shadow-2xl p-8">
-          <h2 className="text-2xl font-bold text-neutral-900 mb-6">Anmelden</h2>
+          <div className="mb-6 flex items-center justify-between gap-3">
+            <h2 className="text-2xl font-bold text-neutral-900">Anmelden</h2>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button type="button" className="cursor-help" aria-label="Login-Hinweis anzeigen">
+                  <Badge variant="secondary" className="bg-amber-100 text-amber-900 hover:bg-amber-200">
+                    Hinweis zum einloggen/registrieren
+                  </Badge>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="text-center max-w-90 leading-5 bg-blue-950 text-white">
+                Nur die E-Mail <strong>mr.shockwave@live.de</strong> ist erlaubt. Das Passwort bitte direkt bei mir erfragen.
+              </TooltipContent>
+            </Tooltip>
+
+
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email Field */}

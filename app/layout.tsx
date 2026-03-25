@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import "./src/index.css";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Lumi",

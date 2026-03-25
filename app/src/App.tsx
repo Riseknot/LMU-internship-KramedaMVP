@@ -323,6 +323,7 @@ export default function App() {
               onAddCostEntry={addCostEntry}
               onAssignHelper={assignHelper}
               onLogout={logout}
+              onUserUpdate={updateCurrentUser}
               activePage={activePage}
               onNavigate={setActivePage}
             />

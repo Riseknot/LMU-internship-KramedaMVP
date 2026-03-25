@@ -1,5 +1,5 @@
 {
-      "name": "MVP Funktionen für Helfer-App",
+      "name": "mvpkrameda",
       "version": "0.1.0",
       "private": true,
       "dependencies": {
@@ -54,6 +54,7 @@
             "vaul": "^1.1.2"
       },
       "devDependencies": {
+            "@tailwindcss/postcss": "^4.2.2",
             "@types/d3": "^7.4.3",
             "@types/d3-scale": "^4.0.9",
             "@types/d3-shape": "^3.1.8",
