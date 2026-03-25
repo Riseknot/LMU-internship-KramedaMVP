@@ -41,10 +41,20 @@ export function useAppState() {
     login(newUser);
   };
 
-  const logout = () => {
-    setCurrentUser(null);
-    setIsAuthenticated(false);
+  const logout = async () => {
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    } finally {
+      setCurrentUser(null);
+      setIsAuthenticated(false);
+      }
   };
+
 
   const switchUser = (userId: string) => {
     const user = users.find(u => u.id === userId);

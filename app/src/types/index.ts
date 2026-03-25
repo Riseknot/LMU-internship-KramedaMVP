@@ -39,6 +39,7 @@ export interface User {
   email: string;
   phone?: string;
   zipCode?: string;
+  languages?: string[];
   skills?: string[];
   avatarUrl?: string;
   certifications?: Certification[];

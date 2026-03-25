@@ -287,7 +287,7 @@ const submitRegister = async () => {
     `p-4 border-2 rounded-lg transition-all ${role === r ? 'border-primary-600 bg-primary-50' : 'border-neutral-200 hover:border-primary-300'}`;
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-primary-700 via-primary-800 to-primary-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary-600 to-primary-700 flex items-center justify-center p-4">
       <div className="w-full max-w-2xl">
         <div className="text-center mb-6"><AppLogo /><Slogan /></div>
 

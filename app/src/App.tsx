@@ -11,6 +11,7 @@ import { MobileSidebar } from './components/MobileSidebar';
 import { Assignment, User } from './types';
 import { Heart, Menu, X } from 'lucide-react';
 
+
 export default function App() {
   const [showRegister, setShowRegister] = useState(false);
   const [showLoginAnimation, setShowLoginAnimation] = useState(false);
@@ -96,19 +97,6 @@ export default function App() {
     setTimeout(() => {
       login(user);
     }, 3500);
-  };
-
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-    } finally {
-      logout();
-    }
   };
 
   const handleAcceptAssignment = (id: string) => {
@@ -220,7 +208,7 @@ export default function App() {
         <DesktopSidebar
           currentUser={currentUser}
           onNavigate={setActivePage}
-          onLogout={handleLogout}
+          onLogout={logout}
           activePage={activePage}
           isOpen={desktopSidebarOpen}
           onToggle={setDesktopSidebarOpen}
@@ -232,7 +220,7 @@ export default function App() {
         <MobileSidebar
           currentUser={currentUser}
           onNavigate={setActivePage}
-          onLogout={handleLogout}
+          onLogout={logout}
           activePage={activePage}
           isOpen={mobileSidebarOpen}
           onToggle={setMobileSidebarOpen}
@@ -306,7 +294,7 @@ export default function App() {
               onAddTodo={addTodo}
               onToggleTodo={toggleTodo}
               onDeleteTodo={deleteTodo}
-              onLogout={handleLogout}
+              onLogout={logout}
               activePage={activePage}
               onNavigate={setActivePage}
             />
@@ -332,7 +320,7 @@ export default function App() {
               onUpdateFinance={updateFinance}
               onAddCostEntry={addCostEntry}
               onAssignHelper={assignHelper}
-              onLogout={handleLogout}
+              onLogout={logout}
               activePage={activePage}
               onNavigate={setActivePage}
             />
