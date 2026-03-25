@@ -49,19 +49,20 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { email: string } }) {
+export async function PUT(
+  req: NextRequest,
+  context: { params: Promise<Record<string, string>> }
+) {
+  const { email } = await context.params;
+
+  if (!email) {
+    return NextResponse.json({ error: "Email is required" }, { status: 400 });
+  }
+
   try {
     await connectDB();
-    const { email } = params; // Email aus Pfad
-    const data = await req.json(); // Felder, die aktualisiert werden sollen
-
-    if (!email) {
-      return NextResponse.json({ error: "Email is required" }, { status: 400 });
-    }
-
-    // updateUser übernimmt nur die Felder, die existieren
+    const data = await req.json();
     await updateUser(email, data);
-
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error(error);
