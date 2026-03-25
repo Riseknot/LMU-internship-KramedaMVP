@@ -39,6 +39,7 @@ export default function App() {
     restoreSession,
     logout,
     switchUser,
+    updateCurrentUser,
     updateAssignment,
     addChatMessage,
     updateAvailability,
@@ -294,6 +295,7 @@ export default function App() {
               onAddTodo={addTodo}
               onToggleTodo={toggleTodo}
               onDeleteTodo={deleteTodo}
+              onUserUpdate={updateCurrentUser}
               onLogout={logout}
               activePage={activePage}
               onNavigate={setActivePage}

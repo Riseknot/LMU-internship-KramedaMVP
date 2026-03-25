@@ -18,20 +18,38 @@ export async function PUT(
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
 
-    const allowed = ["name", "phone", "zipCode", "bio", "avatarUrl", "languages", "skills"] as const;
-    const updatePayload: Partial<Record<(typeof allowed)[number], string | string[]>> = {};
+    const updatePayload: Partial<{
+      name: string;
+      phone: string;
+      zipCode: string;
+      bio: string;
+      avatarUrl: string;
+      languages: string[];
+      skills: string[];
+    }> = {};
 
-    for (const key of allowed) {
-      if (data[key] !== undefined) {
-        if ((key === "languages" || key === "skills") && typeof data[key] === "string") {
-          updatePayload[key] = data[key]
-            .split(",")
-            .map((item: string) => item.trim())
-            .filter(Boolean);
-        } else {
-          updatePayload[key] = data[key];
-        }
-      }
+    if (typeof data.name === "string") updatePayload.name = data.name;
+    if (typeof data.phone === "string") updatePayload.phone = data.phone;
+    if (typeof data.zipCode === "string") updatePayload.zipCode = data.zipCode;
+    if (typeof data.bio === "string") updatePayload.bio = data.bio;
+    if (typeof data.avatarUrl === "string") updatePayload.avatarUrl = data.avatarUrl;
+
+    if (typeof data.languages === "string") {
+      updatePayload.languages = data.languages
+        .split(",")
+        .map((item: string) => item.trim())
+        .filter(Boolean);
+    } else if (Array.isArray(data.languages)) {
+      updatePayload.languages = data.languages.filter((item: unknown): item is string => typeof item === "string");
+    }
+
+    if (typeof data.skills === "string") {
+      updatePayload.skills = data.skills
+        .split(",")
+        .map((item: string) => item.trim())
+        .filter(Boolean);
+    } else if (Array.isArray(data.skills)) {
+      updatePayload.skills = data.skills.filter((item: unknown): item is string => typeof item === "string");
     }
 
     const result = await updateUser(email, updatePayload);

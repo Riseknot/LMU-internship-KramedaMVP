@@ -61,6 +61,10 @@ export function useAppState() {
     if (user) setCurrentUser(user);
   };
 
+  const updateCurrentUser = (updates: Partial<User>) => {
+    setCurrentUser(prev => (prev ? { ...prev, ...updates } : prev));
+  };
+
   const updateAssignment = (id: string, updates: Partial<Assignment>) => {
     setAssignments(prev => 
       prev.map(a => a.id === id ? { ...a, ...updates } : a)
@@ -162,6 +166,7 @@ export function useAppState() {
     register,
     logout,
     switchUser,
+    updateCurrentUser,
     updateAssignment,
     addChatMessage,
     updateAvailability,

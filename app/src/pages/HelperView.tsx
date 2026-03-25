@@ -29,6 +29,7 @@ interface HelperViewProps {
   onAddTodo: (assignmentId: string, text: string) => void;
   onToggleTodo: (todoId: string) => void;
   onDeleteTodo: (todoId: string) => void;
+  onUserUpdate: (updates: Partial<User>) => void;
   onLogout: () => void;
   activePage: string;
   onNavigate: (page: string) => void;
@@ -52,6 +53,7 @@ export function HelperView({
   onAddTodo,
   onToggleTodo,
   onDeleteTodo,
+  onUserUpdate,
   onLogout,
   activePage,
   onNavigate,
@@ -205,7 +207,7 @@ export function HelperView({
         )}
 
         {activeTab === 'profile' && (
-          <MyProfile user={user} onLogout={onLogout} />
+          <MyProfile user={user} onLogout={onLogout} onUserUpdate={onUserUpdate} />
         )}
 
         {activeTab === 'gamification' && user.gamification && (

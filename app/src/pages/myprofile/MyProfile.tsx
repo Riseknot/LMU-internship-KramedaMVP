@@ -1,6 +1,6 @@
 import { Certification, User } from "../../types";
 import { CertificationManager } from "../../components/CertificationManager";
-import { BriefcaseBusiness, FileText, Languages, LucideIcon, MapPin, Phone, Quote, ShieldCheck, Star, User as UserIcon } from "lucide-react";
+import { BriefcaseBusiness, Languages, LucideIcon, MapPin, Phone, Quote, ShieldCheck, Star, User as UserIcon } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
 import EditField from "@/src/utils/EditField";
 
@@ -174,7 +174,35 @@ function ReviewCard({ name, text, period, theme, score, satisfaction, isVerified
   );
 }
 
-export default function MyProfile({ user, onLogout }: { user: User; onLogout: () => void }) {
+function parseCsvList(value: string) {
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function toProfileState(userData: Partial<User>): ProfileState {
+  return {
+    name: userData.name || "",
+    email: userData.email || "",
+    phone: userData.phone || "",
+    zipCode: userData.zipCode || "",
+    languages: (userData.languages || ["Deutsch", "Englisch"]).join(", "),
+    bio: userData.bio || "",
+    avatarUrl: userData.avatarUrl || "",
+    skills: (userData.skills || []).join(", "),
+  };
+}
+
+export default function MyProfile({
+  user,
+  onLogout,
+  onUserUpdate,
+}: {
+  user: User;
+  onLogout: () => void;
+  onUserUpdate?: (updates: Partial<User>) => void;
+}) {
   const [profile, setProfile] = useState<ProfileState>({
     name: user.name || "",
     email: user.email || "",
@@ -249,11 +277,32 @@ export default function MyProfile({ user, onLogout }: { user: User; onLogout: ()
 
   const handleFieldUpdate = (field: string, value: string) => {
     setProfile((prev) => ({ ...prev, [field]: value }));
+
+    if (!onUserUpdate) return;
+
+    if (field === "languages") {
+      onUserUpdate({ languages: parseCsvList(value) });
+      return;
+    }
+
+    if (field === "skills") {
+      onUserUpdate({ skills: parseCsvList(value) });
+      return;
+    }
+
+    onUserUpdate({ [field]: value } as Partial<User>);
   };
 
   const handleAvatarUpload = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+    const input = event.currentTarget;
+    const file = input.files?.[0];
     if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      console.error("Nur Bilddateien sind erlaubt.");
+      input.value = "";
+      return;
+    }
 
     const reader = new FileReader();
 
@@ -274,8 +323,11 @@ export default function MyProfile({ user, onLogout }: { user: User; onLogout: ()
         }
 
         setProfile((prev) => ({ ...prev, avatarUrl }));
+        onUserUpdate?.({ avatarUrl });
       } catch (error) {
         console.error(error);
+      } finally {
+        input.value = "";
       }
     };
 
@@ -304,7 +356,7 @@ export default function MyProfile({ user, onLogout }: { user: User; onLogout: ()
   };
 
   useEffect(() => {
-    const loadCertifications = async () => {
+    const loadProfileData = async () => {
       if (!profile.email) return;
 
       try {
@@ -312,15 +364,17 @@ export default function MyProfile({ user, onLogout }: { user: User; onLogout: ()
         if (!res.ok) return;
 
         const userData = await res.json();
+        setProfile((prev) => ({ ...prev, ...toProfileState(userData) }));
+
         if (Array.isArray(userData?.certifications)) {
           setCertifications(userData.certifications);
         }
       } catch (error) {
-        console.error("Failed to load certifications", error);
+        console.error("Failed to load profile", error);
       }
     };
 
-    loadCertifications();
+    loadProfileData();
   }, [profile.email]);
 
   return (
