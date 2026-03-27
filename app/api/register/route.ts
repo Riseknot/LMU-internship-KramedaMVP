@@ -5,7 +5,8 @@ import { createRegistrationChallenge, consumeRateLimit } from "@/lib/services/re
 import { sendVerificationCodeEmail } from "@/lib/services/email.service";
 
 type RegisterRequest = {
-  name?: string;
+  firstname?: string;
+  surname?: string;
   email?: string;
   password?: string;
   confirmPassword?: string;
@@ -47,7 +48,8 @@ function getClientIp(req: NextRequest) {
 function validateRegistrationInput(body: RegisterRequest) {
   const fieldErrors: Record<string, string> = {};
 
-  const name = (body.name ?? "").trim();
+  const firstname = (body.firstname ?? "").trim();
+  const surname = (body.surname ?? "").trim();
   const email = (body.email ?? "").trim().toLowerCase();
   const password = body.password ?? "";
   const confirmPassword = body.confirmPassword ?? "";
@@ -57,8 +59,12 @@ function validateRegistrationInput(body: RegisterRequest) {
   const skills = Array.isArray(body.skills) ? body.skills.filter(Boolean) : [];
   const acceptTerms = Boolean(body.acceptTerms);
 
-  if (name.length < 2) {
-    fieldErrors.name = "Bitte geben Sie Ihren vollständigen Namen an.";
+  if (firstname.length < 2) {
+    fieldErrors.firstname = "Bitte geben Sie Ihren Vornamen an.";
+  }
+
+  if (surname.length < 2) {
+    fieldErrors.surname = "Bitte geben Sie Ihren Nachnamen an.";
   }
 
   if (!isValidEmail(email)) {
@@ -98,7 +104,8 @@ function validateRegistrationInput(body: RegisterRequest) {
   return {
     fieldErrors,
     data: {
-      name,
+      firstname,
+      surname,
       email,
       password,
       role,
@@ -179,7 +186,8 @@ export async function POST(req: NextRequest) {
     }
 
     const challenge = createRegistrationChallenge({
-      name: data.name,
+      firstname: data.firstname,
+      surname: data.surname,
       email: data.email,
       password: data.password,
       role: data.role as "helper" | "coordinator",
@@ -190,7 +198,7 @@ export async function POST(req: NextRequest) {
 
     await sendVerificationCodeEmail({
       to: data.email,
-      name: data.name,
+      firstname: data.firstname,
       code: challenge.code,
       expiresAt: challenge.expiresAt,
     });

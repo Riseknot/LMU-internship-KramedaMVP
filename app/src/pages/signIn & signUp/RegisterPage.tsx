@@ -25,7 +25,8 @@ interface RegisterPageProps {
 }
 
 type RegisterForm = {
-  name: string;
+  firstname: string;
+  surname: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -65,7 +66,8 @@ const pwStrength = (pw: string) => {
 };
 
 const mapFieldErrors = (x?: Record<string, string>): FieldErrors => ({
-  name: x?.name,
+  firstname: x?.firstname,
+  surname: x?.surname,
   email: x?.email,
   password: x?.password,
   confirmPassword: x?.confirmPassword,
@@ -79,7 +81,8 @@ const mapFieldErrors = (x?: Record<string, string>): FieldErrors => ({
 
 function validate(form: RegisterForm, role: UserRole): FieldErrors {
   const e: FieldErrors = {};
-  if (form.name.trim().length < 2) e.name = 'Bitte geben Sie Ihren vollständigen Namen an.';
+  if (form.firstname.trim().length < 2) e.firstname = 'Bitte geben Sie Ihren Vornamen an.';
+  if (form.surname.trim().length < 2) e.surname = 'Bitte geben Sie Ihren Nachnamen an.';
   if (!mailRegex.test(form.email.trim().toLowerCase())) e.email = 'Bitte geben Sie eine gültige E-Mail-Adresse ein.';
   if (!PW_RULES.every((r) => r.test(form.password))) e.password = 'Bitte erfüllen Sie alle Passwort-Anforderungen.';
   if (form.password !== form.confirmPassword) e.confirmPassword = 'Die Passwörter stimmen nicht überein.';
@@ -95,7 +98,8 @@ function validate(form: RegisterForm, role: UserRole): FieldErrors {
 export function RegisterPage({ onRegister, onBackToLogin }: RegisterPageProps) {
   const [role, setRole] = useState<UserRole>('helper');
   const [form, setForm] = useState<RegisterForm>({
-    name: '',
+    firstname: '',
+    surname: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -162,7 +166,8 @@ type RegisterApiResponse = RegisterApiError & {
 type VerifyApiResponse = RegisterApiError & {
   user?: {
     id: string;
-    name: string;
+    firstname: string;
+    surname: string;
     email: string;
     role: UserRole;
     phone?: string;
@@ -178,7 +183,8 @@ const submitRegister = async () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        name: form.name.trim(),
+        firstname: form.firstname.trim(),
+        surname: form.surname.trim(),
         email: form.email.trim().toLowerCase(),
         password: form.password,
         confirmPassword: form.confirmPassword,
@@ -332,10 +338,15 @@ const submitRegister = async () => {
                 <p className="mt-3 text-xs text-neutral-500">Die Rolle kann später im Profil angepasst werden.</p>
               </div>
 
-              <InputField label="Vollständiger Name *" icon={UserIcon}>
-                <input id="name" type="text" value={form.name} onChange={setValue('name')} required placeholder="Max Mustermann" className={errCls(INPUT_CLS, errors.name)} />
+              <InputField label="Vorname *" icon={UserIcon}>
+                <input id="firstname" type="text" value={form.firstname} onChange={setValue('firstname')} required placeholder="Max" className={errCls(INPUT_CLS, errors.firstname)} />
               </InputField>
-              {!!errors.name && <p className="-mt-3 text-xs text-red-600">{errors.name}</p>}
+              {!!errors.firstname && <p className="-mt-3 text-xs text-red-600">{errors.firstname}</p>}
+
+              <InputField label="Nachname *" icon={UserIcon}>
+                <input id="surname" type="text" value={form.surname} onChange={setValue('surname')} required placeholder="Mustermann" className={errCls(INPUT_CLS, errors.surname)} />
+              </InputField>
+              {!!errors.surname && <p className="-mt-3 text-xs text-red-600">{errors.surname}</p>}
 
               <InputField label="E-Mail-Adresse *" icon={Mail}>
                 <input id="email" type="email" value={form.email} onChange={setValue('email')} required placeholder="max.mustermann@beispiel.de" className={errCls(INPUT_CLS, errors.email)} />

@@ -1,20 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AvailabilitySlot } from '../types';
 import { Clock, Plus, Trash2 } from 'lucide-react';
 
 interface AvailabilityManagerProps {
   userId: string;
-  slots: AvailabilitySlot[];
+  slots?: AvailabilitySlot[];
   onSave: (slots: AvailabilitySlot[]) => void;
 }
 
 const DAYS = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
 
 export function AvailabilityManager({ userId, slots, onSave }: AvailabilityManagerProps) {
-  const [localSlots, setLocalSlots] = useState<AvailabilitySlot[]>(slots);
+  const [localSlots, setLocalSlots] = useState<AvailabilitySlot[]>(slots ?? []);
   const [selectedDay, setSelectedDay] = useState<number>(1);
   const [startTime, setStartTime] = useState('09:00');
   const [endTime, setEndTime] = useState('17:00');
+
+  useEffect(() => {
+    setLocalSlots(slots ?? []);
+  }, [slots]);
 
   const addSlot = () => {
     if (startTime >= endTime) {

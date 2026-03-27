@@ -1,8 +1,9 @@
 import User from "../models/User";
 import bcrypt from "bcryptjs";
 
-export async function createUser({ name, email, password, role, phone, zipCode, languages, skills, emailVerified = false }: {
-  name: string;
+export async function createUser({ firstname, surname, email, password, role, phone, zipCode, languages, skills, emailVerified = false }: {
+  firstname: string;
+  surname: string;
   email: string;
   password: string;
   role: string;
@@ -19,7 +20,8 @@ export async function createUser({ name, email, password, role, phone, zipCode, 
   const hashedPassword = await bcrypt.hash(password, 10);
 
   return await User.create({
-    name: name.trim(),
+    firstname: firstname.trim(),
+    surname: surname.trim(),
     email: normalizedEmail,
     password: hashedPassword,
     role,
@@ -31,14 +33,15 @@ export async function createUser({ name, email, password, role, phone, zipCode, 
   });
 }
 
-export async function findOneUser(query: Partial<{ email: string; name: string; _id: string }>) {
+export async function findOneUser(query: Partial<{ email: string; firstname: string; _id: string }>) {
   return await User.findOne(query);
 }
 
 export async function updateUser(
   email: string,
   fields: Partial<{
-    name: string;
+    firstname: string;
+    surname: string;
     phone: string;
     zipCode: string;
     bio: string;
@@ -51,7 +54,8 @@ export async function updateUser(
 
   // nur vorhandene Felder setzen
   const updateData: Partial<typeof fields> = {};
-  if (fields.name !== undefined) updateData.name = fields.name;
+  if (fields.firstname !== undefined) updateData.firstname = fields.firstname;
+  if (fields.surname !== undefined) updateData.surname = fields.surname;
   if (fields.phone !== undefined) updateData.phone = fields.phone;
   if (fields.zipCode !== undefined) updateData.zipCode = fields.zipCode;
   if (fields.bio !== undefined) updateData.bio = fields.bio;

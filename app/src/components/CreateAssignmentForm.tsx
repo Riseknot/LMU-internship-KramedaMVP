@@ -3,6 +3,19 @@ import { User, Assignment, AvailabilitySlot } from '../types';
 import { findBestHelpers } from '../services/matchingService';
 import { Plus, MapPin, Clock, Award } from 'lucide-react';
 
+// Props für das CreateAssignmentForm
+/*
+- PLZ
+- Zeiten: Start- und Endzeit
+- Fähigkeiten (Checkboxen oder Tags)
+- Empfehlungen anzeigen und direkt anschreiben
+- Titel und Beschreibung
+- Image als Titelbild (optional, könnte später hinzugefügt werden)
+- Nach Erstellung: Empfehlungen anzeigen mit Score, Entfernung, Skill-Match, Verfügbarkeits-Match
+
+ */ 
+
+
 interface CreateAssignmentFormProps {
   coordinatorId: string;
   coordinatorName: string;
@@ -92,7 +105,7 @@ export function CreateAssignmentForm({
   }
 
   return (
-    <div className="bg-white rounded-xl border border-neutral-200 p-6">
+    <div className="bg-white rounded-xl border border-neutral-200 p-6 m-12">
       {!showForm ? (
         <button
           onClick={() => setShowForm(true)}
@@ -104,7 +117,6 @@ export function CreateAssignmentForm({
       ) : (
         <div>
           <h3 className="font-semibold mb-4">Neuer Auftrag</h3>
-          
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-2">Titel</label>

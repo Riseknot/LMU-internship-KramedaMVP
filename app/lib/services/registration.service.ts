@@ -6,7 +6,8 @@ type PendingRegistration = {
   attempts: number;
   expiresAt: number;
   payload: {
-    name: string;
+    firstname: string;
+    surname: string;
     email: string;
     password: string;
     role: "helper" | "coordinator";

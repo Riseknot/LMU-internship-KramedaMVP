@@ -2,7 +2,7 @@ import { Resend } from "resend";
 
 type VerificationEmailInput = {
   to: string;
-  name: string;
+  firstname: string;
   code: string;
   expiresAt: number;
 };
@@ -34,7 +34,7 @@ function getResendClient() {
   return cachedResendClient;
 }
 
-export async function sendVerificationCodeEmail({ to, name, code, expiresAt }: VerificationEmailInput) {
+export async function sendVerificationCodeEmail({ to, firstname, code, expiresAt }: VerificationEmailInput) {
   const config = getResendConfig();
   const appName = process.env.APP_NAME ?? "CareConnect";
 
@@ -61,11 +61,11 @@ export async function sendVerificationCodeEmail({ to, name, code, expiresAt }: V
     from: config.from,
     to,
     subject: `${appName} - E-Mail bestätigen`,
-    text: `Hallo ${name},\n\nIhr Bestaetigungscode lautet: ${code}\nDer Code ist gueltig bis ${expiresTime}.\n\nWenn Sie diese Registrierung nicht gestartet haben, ignorieren Sie bitte diese E-Mail.`,
+    text: `Hallo ${firstname},\n\nIhr Bestaetigungscode lautet: ${code}\nDer Code ist gueltig bis ${expiresTime}.\n\nWenn Sie diese Registrierung nicht gestartet haben, ignorieren Sie bitte diese E-Mail.`,
     html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #0f172a;">
         <h2 style="margin-bottom: 8px;">E-Mail-Bestaetigung</h2>
-        <p>Hallo ${name},</p>
+        <p>Hallo ${firstname},</p>
         <p>bitte bestaetigen Sie Ihre Registrierung mit diesem 6-stelligen Code:</p>
         <div style="font-size: 28px; letter-spacing: 6px; font-weight: 700; margin: 18px 0; color: #1d4ed8;">${code}</div>
         <p>Der Code ist gueltig bis <strong>${expiresTime}</strong>.</p>

@@ -131,7 +131,8 @@ export async function POST(req: NextRequest) {
 				message: "Login erfolgreich.",
 				user: {
 					id: String(user._id),
-					name: user.name,
+					firstname: user.firstname,
+					surname: user.surname,
 					email: user.email,
 					role: user.role,
 					phone: user.phone,

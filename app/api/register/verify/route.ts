@@ -61,7 +61,8 @@ export async function POST(req: NextRequest) {
         message: "E-Mail erfolgreich bestätigt. Ihr Konto wurde erstellt.",
         user: {
           id: String(createdUser._id),
-          name: createdUser.name,
+          firstname: createdUser.firstname,
+          surname: createdUser.surname,
           email: createdUser.email,
           role: createdUser.role,
           phone: createdUser.phone,

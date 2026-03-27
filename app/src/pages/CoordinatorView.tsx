@@ -260,7 +260,6 @@ export function CoordinatorView({
           <MyProfile user={user} onLogout={onLogout} onUserUpdate={onUserUpdate} />
         );
 
-      case 'assignments':
       default:
         return (
           <div className="space-y-6">

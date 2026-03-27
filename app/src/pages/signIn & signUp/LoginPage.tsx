@@ -90,7 +90,7 @@ export function LoginPage({ onLogin, onShowRegister }: LoginPageProps) {
                 </button>
               </TooltipTrigger>
               <TooltipContent side="top" className="text-center max-w-90 leading-5 bg-blue-950 text-white">
-                Nur die E-Mail <strong>mr.shockwave@live.de</strong> ist erlaubt. Das Passwort bitte direkt bei mir erfragen.
+                Nur die E-Mail <strong>mr.shockwave@live.de</strong> ist erlaubt. 
               </TooltipContent>
             </Tooltip>
 

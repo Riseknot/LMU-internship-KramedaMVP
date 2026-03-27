@@ -51,7 +51,8 @@ type ReviewCardProps = {
 type ReviewTheme = "primary" | "accent" | "mixed";
 
 type ProfileState = {
-  name: string;
+  firstname: string;
+  surname: string;
   email: string;
   phone: string;
   zipCode: string;
@@ -204,7 +205,8 @@ function parseCsvList(value: string) {
 
 function toProfileState(userData: Partial<User>): ProfileState {
   return {
-    name: userData.name || "",
+    firstname: userData.firstname || "",
+    surname: userData.surname || "",
     email: userData.email || "",
     phone: userData.phone || "",
     zipCode: userData.zipCode || "",
@@ -225,7 +227,8 @@ export default function MyProfile({
   onUserUpdate?: (updates: Partial<User>) => void;
 }) {
   const [profile, setProfile] = useState<ProfileState>({
-    name: user.name || "",
+    firstname: user.firstname || "",
+    surname: user.surname || "",
     email: user.email || "",
     phone: user.phone || "",
     zipCode: user.zipCode || "",
@@ -237,7 +240,7 @@ export default function MyProfile({
   const [certifications, setCertifications] = useState<Certification[]>(user.certifications || []);
 
   const roleLabel = user.role === "coordinator" ? "Koordinator:in" : "Helper";
-  const firstName = profile.name.split(" ")[0] || profile.name;
+  const firstName = profile.firstname || profile.surname;
   const hostingYears = user.gamification?.level ? Math.max(1, user.gamification.level) : 1;
   const reviewCount = user.gamification?.completedAssignments || 0;
   const ratingValue = user.gamification ? (4 + Math.min(0.9, user.gamification.level / 10)).toFixed(1) : "4.7";
@@ -246,12 +249,20 @@ export default function MyProfile({
   const aboutFields: AboutField[] = [
     { id: "role", icon: BriefcaseBusiness, label: "Rolle", value: roleLabel, editable: false },
     {
-      id: "name",
+      id: "firstname",
       icon: UserIcon,
-      label: "Name",
-      value: profile.name,
-      field: "name",
-      placeholder: "Vor- und Nachname",
+      label: "Vorname",
+      value: profile.firstname,
+      field: "firstname",
+      placeholder: "Vorname",
+    },
+    {
+      id: "surname",
+      icon: UserIcon,
+      label: "Nachname",
+      value: profile.surname,
+      field: "surname",
+      placeholder: "Nachname",
     },
     {
       id: "phone",
@@ -407,7 +418,7 @@ export default function MyProfile({
               <div className="relative h-24 w-24 overflow-hidden rounded-full border border-neutral-200">
                 <img
                   src={profile.avatarUrl || DUMMY_AVATAR}
-                  alt={profile.avatarUrl ? profile.name : "Dummy Profilbild"}
+                  alt={profile.avatarUrl ? `${profile.firstname} ${profile.surname}` : "Dummy Profilbild"}
                   className="h-full w-full object-cover"
                 />
                 <span className="absolute right-1 bottom-1 h-4 w-4 rounded-full border-2 border-white bg-accent-500" />

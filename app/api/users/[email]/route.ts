@@ -19,7 +19,8 @@ export async function PUT(
     }
 
     const updatePayload: Partial<{
-      name: string;
+      firstname: string;
+      surname: string;
       phone: string;
       zipCode: string;
       bio: string;
@@ -28,7 +29,8 @@ export async function PUT(
       skills: string[];
     }> = {};
 
-    if (typeof data.name === "string") updatePayload.name = data.name;
+    if (typeof data.firstname === "string") updatePayload.firstname = data.firstname;
+    if (typeof data.surname === "string") updatePayload.surname = data.surname;
     if (typeof data.phone === "string") updatePayload.phone = data.phone;
     if (typeof data.zipCode === "string") updatePayload.zipCode = data.zipCode;
     if (typeof data.bio === "string") updatePayload.bio = data.bio;

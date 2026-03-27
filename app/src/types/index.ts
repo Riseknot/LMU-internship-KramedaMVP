@@ -34,7 +34,8 @@ export type CareGrade = 1 | 2 | 3 | 4 | 5;
  */
 export interface User {
   id: string;
-  name: string;
+  firstname: string;
+  surname: string;
   role: UserRole;
   email: string;
   phone?: string;

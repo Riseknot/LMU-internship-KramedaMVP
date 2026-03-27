@@ -22,22 +22,22 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
 
     const email = searchParams.get("email")?.trim() || undefined;
-    const name = searchParams.get("name")?.trim() || undefined;
+    const firstname = searchParams.get("firstname")?.trim() || undefined;
 
-    if (!email && !name) {
+    if (!email && !firstname) {
       return NextResponse.json(
-        { error: "Email or name must be provided" },
+        { error: "Email or firstname must be provided" },
         { status: 400 }
       );
     }
 
     const query: any = {};
     if (email) query.email = email;
-    if (name) query.name = name;
+    if (firstname) query.firstname = firstname;
 
     const userData = await findOneUser(query);
 
-    console.log(`🔍 GET /api/users?email=${email}&name=${name} - User found: ${!!userData}`);
+    console.log(`🔍 GET /api/users?email=${email}&firstname=${firstname} - User found: ${!!userData}`);
 
     if (!userData) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
