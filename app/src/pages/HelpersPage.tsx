@@ -22,18 +22,18 @@ export function HelpersPage({
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6 flex items-center justify-between rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
         <div>
           <h1 className="text-3xl font-bold mb-2">Helper Übersicht</h1>
-          <p className="text-neutral-600">Finden Sie die passenden Helper für Ihre Aufträge</p>
+          <p className="text-neutral-600">Airbnb-Listing trifft auf Uber-Karte: ruhig suchen, schnell entscheiden.</p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={() => setViewMode('list')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+            className={`btn-base px-4 py-2 rounded-lg text-sm flex items-center gap-2 ${
               viewMode === 'list'
-                ? 'bg-primary-600 text-white'
-                : 'bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50'
+                ? 'btn-secondary text-white'
+                : 'btn-ghost'
             }`}
           >
             <List className="w-4 h-4" />
@@ -41,10 +41,10 @@ export function HelpersPage({
           </button>
           <button
             onClick={() => setViewMode('map')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+            className={`btn-base px-4 py-2 rounded-lg text-sm flex items-center gap-2 ${
               viewMode === 'map'
-                ? 'bg-primary-600 text-white'
-                : 'bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50'
+                ? 'btn-secondary text-white'
+                : 'btn-ghost'
             }`}
           >
             <MapIcon className="w-4 h-4" />
@@ -61,7 +61,7 @@ export function HelpersPage({
           onProposeAssignment={(helperId) => alert(`Auftrag an ${helperId} vorgeschlagen`)}
         />
       ) : (
-        <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden" style={{ height: '600px' }}>
+        <div className="overflow-hidden rounded-xl border border-neutral-900 bg-neutral-950" style={{ height: '600px' }}>
           <MapView currentUser={user} helpers={helpers} assignments={assignments} />
         </div>
       )}

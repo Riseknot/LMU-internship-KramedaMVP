@@ -96,7 +96,7 @@ export function TodoList({
               <div className="flex items-start gap-3">
                 <button
                   onClick={() => onToggleTodo(todo.id)}
-                  className="mt-0.5 flex-shrink-0 text-neutral-400 hover:text-primary-600 transition-colors"
+                  className="mt-0.5 shrink-0 text-neutral-400 hover:text-primary-600 transition-colors"
                 >
                   {todo.completed ? (
                     <CheckCircle2 className="w-5 h-5 text-primary-600" />
@@ -134,7 +134,7 @@ export function TodoList({
                 </div>
                 <button
                   onClick={() => onDeleteTodo(todo.id)}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-neutral-400 hover:text-red-600"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-neutral-400 hover:text-error"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -146,3 +146,4 @@ export function TodoList({
     </div>
   );
 }
+

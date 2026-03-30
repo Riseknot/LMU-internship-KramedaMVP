@@ -61,7 +61,7 @@ export function HelperRecommendations({
               >
                 <div className="flex items-start gap-4">
                   {/* Rank Badge */}
-                  <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${
+                  <div className={`shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${
                     index === 0 ? 'bg-accent-100 text-accent-700' : 'bg-neutral-100 text-neutral-600'
                   }`}>
                     #{index + 1}
@@ -156,7 +156,7 @@ export function HelperRecommendations({
                     {/* Assign Button */}
                     <button
                       onClick={() => onAssignHelper(assignment.id, rec.helperId)}
-                      className="w-full px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors"
+                      className="w-full px-4 py-2.5 btn-base btn-secondary rounded-lg font-medium transition-colors"
                     >
                       Helper zuweisen
                     </button>
@@ -181,3 +181,5 @@ export function HelperRecommendations({
     </div>
   );
 }
+
+

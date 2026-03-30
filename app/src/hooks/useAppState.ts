@@ -146,7 +146,7 @@ export function useAppState() {
       text,
       completed: false,
       createdBy: currentUser.id,
-      createdByName: currentUser.name,
+      createdByName: `${currentUser.firstname} ${currentUser.surname}`,
       createdAt: new Date().toISOString(),
     };
     setTodos(prev => [...prev, newTodo]);
@@ -191,7 +191,7 @@ export function useAppState() {
     if (helper) {
       updateAssignment(assignmentId, {
         helperId,
-        helperName: helper.name,
+        helperName: `${helper.firstname} ${helper.surname}`,
         status: 'ASSIGNED',
       });
     }

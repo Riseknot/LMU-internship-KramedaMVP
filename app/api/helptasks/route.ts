@@ -6,25 +6,50 @@ import {
 } from "@/lib/services/helptasks.service";
 import { NextRequest, NextResponse } from "next/server";
 
+function parseIsoDate(value: unknown): Date | null {
+    if (typeof value !== "string") {
+        return null;
+    }
+
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+}
+
 export async function POST(req: NextRequest) {
     try {
         await connectDB();
         const data = await req.json();
 
-        // Parse ISO timestamps to Date and time strings
-        const startDateTime = data.startTime ? new Date(data.startTime) : new Date();
-        const endDateTime = data.endTime ? new Date(data.endTime) : new Date(startDateTime.getTime() + 3600000);
+        const rawStart = data.start;
+        const rawEnd = data.end;
+
+        if (!rawStart || !rawEnd) {
+            return NextResponse.json(
+                { error: "start and end are required ISO datetime values" },
+                { status: 400 }
+            );
+        }
+
+        const startDate = parseIsoDate(rawStart);
+        const endDate = parseIsoDate(rawEnd);
+
+        if (!startDate || !endDate) {
+            return NextResponse.json(
+                { error: "start and end must be valid ISO datetime values" },
+                { status: 400 }
+            );
+        }
 
         const normalizedData = {
             taskType: data.taskType || 'help',
             title: data.title,
             description: data.description,
-            location: data.location || { type: 'Point', coordinates: [0, 0] },
+            location: data.location?.type === 'Point' && Array.isArray(data.location?.coordinates)
+                ? data.location
+                : { type: 'Point', coordinates: [0, 0] },
             address: data.address || { zipCode: '', city: '', street: '' },
-            startDate: startDateTime,
-            startTime: startDateTime.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }),
-            endDate: endDateTime,
-            endTime: endDateTime.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }),
+            start: startDate,
+            end: endDate,
             status: data.status || 'open',
             firstname: data.firstname?.trim(),
             surname: data.surname?.trim(),

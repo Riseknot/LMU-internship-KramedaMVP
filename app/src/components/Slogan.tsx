@@ -20,7 +20,7 @@ export function Slogan() {
       onClick={() => setIndex((index + 1) % slogans.length)}
       className="flex flex-col items-center justify-center gap-4 cursor-pointer"
     >
-      <p className="text-primary-100 text-xl">{slogans[index]}</p>
+      <p className="text-neutral-100 text-xl">{slogans[index]}</p>
     </div>
   );
 }

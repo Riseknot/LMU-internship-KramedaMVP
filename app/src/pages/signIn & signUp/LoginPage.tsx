@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { User } from '../../types';
-import { Heart, Lock, Mail, Eye, EyeOff } from 'lucide-react';
+import { Lock, Mail, Eye, EyeOff } from 'lucide-react';
 import { AppLogo } from '../../components/AppLogo';
 import { Slogan } from '../../components/Slogan';
 import { Badge } from '@/src/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/src/components/ui/tooltip';
-import { AlertDescription } from '@/src/components/ui/alert';
-import { Button } from '@/src/components/ui/button';
 
 interface LoginPageProps {
   onLogin: (user: User) => void;
@@ -37,7 +35,6 @@ export function LoginPage({ onLogin, onShowRegister }: LoginPageProps) {
     e.preventDefault();
     setError('');
     setIsLoading(true);
-    console.log('Attempting login with:', { email, password });
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -60,7 +57,7 @@ export function LoginPage({ onLogin, onShowRegister }: LoginPageProps) {
       }
 
       onLogin(data.user);
-    } catch (err) {
+    } catch {
       setError('Server nicht erreichbar. Bitte versuchen Sie es erneut.');
     }
 
@@ -68,8 +65,8 @@ export function LoginPage({ onLogin, onShowRegister }: LoginPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-primary-600 to-primary-700 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="auth-shell">
+      <div className="auth-shell-inner w-full max-w-md">
         {/* Logo and Header */}
         <div className="text-center mb-6">
             <AppLogo />
@@ -77,19 +74,19 @@ export function LoginPage({ onLogin, onShowRegister }: LoginPageProps) {
         </div>
 
         {/* Login Form */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
+        <div className="auth-card rounded-2xl p-8">
           <div className="mb-6 flex items-center justify-between gap-3">
-            <h2 className="text-2xl font-bold text-neutral-900">Anmelden</h2>
+            <h2 className="text-2xl font-bold text-white">Anmelden</h2>
 
             <Tooltip>
               <TooltipTrigger asChild>
                 <button type="button" className="cursor-help" aria-label="Login-Hinweis anzeigen">
-                  <Badge variant="secondary" className="bg-amber-100 text-amber-900 hover:bg-amber-200">
+                  <Badge variant="secondary" className="bg-warning/20 text-warning hover:bg-warning/30">
                     Hinweis zum einloggen/registrieren
                   </Badge>
                 </button>
               </TooltipTrigger>
-              <TooltipContent side="top" className="text-center max-w-90 leading-5 bg-blue-950 text-white">
+              <TooltipContent side="top" className="text-center max-w-90 leading-5 bg-primary-950 text-white">
                 Nur die E-Mail <strong>mr.shockwave@live.de</strong> ist erlaubt. 
               </TooltipContent>
             </Tooltip>
@@ -100,11 +97,11 @@ export function LoginPage({ onLogin, onShowRegister }: LoginPageProps) {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-neutral-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-neutral-100 mb-2">
                 E-Mail-Adresse
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-neutral-400" />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-neutral-300" />
                 <input
                   id="email"
                   type="email"
@@ -112,18 +109,18 @@ export function LoginPage({ onLogin, onShowRegister }: LoginPageProps) {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="ihre.email@beispiel.de"
                   required
-                  className="w-full pl-11 pr-4 py-3 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                  className="w-full pl-11 pr-4 py-3 border border-neutral-700 bg-neutral-950 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                 />
               </div>
             </div>
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-neutral-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-neutral-100 mb-2">
                 Passwort
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-neutral-400" />
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-neutral-300" />
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
@@ -131,12 +128,12 @@ export function LoginPage({ onLogin, onShowRegister }: LoginPageProps) {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="w-full pl-11 pr-11 py-3 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                  className="w-full pl-11 pr-11 py-3 border border-neutral-700 bg-neutral-950 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition-colors"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-300 hover:text-neutral-100 transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -145,7 +142,7 @@ export function LoginPage({ onLogin, onShowRegister }: LoginPageProps) {
 
             {/* Error Message */}
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-error/10 border border-error/30 text-error px-4 py-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
@@ -154,7 +151,7 @@ export function LoginPage({ onLogin, onShowRegister }: LoginPageProps) {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 text-white py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+              className="btn-base btn-primary w-full py-3 flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
@@ -169,11 +166,11 @@ export function LoginPage({ onLogin, onShowRegister }: LoginPageProps) {
 
           {/* Register Link */}
           <div className="mt-6 text-center">
-            <p className="text-sm text-neutral-600">
+            <p className="text-sm text-neutral-200">
               Noch kein Konto?{' '}
               <button
                 onClick={onShowRegister}
-                className="text-primary-600 hover:text-primary-700 font-medium"
+                className="btn-link font-medium"
               >
                 Jetzt registrieren
               </button>

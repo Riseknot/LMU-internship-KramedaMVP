@@ -63,16 +63,16 @@ export function BuddyManagement({
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-start gap-4">
             {/* Avatar */}
-            <div className="w-14 h-14 bg-gradient-to-br from-primary-500 to-primary-700 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
+            <div className="w-14 h-14 bg-linear-to-br from-primary-500 to-primary-700 rounded-full flex items-center justify-center shrink-0 shadow-lg">
               {buddyUser.avatarUrl ? (
                 <img 
                   src={buddyUser.avatarUrl} 
-                  alt={buddyUser.name} 
+                  alt={`${buddyUser.firstname} ${buddyUser.surname}`}
                   className="w-full h-full rounded-full object-cover" 
                 />
               ) : (
                 <span className="text-white font-bold text-xl">
-                  {buddyUser.name.charAt(0)}
+                  {buddyUser.firstname?.charAt(0)}{buddyUser.surname?.charAt(0)}
                 </span>
               )}
             </div>
@@ -80,7 +80,7 @@ export function BuddyManagement({
             {/* Info */}
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <h3 className="font-bold text-lg text-neutral-900">{buddyUser.name}</h3>
+                <h3 className="font-bold text-lg text-neutral-900">{buddyUser.firstname} {buddyUser.surname}</h3>
                 {isActive && (
                   <span className="px-2 py-0.5 bg-success/10 text-success text-xs font-medium rounded-full flex items-center gap-1">
                     <CheckCircle className="w-3 h-3" />
@@ -172,7 +172,7 @@ export function BuddyManagement({
             <>
               <button
                 onClick={() => onAcceptBuddy?.(buddy.id)}
-                className="flex-1 px-4 py-2 bg-gradient-to-r from-success to-emerald-600 text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-2 bg-linear-to-r from-success/90 to-success text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
               >
                 <CheckCircle className="w-4 h-4" />
                 Akzeptieren
@@ -209,7 +209,7 @@ export function BuddyManagement({
             <>
               <button
                 onClick={() => onResumeBuddy?.(buddy.id)}
-                className="flex-1 px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-2 bg-linear-to-r from-primary-600 to-primary-700 text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
               >
                 <Play className="w-4 h-4" />
                 Fortsetzen
@@ -230,7 +230,7 @@ export function BuddyManagement({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 text-white rounded-xl p-8">
+      <div className="bg-linear-to-br from-primary-700 via-primary-800 to-primary-900 text-white rounded-xl p-8">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
             <UserCheck className="w-8 h-8" />
@@ -307,26 +307,26 @@ export function BuddyManagement({
       )}
 
       {/* Info Box */}
-      <div className="bg-gradient-to-br from-accent-50 to-accent-100 rounded-xl p-6 border border-accent-200">
+      <div className="bg-linear-to-br from-accent-50 to-accent-100 rounded-xl p-6 border border-accent-200">
         <h4 className="font-bold text-neutral-900 mb-2 flex items-center gap-2">
           <Settings className="w-5 h-5 text-accent-600" />
           Wie funktioniert das Buddy-System?
         </h4>
         <ul className="space-y-2 text-sm text-neutral-700">
           <li className="flex items-start gap-2">
-            <CheckCircle className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+            <CheckCircle className="w-4 h-4 text-success mt-0.5 shrink-0" />
             <span><strong>Automatische Zuweisung:</strong> Neue Aufträge gehen direkt an Ihren Buddy</span>
           </li>
           <li className="flex items-start gap-2">
-            <CheckCircle className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+            <CheckCircle className="w-4 h-4 text-success mt-0.5 shrink-0" />
             <span><strong>Fester Stundensatz:</strong> Vereinbaren Sie einen bevorzugten Stundensatz</span>
           </li>
           <li className="flex items-start gap-2">
-            <CheckCircle className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+            <CheckCircle className="w-4 h-4 text-success mt-0.5 shrink-0" />
             <span><strong>Direkte Abrechnung:</strong> Schnelle, unkomplizierte Zahlungsabwicklung</span>
           </li>
           <li className="flex items-start gap-2">
-            <CheckCircle className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+            <CheckCircle className="w-4 h-4 text-success mt-0.5 shrink-0" />
             <span><strong>Flexibel:</strong> Pausieren oder beenden Sie die Partnerschaft jederzeit</span>
           </li>
         </ul>
@@ -334,3 +334,4 @@ export function BuddyManagement({
     </div>
   );
 }
+

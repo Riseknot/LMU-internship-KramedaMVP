@@ -20,10 +20,10 @@ function checkAvailability(
 ): number {
   if (helperSlots.length === 0) return 0;
 
-  const assignmentDate = new Date(assignment.startTime);
+  const assignmentDate = new Date(assignment.start);
   const assignmentDay = assignmentDate.getDay();
   const assignmentStart = assignmentDate.toTimeString().slice(0, 5); // HH:mm
-  const assignmentEnd = new Date(assignment.endTime).toTimeString().slice(0, 5);
+  const assignmentEnd = new Date(assignment.end).toTimeString().slice(0, 5);
 
   // Find matching day slots
   const daySlots = helperSlots.filter(slot => slot.dayOfWeek === assignmentDay);
@@ -88,14 +88,14 @@ export function findBestHelpers(
   const scores: HelperScore[] = helpers.map(helper => {
     const helperSlots = availabilitySlots.filter(slot => slot.userId === helper.id);
     
-    const distance = calculateDistance(assignment.zipCode, helper.zipCode);
+    const distance = calculateDistance(assignment.address?.zipCode, helper.zipCode);
     const availabilityMatch = checkAvailability(assignment, helperSlots);
     const skillMatch = calculateSkillMatch(assignment.requiredSkills, helper.skills);
     const score = calculateOverallScore(availabilityMatch, skillMatch, distance);
 
     return {
       helperId: helper.id,
-      helperName: helper.name,
+      helperName: `${helper.firstname} ${helper.surname}`,
       score,
       distance,
       availabilityMatch,

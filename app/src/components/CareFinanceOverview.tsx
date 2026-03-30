@@ -184,7 +184,7 @@ export function CareFinanceOverview({
             <div className="flex gap-3 pt-4">
               <button
                 onClick={handleSave}
-                className="flex-1 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-2.5 btn-base btn-secondary rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
               >
                 <Check className="w-4 h-4" />
                 Speichern
@@ -252,3 +252,4 @@ export function CareFinanceOverview({
     </div>
   );
 }
+

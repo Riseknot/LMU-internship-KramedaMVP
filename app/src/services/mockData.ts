@@ -4,7 +4,8 @@ import { User, Assignment, AvailabilitySlot, ChatMessage, TodoItem, HelperEarnin
 export const mockUsers: User[] = [
   {
     id: 'coord-1',
-    name: 'Anna Schmidt',
+    firstname: 'Anna',
+    surname: 'Schmidt',
     role: 'coordinator',
     email: 'anna.schmidt@care.de',
     phone: '+49 30 12345678',
@@ -37,7 +38,8 @@ export const mockUsers: User[] = [
   },
   {
     id: 'helper-1',
-    name: 'Max Müller',
+    firstname: 'Max',
+    surname: 'Müller',
     role: 'helper',
     email: 'max.mueller@care.de',
     phone: '+49 30 98765432',
@@ -110,7 +112,8 @@ export const mockUsers: User[] = [
   },
   {
     id: 'helper-2',
-    name: 'Sophie Weber',
+    firstname: 'Sophie',
+    surname: 'Weber',
     role: 'helper',
     email: 'sophie.weber@care.de',
     phone: '+49 30 55555555',
@@ -161,7 +164,8 @@ export const mockUsers: User[] = [
   },
   {
     id: 'helper-3',
-    name: 'Tom Fischer',
+    firstname: 'Tom',
+    surname: 'Fischer',
     role: 'helper',
     email: 'tom.fischer@care.de',
     phone: '+49 30 44444444',
@@ -197,7 +201,8 @@ export const mockUsers: User[] = [
   },
   {
     id: 'helper-4',
-    name: 'Lisa Hoffmann',
+    firstname: 'Lisa',
+    surname: 'Hoffmann',
     role: 'helper',
     email: 'lisa.hoffmann@care.de',
     phone: '+49 30 77777777',
@@ -250,7 +255,8 @@ export const mockUsers: User[] = [
   },
   {
     id: 'helper-5',
-    name: 'Michael Klein',
+    firstname: 'Michael',
+    surname: 'Klein',
     role: 'helper',
     email: 'michael.klein@care.de',
     phone: '+49 30 88888888',
@@ -314,9 +320,14 @@ export const mockAssignments: Assignment[] = [
     helperId: 'helper-1',
     helperName: 'Max Müller',
     status: 'ASSIGNED',
-    startTime: '2026-02-10T08:00:00',
-    endTime: '2026-02-10T10:00:00',
-    zipCode: '10115',
+    start: '2026-02-10T08:00:00',
+    end: '2026-02-10T10:00:00',
+    address: {
+      zipCode: '10115',
+      city: 'Berlin',
+      street: 'Prenzlauer Berg',
+      streetNumber: '42'
+    },
     requiredSkills: ['Körperpflege', 'Mobilität'],
     createdAt: '2026-02-05T10:00:00',
   },
@@ -327,9 +338,14 @@ export const mockAssignments: Assignment[] = [
     coordinatorId: 'coord-1',
     coordinatorName: 'Anna Schmidt',
     status: 'OPEN',
-    startTime: '2026-02-12T14:00:00',
-    endTime: '2026-02-12T17:00:00',
-    zipCode: '10115',
+    start: '2026-02-12T14:00:00',
+    end: '2026-02-12T17:00:00',
+    address: {
+      zipCode: '10115',
+      city: 'Berlin',
+      street: 'Friedrichshain',
+      streetNumber: '15'
+    },
     requiredSkills: ['Begleitung', 'Mobilität'],
     createdAt: '2026-02-08T09:00:00',
   },
@@ -342,9 +358,14 @@ export const mockAssignments: Assignment[] = [
     helperId: 'helper-2',
     helperName: 'Sophie Weber',
     status: 'IN_PROGRESS',
-    startTime: '2026-02-08T14:00:00',
-    endTime: '2026-02-08T17:00:00',
-    zipCode: '10178',
+    start: '2026-02-08T14:00:00',
+    end: '2026-02-08T17:00:00',
+    address: {
+      zipCode: '10178',
+      city: 'Berlin',
+      street: 'Kreuzberg',
+      streetNumber: '88'
+    },
     requiredSkills: ['Haushalt', 'Begleitung'],
     createdAt: '2026-02-01T10:00:00',
   },
@@ -357,9 +378,14 @@ export const mockAssignments: Assignment[] = [
     helperId: 'helper-1',
     helperName: 'Max Müller',
     status: 'DONE',
-    startTime: '2026-01-15T18:00:00',
-    endTime: '2026-01-15T19:00:00',
-    zipCode: '10115',
+    start: '2026-01-15T18:00:00',
+    end: '2026-01-15T19:00:00',
+    address: {
+      zipCode: '10115',
+      city: 'Berlin',
+      street: 'Charlottenburg',
+      streetNumber: '33'
+    },
     requiredSkills: ['Medikamentengabe', 'Körperpflege'],
     createdAt: '2026-01-10T10:00:00',
     rating: {

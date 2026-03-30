@@ -25,54 +25,73 @@ export function MapView({ currentUser, helpers, assignments }: MapViewProps) {
   const activeAssignments = assignments.filter(
     a => (a.status === 'ASSIGNED' || a.status === 'IN_PROGRESS') && a.coordinatorId === currentUser.id
   );
+  const availableHelpers = helpers.filter(h => !activeAssignments.some(a => a.helperId === h.id));
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-xl border border-neutral-200 p-6">
+      <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-6 text-neutral-100 shadow-xl">
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-primary-100 rounded-lg">
-            <MapPin className="w-5 h-5 text-primary-600" />
+          <div className="rounded-lg bg-primary-500/20 p-2">
+            <MapPin className="w-5 h-5 text-primary-300" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-neutral-900">GPS Karte</h3>
-            <p className="text-sm text-neutral-600">Helper in Ihrer Nähe</p>
+            <h3 className="text-lg font-semibold text-white">Live-Karte</h3>
+            <p className="text-sm text-neutral-300">Orte, Zeiten und Status in einem klaren Dispatch-Flow</p>
+          </div>
+        </div>
+
+        <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="rounded-lg border border-primary-500/30 bg-primary-500/10 p-3">
+            <p className="text-xs uppercase tracking-wide text-primary-200">Verfügbar</p>
+            <p className="text-xl font-bold text-white">{availableHelpers.length}</p>
+          </div>
+          <div className="rounded-lg border border-neutral-700 bg-neutral-800 p-3">
+            <p className="text-xs uppercase tracking-wide text-neutral-400">Im Einsatz</p>
+            <p className="text-xl font-bold text-white">{activeAssignments.length}</p>
+          </div>
+          <div className="rounded-lg border border-neutral-700 bg-neutral-800 p-3">
+            <p className="text-xs uppercase tracking-wide text-neutral-400">Standort</p>
+            <p className="text-xl font-bold text-white">PLZ {currentUser.zipCode || 'N/A'}</p>
           </div>
         </div>
 
         {/* Map Placeholder */}
-        <div className="relative w-full h-96 bg-neutral-100 rounded-lg overflow-hidden mb-6">
+        <div className="relative mb-6 h-96 w-full overflow-hidden rounded-lg border border-neutral-700 bg-linear-to-br from-neutral-900 via-neutral-800 to-primary-950">
+          <div className="absolute -left-10 top-12 h-40 w-40 rounded-full bg-primary-500/15 blur-2xl" />
+          <div className="absolute -right-16 bottom-4 h-48 w-48 rounded-full bg-primary-400/10 blur-2xl" />
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
-              <Navigation className="w-12 h-12 text-neutral-400 mx-auto mb-3" />
-              <p className="text-neutral-600 font-medium">Interaktive Karte</p>
-              <p className="text-sm text-neutral-500 mt-1">
-                In der Vollversion mit echter GPS-Integration
+              <Navigation className="mx-auto mb-3 w-12 h-12 text-primary-300" />
+              <p className="font-medium text-white">Interaktive Karte</p>
+              <p className="mt-1 text-sm text-neutral-300">
+                Fokus auf schnelle Orientierung und klare Entscheidungen
               </p>
             </div>
           </div>
 
           {/* Mock Map Elements */}
-          <div className="absolute top-4 left-4 bg-white rounded-lg shadow-lg p-3 border border-neutral-200">
-            <div className="flex items-center gap-2 text-sm">
-              <div className="w-3 h-3 bg-primary-600 rounded-full"></div>
+          <div className="absolute left-4 top-4 rounded-lg border border-neutral-700 bg-neutral-900/90 p-3 shadow-lg backdrop-blur">
+            <div className="flex items-center gap-2 text-sm text-neutral-200">
+              <div className="h-3 w-3 rounded-full bg-primary-400 pulse-soft"></div>
               <span className="font-medium">Ihr Standort</span>
             </div>
-            <p className="text-xs text-neutral-600 mt-1">PLZ {currentUser.zipCode || 'N/A'}</p>
+            <p className="mt-1 text-xs text-neutral-400">PLZ {currentUser.zipCode || 'N/A'}</p>
           </div>
 
           {/* Mock Helper Markers */}
           {helpers.slice(0, 3).map((helper, index) => (
             <div
               key={helper.id}
-              className="absolute cursor-pointer hover:scale-110 transition-transform"
+              className="absolute cursor-pointer transition-transform hover:scale-110"
               style={{
                 top: `${30 + index * 20}%`,
                 left: `${30 + index * 15}%`,
               }}
               onClick={() => setSelectedHelper(helper)}
             >
-              <div className="w-8 h-8 bg-accent-600 rounded-full border-2 border-white shadow-lg flex items-center justify-center">
-                <Users className="w-4 h-4 text-white" />
+              <div className="relative grid h-9 w-9 place-items-center rounded-full border-2 border-neutral-900 bg-primary-500 shadow-lg shadow-primary-900/60">
+                <span className="absolute h-9 w-9 rounded-full bg-primary-400/30 pulse-soft" />
+                <Users className="relative z-10 h-4 w-4 text-white" />
               </div>
             </div>
           ))}
@@ -81,23 +100,24 @@ export function MapView({ currentUser, helpers, assignments }: MapViewProps) {
         {/* Legend */}
         <div className="flex flex-wrap gap-4 text-sm">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-primary-600 rounded-full"></div>
-            <span className="text-neutral-700">Ihr Standort</span>
+            <div className="h-3 w-3 rounded-full bg-primary-400"></div>
+            <span className="text-neutral-300">Ihr Standort</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-accent-600 rounded-full"></div>
-            <span className="text-neutral-700">Verfügbare Helper</span>
+            <div className="h-3 w-3 rounded-full bg-primary-500"></div>
+            <span className="text-neutral-300">Verfügbare Helper</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-success rounded-full"></div>
-            <span className="text-neutral-700">Aktive Einsätze</span>
+            <div className="h-3 w-3 rounded-full bg-neutral-300"></div>
+            <span className="text-neutral-300">Aktive Einsätze</span>
           </div>
         </div>
       </div>
 
       {/* Helper List */}
       <div className="bg-white rounded-xl border border-neutral-200 p-6">
-        <h3 className="text-lg font-semibold text-neutral-900 mb-4">Helper in Ihrer Nähe</h3>
+        <h3 className="text-lg font-semibold text-neutral-900 mb-1">Helper in Ihrer Nähe</h3>
+        <p className="mb-4 text-sm text-neutral-600">Sortiert für schnelle Auswahl wie im Dispatch-Flow</p>
         <div className="space-y-3">
           {helpers.length === 0 ? (
             <div className="text-center py-8 text-neutral-500">
@@ -113,7 +133,7 @@ export function MapView({ currentUser, helpers, assignments }: MapViewProps) {
                   key={helper.id}
                   className={`p-4 rounded-lg border transition-all cursor-pointer ${
                     selectedHelper?.id === helper.id
-                      ? 'border-primary-600 bg-primary-50'
+                      ? 'border-neutral-900 bg-primary-50 shadow-sm'
                       : 'border-neutral-200 hover:border-neutral-300'
                   }`}
                   onClick={() => setSelectedHelper(helper)}
@@ -121,9 +141,9 @@ export function MapView({ currentUser, helpers, assignments }: MapViewProps) {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <h4 className="font-semibold text-neutral-900">{helper.name}</h4>
+                        <h4 className="font-semibold text-neutral-900">{helper.firstname} {helper.surname}</h4>
                         {helperAssignments.length > 0 && (
-                          <span className="px-2 py-0.5 bg-success/10 text-success text-xs rounded-full font-medium">
+                          <span className="px-2 py-0.5 bg-primary-100 text-primary-800 text-xs rounded-full font-medium">
                             Aktiv
                           </span>
                         )}

@@ -97,9 +97,14 @@ export interface Assignment {
   helperId?: string;
   helperName?: string;
   status: AssignmentStatus;
-  startTime: string;
-  endTime: string;
-  zipCode: string;
+  start: string;
+  end: string;
+  address: {
+    zipCode: string;
+    city: string;
+    street: string;
+    streetNumber: string;
+  };
   requiredSkills: string[];
   createdAt: string;
   rating?: Rating;

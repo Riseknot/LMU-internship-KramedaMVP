@@ -99,7 +99,7 @@ export function CareGradeProfile({ careGrade, onUpdateCareGrade }: CareGradeProf
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 text-white rounded-xl p-6">
+      <div className="bg-linear-to-br from-primary-700 via-primary-800 to-primary-900 text-white rounded-xl p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-3 bg-white/20 rounded-xl">
             <Shield className="w-7 h-7" />
@@ -121,7 +121,7 @@ export function CareGradeProfile({ careGrade, onUpdateCareGrade }: CareGradeProf
               onClick={() => onUpdateCareGrade(grade)}
               className={`py-4 rounded-xl font-bold text-lg transition-all duration-200 ${
                 careGrade === grade
-                  ? 'bg-gradient-to-br from-primary-600 to-primary-700 text-white shadow-lg scale-105'
+                  ? 'bg-linear-to-br from-primary-600 to-primary-700 text-white shadow-lg scale-105'
                   : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200 hover:scale-102'
               }`}
             >
@@ -132,7 +132,7 @@ export function CareGradeProfile({ careGrade, onUpdateCareGrade }: CareGradeProf
 
         {!careGrade && (
           <div className="mt-4 flex items-start gap-3 p-4 bg-primary-50 rounded-lg border border-primary-200">
-            <Info className="w-5 h-5 text-primary-600 flex-shrink-0 mt-0.5" />
+            <Info className="w-5 h-5 text-primary-600 shrink-0 mt-0.5" />
             <div className="text-sm text-primary-900">
               <p className="font-medium mb-1">Bitte wählen Sie Ihren Pflegegrad</p>
               <p className="text-primary-700">
@@ -154,7 +154,7 @@ export function CareGradeProfile({ careGrade, onUpdateCareGrade }: CareGradeProf
             {availableServices.map(service => (
               <div 
                 key={service.id}
-                className="p-5 bg-gradient-to-br from-neutral-50 to-white rounded-xl border border-neutral-200 hover:shadow-md transition-all duration-200"
+                className="p-5 bg-linear-to-br from-neutral-50 to-white rounded-xl border border-neutral-200 hover:shadow-md transition-all duration-200"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
@@ -190,7 +190,7 @@ export function CareGradeProfile({ careGrade, onUpdateCareGrade }: CareGradeProf
           </div>
 
           {/* Summary */}
-          <div className="mt-6 p-5 bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl border border-primary-200">
+          <div className="mt-6 p-5 bg-linear-to-br from-primary-50 to-primary-100 rounded-xl border border-primary-200">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-primary-700 mb-1">Gesamt verfügbar (monatlich)</p>
@@ -212,19 +212,19 @@ export function CareGradeProfile({ careGrade, onUpdateCareGrade }: CareGradeProf
         <h3 className="text-lg font-bold text-neutral-900 mb-3">Hinweise zu Pflegeleistungen</h3>
         <ul className="space-y-2 text-sm text-neutral-700">
           <li className="flex items-start gap-2">
-            <CheckCircle className="w-4 h-4 text-success flex-shrink-0 mt-0.5" />
+            <CheckCircle className="w-4 h-4 text-success shrink-0 mt-0.5" />
             <span>Der <strong>Entlastungsbetrag</strong> (125 €) steht allen Pflegegraden zur Verfügung</span>
           </li>
           <li className="flex items-start gap-2">
-            <CheckCircle className="w-4 h-4 text-success flex-shrink-0 mt-0.5" />
+            <CheckCircle className="w-4 h-4 text-success shrink-0 mt-0.5" />
             <span><strong>Pflegesachleistungen</strong> sind ab Pflegegrad 2 verfügbar und steigen mit jedem Grad</span>
           </li>
           <li className="flex items-start gap-2">
-            <CheckCircle className="w-4 h-4 text-success flex-shrink-0 mt-0.5" />
+            <CheckCircle className="w-4 h-4 text-success shrink-0 mt-0.5" />
             <span><strong>Verhinderungs-</strong> und <strong>Kurzzeitpflege</strong> sind jährliche Budgets</span>
           </li>
           <li className="flex items-start gap-2">
-            <CheckCircle className="w-4 h-4 text-success flex-shrink-0 mt-0.5" />
+            <CheckCircle className="w-4 h-4 text-success shrink-0 mt-0.5" />
             <span>Beträge können kombiniert werden, um Ihren individuellen Bedarf abzudecken</span>
           </li>
         </ul>
@@ -234,3 +234,4 @@ export function CareGradeProfile({ careGrade, onUpdateCareGrade }: CareGradeProf
 }
 
 export { CARE_SERVICES };
+

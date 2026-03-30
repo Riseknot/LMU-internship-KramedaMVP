@@ -49,7 +49,7 @@ export function TodoModal({
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-neutral-100 rounded-lg transition-colors flex-shrink-0"
+            className="p-2 hover:bg-neutral-100 rounded-lg transition-colors shrink-0"
           >
             <X className="w-5 h-5 text-neutral-600" />
           </button>

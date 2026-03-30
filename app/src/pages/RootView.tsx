@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { AnimatePresence, motion } from 'motion/react';
 import { User, Assignment, AvailabilitySlot, ChatMessage, TodoItem, CareFinance, CostEntry, SocialFundContribution, BuddyRelationship } from '../types';
 import { Sidebar } from '../components/Sidebar';
 
 // Import all page components
 import { AssignmentsPage } from './AssignmentsPage';
-import { HelptasksPage } from './HelptasksPage.tsx';
+import { HelptasksPage } from './helptasks/HelptasksPage';
 import { BuddiesPage } from './BuddiesPage';
 import { MapPage } from './MapPage';
 import { FinancePage } from './FinancePage';
@@ -16,6 +17,7 @@ import { NeedsCalculatorPage } from './NeedsCalculatorPage';
 import { GamificationPage } from './GamificationPage';
 import { HelpersPage } from './HelpersPage';
 import { AvailabilityPage } from './AvailabilityPage';
+import { DashboardHome } from './DashboardHome';
 
 interface RootViewProps {
   activePage: string;
@@ -151,26 +153,12 @@ export function RootView({
 
       case 'dashboard':
         return (
-          <div className="p-6 space-y-6">
-            <div>
-              <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-              <p className="text-neutral-600">Ihre Statistiken und Übersicht</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white rounded-xl border border-neutral-200 p-6">
-                <p className="text-sm text-neutral-600">Aktive Aufträge</p>
-                <p className="text-3xl font-bold mt-2">{assignments.filter(a => a.status === 'IN_PROGRESS').length}</p>
-              </div>
-              <div className="bg-white rounded-xl border border-neutral-200 p-6">
-                <p className="text-sm text-neutral-600">Abgeschlossen</p>
-                <p className="text-3xl font-bold mt-2">{assignments.filter(a => a.status === 'DONE').length}</p>
-              </div>
-              <div className="bg-white rounded-xl border border-neutral-200 p-6">
-                <p className="text-sm text-neutral-600">Gesamte Helper</p>
-                <p className="text-3xl font-bold mt-2">{helpers.length}</p>
-              </div>
-            </div>
-          </div>
+          <DashboardHome
+            currentUser={user}
+            assignments={assignments}
+            helpers={helpers}
+            onNavigate={(page) => router.push(`/${page}`)}
+          />
         );
 
       default:
@@ -202,7 +190,17 @@ export function RootView({
 
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
-        {renderContent()}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={activePage}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.24, ease: 'easeOut' }}
+          >
+            {renderContent()}
+          </motion.div>
+        </AnimatePresence>
       </main>
     </div>
   );

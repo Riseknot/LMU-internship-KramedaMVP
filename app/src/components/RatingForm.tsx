@@ -59,7 +59,7 @@ export function RatingForm({ onSubmit, onCancel }: RatingFormProps) {
         <div className="flex gap-3">
           <button
             type="submit"
-            className="flex-1 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors"
+            className="flex-1 px-4 py-2.5 btn-base btn-secondary rounded-lg font-medium transition-colors"
           >
             Bewertung abgeben
           </button>
@@ -75,3 +75,4 @@ export function RatingForm({ onSubmit, onCancel }: RatingFormProps) {
     </div>
   );
 }
+

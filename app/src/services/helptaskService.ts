@@ -16,10 +16,8 @@ export interface HelptaskCreatePayload {
     city?: string;
     street?: string;
   };
-  startDate?: Date | string;
-  startTime: string;
-  endDate?: Date | string;
-  endTime: string;
+  start: Date | string;
+  end: Date | string;
   status?: "open" | "assigned" | "completed";
   assignedHelper?: string;
   firstname: string;
@@ -41,10 +39,8 @@ export interface HelptaskUpdatePayload {
     city?: string;
     street?: string;
   };
-  startDate?: Date | string;
-  startTime?: string;
-  endDate?: Date | string;
-  endTime?: string;
+  start?: Date | string;
+  end?: Date | string;
   status?: "open" | "assigned" | "completed";
   assignedHelper?: string;
 }
@@ -63,10 +59,8 @@ export interface Helptask {
     city?: string;
     street?: string;
   };
-  startDate: string;
-  startTime: string;
-  endDate: string;
-  endTime: string;
+  start: string;
+  end: string;
   status: "open" | "assigned" | "completed";
   assignedHelper?: string;
   firstname: string;

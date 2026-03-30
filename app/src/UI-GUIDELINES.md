@@ -457,7 +457,7 @@ bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900
 bg-gradient-to-r from-accent-400 to-accent-500
 
 // Success
-bg-gradient-to-r from-success to-emerald-600
+bg-linear-to-r from-success/90 to-success
 ```
 
 ### Button Gradienten
@@ -470,7 +470,7 @@ bg-gradient-to-r from-primary-600 to-primary-700
 bg-gradient-to-r from-accent-400 to-accent-500
 
 // Gefährlicher Button (Notfall)
-bg-gradient-to-r from-error to-red-600
+bg-linear-to-r from-error/90 to-error
 ```
 
 ### Card Gradienten (Subtle)

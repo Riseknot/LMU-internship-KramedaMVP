@@ -2,6 +2,21 @@
 import mongoose from "mongoose";
 import Helptask from "../models/Helptask";
 
+let helptaskIndexSyncPromise: Promise<unknown> | null = null;
+
+function ensureHelptaskIndexes() {
+  if (!helptaskIndexSyncPromise) {
+    // Keeps existing databases in sync (e.g. removes legacy wrong index
+    // on location.type and creates the correct 2dsphere index on location).
+    helptaskIndexSyncPromise = Helptask.syncIndexes().catch((error) => {
+      helptaskIndexSyncPromise = null;
+      throw error;
+    });
+  }
+
+  return helptaskIndexSyncPromise;
+}
+
 type CreateHelptaskInput = {
   taskType: string;
   title: string;
@@ -15,10 +30,8 @@ type CreateHelptaskInput = {
     city?: string;
     street?: string;
   };
-  startDate: Date;
-  startTime: string;
-  endDate: Date;
-  endTime: string;
+  start: Date;
+  end: Date;
   status: "open" | "assigned" | "completed";
   assignedHelper?: mongoose.Types.ObjectId;
   createdBy?: mongoose.Types.ObjectId | null;
@@ -45,6 +58,7 @@ function buildContainsRegex(value: string) {
 }
 
 export async function createHelptask(input: CreateHelptaskInput) {
+  await ensureHelptaskIndexes();
   return Helptask.create(input);
 }
 

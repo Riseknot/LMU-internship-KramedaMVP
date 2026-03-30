@@ -5,11 +5,9 @@ import { usePathname } from 'next/navigation';
 import { useAppState } from './hooks/useAppState';
 import { LoginPage } from './pages/signIn & signUp/LoginPage';
 import { RegisterPage } from './pages/signIn & signUp/RegisterPage';
-import { UserSwitcher } from './components/UserSwitcher';
 import { RootView } from './pages/RootView';
 import { LoginAnimation } from './pages/signIn & signUp/LoginAnimation';
 import { Assignment, User } from './types';
-import { Heart } from 'lucide-react';
 
 
 export default function App() {
@@ -31,15 +29,12 @@ export default function App() {
     todos,
     finances,
     costEntries,
-    helperEarnings,
     socialFundContributions,
     buddyRelationships,
     login,
     restoreSession,
     logout,
-    switchUser,
     updateCurrentUser,
-    updateAssignment,
     addChatMessage,
     updateAvailability,
     addTodo,
@@ -69,9 +64,14 @@ export default function App() {
           return;
         }
 
-        const data = (await res.json()) as { user?: User };
-        if (isMounted) {
-          restoreSession(data.user ?? null);
+        // Session is valid. If the user is already authenticated (e.g. restored
+        // from localStorage after an in-app tab switch), do not overwrite the
+        // local frontend state on every page navigation.
+        if (!isAuthenticated) {
+          const data = (await res.json()) as { user?: User };
+          if (isMounted) {
+            restoreSession(data.user ?? null);
+          }
         }
       } catch {
         if (isMounted) {
@@ -91,45 +91,12 @@ export default function App() {
     };
   }, []);
 
-  const handleLogin = (user: any) => {
+  const handleLogin = (user: User) => {
     setShowLoginAnimation(true);
     // Wait for animation, then actually login
     setTimeout(() => {
       login(user);
     }, 3500);
-  };
-
-  const handleAcceptAssignment = (id: string) => {
-    if (!currentUser) return;
-    
-    updateAssignment(id, {
-      helperId: currentUser.id,
-      helperName: currentUser.name,
-      status: 'ASSIGNED',
-    });
-
-    // Add status event to chat
-    addChatMessage({
-      assignmentId: id,
-      userId: 'system',
-      userName: 'System',
-      message: `${currentUser.name} hat den Auftrag angenommen`,
-      type: 'status_event',
-    });
-  };
-
-  const handleRejectAssignment = (id: string) => {
-    if (!currentUser) return;
-    
-    addChatMessage({
-      assignmentId: id,
-      userId: 'system',
-      userName: 'System',
-      message: `${currentUser.name} hat den Auftrag abgelehnt`,
-      type: 'status_event',
-    });
-
-    alert('Auftrag wurde abgelehnt');
   };
 
   const handleCreateAssignment = (assignment: Assignment) => {
@@ -143,7 +110,7 @@ export default function App() {
     addChatMessage({
       assignmentId,
       userId: currentUser.id,
-      userName: currentUser.name,
+      userName: `${currentUser.firstname} ${currentUser.surname}`,
       message,
       type: 'message',
     });
@@ -151,10 +118,10 @@ export default function App() {
 
   if (isRestoringSession && !currentUser) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
+      <div className="auth-shell">
+        <div className="auth-loader-card text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-          <p className="text-neutral-600">Sitzung wird geladen...</p>
+          <p className="text-neutral-100">Sitzung wird geladen...</p>
         </div>
       </div>
     );
@@ -192,10 +159,10 @@ export default function App() {
 
   if (!currentUser) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
+      <div className="auth-shell">
+        <div className="auth-loader-card text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-          <p className="text-neutral-600">Lädt...</p>
+          <p className="text-neutral-100">Lädt...</p>
         </div>
       </div>
     );

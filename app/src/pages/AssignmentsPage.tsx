@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { User, Assignment, AvailabilitySlot, ChatMessage, TodoItem } from '../types';
 import { AssignmentCard } from '../components/AssignmentCard';
-import { CreateAssignmentForm } from '../components/CreateAssignmentForm';
+import { CreateHelptaskForm } from './helptasks/components/CreateHelptaskForm';
 import { ChatModal } from '../components/ChatModal';
 import { TodoModal } from '../components/TodoModal';
 import { HelperRecommendations } from '../components/HelperRecommendations';
 import { ClipboardList, CheckCircle, Calendar } from 'lucide-react';
+import { CreateHelptaskFormData } from './helptasks/types';
 
 interface AssignmentsPageProps {
   user: User;
@@ -52,6 +53,29 @@ export function AssignmentsPage({
 
   const selectedAssignment = selectedAssignmentId ? assignments.find(a => a.id === selectedAssignmentId) : null;
 
+  const handleCreateAssignment = (data: CreateHelptaskFormData) => {
+    const newAssignment: Assignment = {
+      id: `assign-${Date.now()}`,
+      title: data.title,
+      description: data.description,
+      coordinatorId: user.id,
+      coordinatorName: user.firstname,
+      status: 'OPEN',
+      start: data.start,
+      end: data.end,
+      address: {
+        zipCode: data.zipCode,
+        city: data.city,
+        street: data.street,
+        streetNumber: data.streetNumber,
+      },
+      requiredSkills: data.requiredSkills,
+      createdAt: new Date().toISOString(),
+    };
+
+    onCreateAssignment(newAssignment);
+  };
+
   const handleOpenChat = (assignmentId: string) => {
     setSelectedAssignmentId(assignmentId);
     setChatModalOpen(true);
@@ -66,34 +90,48 @@ export function AssignmentsPage({
     <>
       <div className="p-6 space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Aufträge</h1>
+        <div className="rounded-2xl border border-neutral-200 bg-white/85 p-6 shadow-sm">
+          <h1 className="text-3xl font-bold mb-2 text-neutral-900">Aufträge</h1>
           <p className="text-neutral-600">
             {isCoordinator ? 'Verwalten Sie Ihre Pflegeaufträge' : 'Ihre verfügbaren Aufträge'}
           </p>
+          <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
+            <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Schritt 1</p>
+              <p className="text-sm font-medium text-neutral-800">Anfrage erfassen</p>
+            </div>
+            <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Schritt 2</p>
+              <p className="text-sm font-medium text-neutral-800">Helper matchen</p>
+            </div>
+            <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Schritt 3</p>
+              <p className="text-sm font-medium text-neutral-800">Einsatz starten</p>
+            </div>
+          </div>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white rounded-xl border border-neutral-200 p-6">
+          <div className="bg-white/85 rounded-xl border border-neutral-200 p-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <ClipboardList className="w-5 h-5 text-blue-600" />
+              <div className="p-2 bg-secondary-100 rounded-lg">
+                <ClipboardList className="w-5 h-5 text-secondary-700" />
               </div>
               <div>
-                <div className="text-2xl font-bold">{openAssignments.length}</div>
+                <div className="text-2xl font-bold text-neutral-900">{openAssignments.length}</div>
                 <div className="text-sm text-neutral-600">Offene Aufträge</div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-neutral-200 p-6">
+          <div className="bg-white/85 rounded-xl border border-neutral-200 p-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <Calendar className="w-5 h-5 text-green-600" />
+              <div className="p-2 bg-primary-100 rounded-lg">
+                <Calendar className="w-5 h-5 text-primary-700" />
               </div>
               <div>
-                <div className="text-2xl font-bold">{myAssignments.length}</div>
+                <div className="text-2xl font-bold text-neutral-900">{myAssignments.length}</div>
                 <div className="text-sm text-neutral-600">
                   {isCoordinator ? 'Laufende' : 'Meine Aufträge'}
                 </div>
@@ -101,13 +139,13 @@ export function AssignmentsPage({
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-neutral-200 p-6">
+          <div className="bg-white/85 rounded-xl border border-neutral-200 p-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-neutral-100 rounded-lg">
-                <CheckCircle className="w-5 h-5 text-neutral-600" />
+              <div className="p-2 bg-accent-100 rounded-lg">
+                <CheckCircle className="w-5 h-5 text-accent-700" />
               </div>
               <div>
-                <div className="text-2xl font-bold">{completedAssignments.length}</div>
+                <div className="text-2xl font-bold text-neutral-900">{completedAssignments.length}</div>
                 <div className="text-sm text-neutral-600">Abgeschlossen</div>
               </div>
             </div>
@@ -116,19 +154,19 @@ export function AssignmentsPage({
 
         {/* Create Assignment (Coordinator only) */}
         {isCoordinator && (
-          <CreateAssignmentForm
+          <CreateHelptaskForm
             coordinatorId={user.id}
             coordinatorName={user.firstname}
             helpers={helpers}
             availabilitySlots={availabilitySlots}
-            onCreate={onCreateAssignment}
+            onCreate={handleCreateAssignment}
           />
         )}
 
         {/* Open Assignments */}
         {isCoordinator && openAssignments.length > 0 && (
           <div>
-            <h2 className="text-xl font-semibold mb-4">Offene Aufträge</h2>
+            <h2 className="text-xl font-semibold mb-4 text-neutral-900">Offene Aufträge</h2>
             <div className="space-y-6">
               {openAssignments.map(assignment => (
                 <div key={assignment.id}>
@@ -161,7 +199,7 @@ export function AssignmentsPage({
         {/* My Assignments */}
         {myAssignments.length > 0 && (
           <div>
-            <h2 className="text-xl font-semibold mb-4">
+            <h2 className="text-xl font-semibold mb-4 text-neutral-900">
               {isCoordinator ? 'Laufende Aufträge' : 'Meine Aufträge'}
             </h2>
             <div className="grid gap-4">

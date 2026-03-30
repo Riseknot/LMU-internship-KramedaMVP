@@ -17,7 +17,6 @@ export function HelperListView({
   onProposeAssignment 
 }: HelperListViewProps) {
   const [selectedHelper, setSelectedHelper] = useState<string | null>(null);
-  const [showActions, setShowActions] = useState<string | null>(null);
 
   const getDistanceLabel = (helperZip?: string) => {
     if (!helperZip || !currentUser.zipCode) return 'Unbekannt';
@@ -31,14 +30,14 @@ export function HelperListView({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-neutral-900">
+        <h2 className="text-2xl font-semibold text-neutral-900 font-serif">
           Verfügbare Helper ({helpers.length})
         </h2>
       </div>
 
       {helpers.length === 0 ? (
-        <div className="bg-white rounded-xl border border-neutral-200 p-12 text-center">
-          <p className="text-neutral-500">Keine Helper verfügbar</p>
+        <div className="bg-neutral-50 rounded-xl border border-neutral-200 p-12 text-center">
+          <p className="text-neutral-600">Keine Helper verfügbar</p>
         </div>
       ) : (
         <div className="grid gap-4">
@@ -51,24 +50,24 @@ export function HelperListView({
                 key={helper.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-xl border border-neutral-200 hover:border-primary-300 transition-all overflow-hidden"
+                className="bg-white/95 rounded-2xl border border-neutral-200 hover:border-primary-200 transition-all overflow-hidden shadow-sm"
               >
                 <div className="p-6">
                   <div className="flex gap-4">
                     {/* Avatar */}
-                    <div className="flex-shrink-0">
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white text-xl sm:text-2xl font-bold relative">
+                    <div className="shrink-0">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-xl sm:text-2xl font-bold relative">
                         {helper.avatarUrl ? (
                           <img 
                             src={helper.avatarUrl} 
-                            alt={helper.name}
+                            alt={`${helper.firstname} ${helper.surname}`}
                             className="w-full h-full rounded-full object-cover"
                           />
                         ) : (
-                          helper.name.split(' ').map(n => n[0]).join('')
+                          `${helper.firstname?.charAt(0) ?? ''}${helper.surname?.charAt(0) ?? ''}`
                         )}
                         {verifiedCerts > 0 && (
-                          <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center border-2 border-white">
+                          <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-success rounded-full flex items-center justify-center border-2 border-neutral-50">
                             <CheckCircle className="w-4 h-4 text-white" />
                           </div>
                         )}
@@ -80,7 +79,7 @@ export function HelperListView({
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <div>
                           <h3 className="font-semibold text-lg text-neutral-900 flex items-center gap-2">
-                            {helper.name}
+                            {helper.firstname} {helper.surname}
                             {gamification && gamification.level >= 5 && (
                               <span className="px-2 py-0.5 bg-accent-100 text-accent-700 text-xs font-medium rounded-full flex items-center gap-1">
                                 <Award className="w-3 h-3" />
@@ -103,13 +102,13 @@ export function HelperListView({
                           </span>
                         )}
                         {verifiedCerts > 0 && (
-                          <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">
+                          <span className="inline-flex items-center gap-1 px-2 py-1 bg-success/15 text-success text-xs rounded-full">
                             <Shield className="w-3 h-3" />
                             {verifiedCerts} {verifiedCerts === 1 ? 'Zertifikat' : 'Zertifikate'}
                           </span>
                         )}
                         {gamification && gamification.completedAssignments > 0 && (
-                          <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                          <span className="inline-flex items-center gap-1 px-2 py-1 bg-primary-100 text-primary-700 text-xs rounded-full">
                             <Star className="w-3 h-3" />
                             {gamification.completedAssignments} Aufträge
                           </span>
@@ -122,7 +121,7 @@ export function HelperListView({
                           {helper.skills.slice(0, 4).map((skill, idx) => (
                             <span 
                               key={idx}
-                              className="px-2 py-0.5 bg-primary-50 text-primary-700 text-xs rounded"
+                              className="px-2 py-0.5 bg-primary-50 text-primary-700 text-xs rounded-md"
                             >
                               {skill}
                             </span>
@@ -140,14 +139,14 @@ export function HelperListView({
                         <div className="flex gap-2 mt-4">
                           <button
                             onClick={() => onSendMessage?.(helper.id)}
-                            className="flex-1 sm:flex-none px-4 py-2 border border-primary-300 text-primary-700 rounded-lg hover:bg-primary-50 transition-colors text-sm font-medium flex items-center justify-center gap-2"
+                            className="btn-base btn-ghost flex-1 sm:flex-none px-4 py-2 text-sm flex items-center justify-center gap-2"
                           >
                             <MessageCircle className="w-4 h-4" />
                             Nachricht
                           </button>
                           <button
                             onClick={() => onProposeAssignment?.(helper.id)}
-                            className="flex-1 sm:flex-none px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm font-medium flex items-center justify-center gap-2"
+                            className="btn-base btn-primary flex-1 sm:flex-none px-4 py-2 text-sm flex items-center justify-center gap-2"
                           >
                             <Send className="w-4 h-4" />
                             Auftrag vorschlagen
@@ -196,7 +195,7 @@ export function HelperListView({
                                   className="flex items-center gap-2 text-sm"
                                 >
                                   {cert.verified ? (
-                                    <CheckCircle className="w-4 h-4 text-green-600" />
+                                    <CheckCircle className="w-4 h-4 text-success" />
                                   ) : (
                                     <div className="w-4 h-4 rounded-full border-2 border-neutral-300" />
                                   )}
@@ -217,7 +216,7 @@ export function HelperListView({
                               {helper.skills.map((skill, idx) => (
                                 <span 
                                   key={idx}
-                                  className="px-2 py-1 bg-primary-50 text-primary-700 text-xs rounded"
+                                  className="px-2 py-1 bg-primary-50 text-primary-700 text-xs rounded-md"
                                 >
                                   {skill}
                                 </span>
@@ -237,3 +236,4 @@ export function HelperListView({
     </div>
   );
 }
+

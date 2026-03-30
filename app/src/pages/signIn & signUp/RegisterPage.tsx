@@ -38,10 +38,28 @@ type RegisterForm = {
 
 type FieldErrors = Partial<Record<keyof RegisterForm | 'role' | 'verificationCode', string>>;
 type RegisterApiError = { message?: string; fieldErrors?: Record<string, string> };
+type RegisterApiResponse = RegisterApiError & {
+  challengeId?: string;
+  expiresAt?: number;
+  developmentCode?: string;
+};
+type VerifyApiResponse = RegisterApiError & {
+  user?: {
+    id: string;
+    firstname: string;
+    surname: string;
+    email: string;
+    role: UserRole;
+    phone?: string;
+    zipCode?: string;
+    skills?: string[];
+    emailVerified?: boolean;
+  };
+};
 
 const SKILLS = ['Körperpflege', 'Haushalt', 'Einkaufen', 'Begleitung', 'Kochen', 'Mobilität'];
-const INPUT_CLS = 'w-full pl-11 pr-4 py-3 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent';
-const PW_INPUT_CLS = 'w-full pl-11 pr-11 py-3 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent';
+const INPUT_CLS = 'w-full pl-11 pr-4 py-3 border border-neutral-700 bg-neutral-950 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent';
+const PW_INPUT_CLS = 'w-full pl-11 pr-11 py-3 border border-neutral-700 bg-neutral-950 text-neutral-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent';
 const PW_RULES = [
   { key: 'len', label: 'Mindestens 10 Zeichen', test: (v: string) => v.length >= 10 },
   { key: 'up', label: 'Mindestens ein Großbuchstabe', test: (v: string) => /[A-Z]/.test(v) },
@@ -56,13 +74,13 @@ const zipRegex = /^\d{5}$/;
 const codeRegex = /^\d{6}$/;
 
 const errCls = (base: string, hasErr?: string) =>
-  hasErr ? `${base} border-red-300 focus:ring-red-500` : base;
+  hasErr ? `${base} border-error/40 focus:ring-error` : base;
 
 const pwStrength = (pw: string) => {
   const pass = PW_RULES.filter((r) => r.test(pw)).length;
-  if (pass <= 2) return { label: 'Schwach', bar: 'w-1/3 bg-red-500' };
-  if (pass <= 4) return { label: 'Mittel', bar: 'w-2/3 bg-amber-500' };
-  return { label: 'Stark', bar: 'w-full bg-emerald-500' };
+  if (pass <= 2) return { label: 'Schwach', bar: 'w-1/3 bg-error' };
+  if (pass <= 4) return { label: 'Mittel', bar: 'w-2/3 bg-warning' };
+  return { label: 'Stark', bar: 'w-full bg-success/100' };
 };
 
 const mapFieldErrors = (x?: Record<string, string>): FieldErrors => ({
@@ -149,33 +167,6 @@ export function RegisterPage({ onRegister, onBackToLogin }: RegisterPageProps) {
       });
     }, 1000);
   };
-
-  console.log('Form State:', form);
-
-type RegisterApiError = {
-  message: string;
-  fieldErrors?: Record<string, string>;
-};
-
-type RegisterApiResponse = RegisterApiError & {
-  challengeId?: string;
-  expiresAt?: number;
-  developmentCode?: string;
-};
-
-type VerifyApiResponse = RegisterApiError & {
-  user?: {
-    id: string;
-    firstname: string;
-    surname: string;
-    email: string;
-    role: UserRole;
-    phone?: string;
-    zipCode?: string;
-    skills?: string[];
-    emailVerified?: boolean;
-  };
-};
 
 const submitRegister = async () => {
   try {
@@ -290,30 +281,30 @@ const submitRegister = async () => {
   };
 
   const roleBtn = (r: UserRole) =>
-    `p-4 border-2 rounded-lg transition-all ${role === r ? 'border-primary-600 bg-primary-50' : 'border-neutral-200 hover:border-primary-300'}`;
+    `p-4 border-2 rounded-lg transition-all ${role === r ? 'border-secondary-500 bg-secondary-500/15 text-neutral-100' : 'border-neutral-700 bg-neutral-950 text-neutral-100 hover:border-primary-500'}`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-600 to-primary-700 flex items-center justify-center p-4">
-      <div className="w-full max-w-2xl">
+    <div className="auth-shell">
+      <div className="auth-shell-inner w-full max-w-2xl">
         <div className="text-center mb-6"><AppLogo /><Slogan /></div>
 
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
-          <h2 className="text-2xl font-bold text-neutral-900 mb-2">Neues Konto erstellen</h2>
-          <p className="text-sm text-neutral-600 mb-6">
+        <div className="auth-card rounded-2xl p-8">
+          <h2 className="text-2xl font-bold text-white mb-2">Neues Konto erstellen</h2>
+          <p className="text-sm text-neutral-200 mb-6">
             {step === 'form'
               ? 'Sicher registrieren mit E-Mail-Bestätigung und starken Passwort-Richtlinien.'
               : 'Bitte bestätigen Sie Ihre E-Mail-Adresse mit dem zugesendeten 6-stelligen Code.'}
           </p>
 
           {!!requestError && (
-            <div className="mb-5 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            <div className="mb-5 flex items-start gap-3 rounded-lg border border-error/30 bg-error/10 p-4 text-sm text-error">
               <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
               <span>{requestError}</span>
             </div>
           )}
 
           {!!requestSuccess && (
-            <div className="mb-5 flex items-start gap-3 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-700">
+            <div className="mb-5 flex items-start gap-3 rounded-lg border border-success/25 bg-success/10 p-4 text-sm text-success">
               <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" />
               <span>{requestSuccess}</span>
             </div>
@@ -322,40 +313,40 @@ const submitRegister = async () => {
           {step === 'form' ? (
             <form onSubmit={onSubmit} className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-neutral-700 mb-3">Ich möchte mich registrieren als:</label>
+                <label className="block text-sm font-medium text-neutral-100 mb-3">Ich möchte mich registrieren als:</label>
                 <div className="grid grid-cols-2 gap-3">
                   <button type="button" onClick={() => setRole('coordinator')} className={roleBtn('coordinator')}>
-                    <Briefcase className={`w-6 h-6 mx-auto mb-2 ${role === 'coordinator' ? 'text-primary-600' : 'text-neutral-400'}`} />
+                    <Briefcase className={`w-6 h-6 mx-auto mb-2 ${role === 'coordinator' ? 'text-primary-400' : 'text-neutral-200'}`} />
                     <div className="font-medium">Koordinator</div>
-                    <div className="text-xs text-neutral-600 mt-1">Pflege organisieren</div>
+                    <div className="text-xs text-neutral-200 mt-1">Pflege organisieren</div>
                   </button>
                   <button type="button" onClick={() => setRole('helper')} className={roleBtn('helper')}>
-                    <UserIcon className={`w-6 h-6 mx-auto mb-2 ${role === 'helper' ? 'text-primary-600' : 'text-neutral-400'}`} />
+                    <UserIcon className={`w-6 h-6 mx-auto mb-2 ${role === 'helper' ? 'text-primary-400' : 'text-neutral-200'}`} />
                     <div className="font-medium">Helper</div>
-                    <div className="text-xs text-neutral-600 mt-1">Pflege leisten</div>
+                    <div className="text-xs text-neutral-200 mt-1">Pflege leisten</div>
                   </button>
                 </div>
-                <p className="mt-3 text-xs text-neutral-500">Die Rolle kann später im Profil angepasst werden.</p>
+                <p className="mt-3 text-xs text-neutral-200">Die Rolle kann später im Profil angepasst werden.</p>
               </div>
 
               <InputField label="Vorname *" icon={UserIcon}>
                 <input id="firstname" type="text" value={form.firstname} onChange={setValue('firstname')} required placeholder="Max" className={errCls(INPUT_CLS, errors.firstname)} />
               </InputField>
-              {!!errors.firstname && <p className="-mt-3 text-xs text-red-600">{errors.firstname}</p>}
+              {!!errors.firstname && <p className="-mt-3 text-xs text-error">{errors.firstname}</p>}
 
               <InputField label="Nachname *" icon={UserIcon}>
                 <input id="surname" type="text" value={form.surname} onChange={setValue('surname')} required placeholder="Mustermann" className={errCls(INPUT_CLS, errors.surname)} />
               </InputField>
-              {!!errors.surname && <p className="-mt-3 text-xs text-red-600">{errors.surname}</p>}
+              {!!errors.surname && <p className="-mt-3 text-xs text-error">{errors.surname}</p>}
 
               <InputField label="E-Mail-Adresse *" icon={Mail}>
                 <input id="email" type="email" value={form.email} onChange={setValue('email')} required placeholder="max.mustermann@beispiel.de" className={errCls(INPUT_CLS, errors.email)} />
               </InputField>
-              {!!errors.email && <p className="-mt-3 text-xs text-red-600">{errors.email}</p>}
+              {!!errors.email && <p className="-mt-3 text-xs text-error">{errors.email}</p>}
 
               <InputField label="Passwort *" icon={Lock}>
                 <input id="password" type={showPw ? 'text' : 'password'} value={form.password} onChange={setValue('password')} required placeholder="••••••••" className={errCls(PW_INPUT_CLS, errors.password)} />
-                <button type="button" onClick={() => setShowPw((s) => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600">
+                <button type="button" onClick={() => setShowPw((s) => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-300 hover:text-neutral-100">
                   {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </InputField>
@@ -369,7 +360,7 @@ const submitRegister = async () => {
                   {PW_RULES.map((r) => {
                     const ok = r.test(form.password);
                     return (
-                      <div key={r.key} className={`flex items-center gap-2 ${ok ? 'text-emerald-700' : 'text-neutral-600'}`}>
+                      <div key={r.key} className={`flex items-center gap-2 ${ok ? 'text-success' : 'text-neutral-600'}`}>
                         <ShieldCheck className="h-3.5 w-3.5" />
                         <span>{r.label}</span>
                       </div>
@@ -377,15 +368,15 @@ const submitRegister = async () => {
                   })}
                 </div>
               </div>
-              {!!errors.password && <p className="-mt-3 text-xs text-red-600">{errors.password}</p>}
+              {!!errors.password && <p className="-mt-3 text-xs text-error">{errors.password}</p>}
 
               <InputField label="Passwort bestätigen *" icon={Lock}>
                 <input id="confirm-password" type={showConfirmPw ? 'text' : 'password'} value={form.confirmPassword} onChange={setValue('confirmPassword')} required placeholder="••••••••" className={errCls(PW_INPUT_CLS, errors.confirmPassword)} />
-                <button type="button" onClick={() => setShowConfirmPw((s) => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600">
+                <button type="button" onClick={() => setShowConfirmPw((s) => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-300 hover:text-neutral-100">
                   {showConfirmPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </InputField>
-              {!!errors.confirmPassword && <p className="-mt-3 text-xs text-red-600">{errors.confirmPassword}</p>}
+              {!!errors.confirmPassword && <p className="-mt-3 text-xs text-error">{errors.confirmPassword}</p>}
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <InputField label="Telefon" icon={Phone}>
@@ -395,11 +386,11 @@ const submitRegister = async () => {
                   <input id="zipCode" type="text" value={form.zipCode} onChange={setValue('zipCode')} required={role === 'helper'} pattern="[0-9]{5}" placeholder="10115" className={errCls(INPUT_CLS, errors.zipCode)} />
                 </InputField>
               </div>
-              {(errors.phone || errors.zipCode) && <p className="-mt-3 text-xs text-red-600">{errors.phone || errors.zipCode}</p>}
+              {(errors.phone || errors.zipCode) && <p className="-mt-3 text-xs text-error">{errors.phone || errors.zipCode}</p>}
 
               {role === 'helper' && (
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-2">Fähigkeiten *</label>
+                  <label className="block text-sm font-medium text-neutral-100 mb-2">Fähigkeiten *</label>
                   <div className="flex flex-wrap gap-2">
                     {SKILLS.map((s) => (
                       <button
@@ -412,7 +403,7 @@ const submitRegister = async () => {
                       </button>
                     ))}
                   </div>
-                  {!!errors.skills && <p className="text-xs text-red-600 mt-2">{errors.skills}</p>}
+                  {!!errors.skills && <p className="text-xs text-error mt-2">{errors.skills}</p>}
                 </div>
               )}
 
@@ -420,9 +411,9 @@ const submitRegister = async () => {
                 <input type="checkbox" checked={form.acceptTerms} onChange={setValue('acceptTerms')} className="mt-1 h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500" />
                 <span>Ich akzeptiere die Nutzungsbedingungen und die Datenschutzerklärung.</span>
               </label>
-              {!!errors.acceptTerms && <p className="-mt-3 text-xs text-red-600">{errors.acceptTerms}</p>}
+              {!!errors.acceptTerms && <p className="-mt-3 text-xs text-error">{errors.acceptTerms}</p>}
 
-              <button type="submit" disabled={loading} className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 text-white py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
+              <button type="submit" disabled={loading} className="btn-base btn-primary w-full py-3 flex items-center justify-center gap-2">
                 {loading
                   ? <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />Registrierung wird vorbereitet...</>
                   : 'Konto erstellen und E-Mail bestätigen'}
@@ -455,27 +446,27 @@ const submitRegister = async () => {
                   className={errCls(INPUT_CLS, errors.verificationCode)}
                 />
               </InputField>
-              {!!errors.verificationCode && <p className="-mt-3 text-xs text-red-600">{errors.verificationCode}</p>}
+              {!!errors.verificationCode && <p className="-mt-3 text-xs text-error">{errors.verificationCode}</p>}
 
-              <button type="submit" disabled={verifyLoading || verificationCode.length !== 6} className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 text-white py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
+              <button type="submit" disabled={verifyLoading || verificationCode.length !== 6} className="btn-base btn-primary w-full py-3 flex items-center justify-center gap-2">
                 {verifyLoading
                   ? <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />Code wird überprüft...</>
                   : 'E-Mail bestätigen und Konto aktivieren'}
               </button>
 
-              <button type="button" onClick={resendCode} disabled={!!resendCooldown || loading} className="w-full border border-neutral-300 text-neutral-700 hover:bg-neutral-50 disabled:text-neutral-400 disabled:border-neutral-200 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
+              <button type="button" onClick={resendCode} disabled={!!resendCooldown || loading} className="btn-base btn-ghost w-full py-3 disabled:text-neutral-400 disabled:border-neutral-200 flex items-center justify-center gap-2">
                 <RefreshCcw className="h-4 w-4" />
                 {resendCooldown ? `Code erneut senden in ${resendCooldown}s` : 'Code erneut senden'}
               </button>
 
-              <button type="button" onClick={() => setStep('form')} className="w-full text-sm text-primary-600 hover:text-primary-700 font-medium">
+              <button type="button" onClick={() => setStep('form')} className="w-full text-sm btn-link font-medium">
                 Angaben anpassen
               </button>
             </form>
           )}
 
           <div className="mt-6 text-center">
-            <button onClick={onBackToLogin} className="text-sm text-primary-600 hover:text-primary-700 font-medium">
+            <button onClick={onBackToLogin} className="text-sm btn-link font-medium">
               ← Zurück zur Anmeldung
             </button>
           </div>
@@ -484,3 +475,5 @@ const submitRegister = async () => {
     </div>
   );
 }
+
+

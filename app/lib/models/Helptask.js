@@ -12,7 +12,6 @@ const HelptaskSchema = new mongoose.Schema({
             type: String,
             enum: ['Point'],
             required: true,
-            index: "2dsphere", // Geo-Index direkt hier
         },
         coordinates: {
             type: [Number],
@@ -26,11 +25,8 @@ const HelptaskSchema = new mongoose.Schema({
         street: String,
     },
 
-    startDate: { type: Date, required: true },
-    startTime: { type: String, required: true },
-
-    endDate: { type: Date, required: true },
-    endTime: { type: String, required: true },
+    start: { type: Date, required: true },
+    end: { type: Date, required: true },
 
     status: { type: String, required: true, enum: ["open", "assigned", "completed"], index: true },
 
@@ -43,5 +39,15 @@ const HelptaskSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-export default mongoose.models.Helptask || mongoose.model("Helptask", HelptaskSchema);
+// 2dsphere index must target the geo object field, not location.type.
+HelptaskSchema.index({ location: '2dsphere' });
+
+// In Next.js dev/hot-reload, reusing mongoose.models.Helptask can keep an old
+// schema shape alive. Recreate the model so schema changes (e.g. start/end)
+// take effect immediately.
+if (mongoose.models.Helptask) {
+    mongoose.deleteModel('Helptask');
+}
+
+export default mongoose.model("Helptask", HelptaskSchema);
 

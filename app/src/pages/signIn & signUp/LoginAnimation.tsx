@@ -33,7 +33,7 @@ export function LoginAnimation({ onComplete }: LoginAnimationProps) {
   }, [onComplete]);
 
   return (
-    <div className="fixed inset-0 z-50 bg-gradient-to-br from-primary-700 via-primary-800 to-primary-900 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 auth-shell auth-animation-shell">
       {/* Logo Animation */}
       <motion.div
         initial={{ scale: 0, opacity: 0 }}
@@ -41,7 +41,7 @@ export function LoginAnimation({ onComplete }: LoginAnimationProps) {
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className="relative"
       >
-        <div className="bg-white rounded-3xl p-8 shadow-2xl">
+        <div className="auth-animation-card">
           <Heart className="w-24 h-24 text-primary-700" />
         </div>
         
@@ -149,8 +149,9 @@ export function LoginAnimation({ onComplete }: LoginAnimationProps) {
         className="absolute bottom-32 text-center"
       >
         <h2 className="text-white text-2xl font-bold">Willkommen zurück!</h2>
-        <p className="text-primary-100 mt-2">Anmeldung erfolgreich...</p>
+        <p className="text-neutral-100 mt-2">Anmeldung erfolgreich...</p>
       </motion.div>
     </div>
   );
 }
+

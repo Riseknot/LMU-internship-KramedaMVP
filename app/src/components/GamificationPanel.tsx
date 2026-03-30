@@ -18,7 +18,7 @@ export function GamificationPanel({ gamification, userName }: GamificationPanelP
   return (
     <div className="space-y-6">
       {/* Level und Fortschritt */}
-      <div className="bg-gradient-to-br from-primary-600 to-primary-800 rounded-xl p-6 text-white">
+      <div className="bg-linear-to-br from-primary-600 to-primary-800 rounded-xl p-6 text-white">
         <div className="flex items-center justify-between mb-4">
           <div>
             <p className="text-primary-100 text-sm">Dein Level</p>
@@ -65,8 +65,8 @@ export function GamificationPanel({ gamification, userName }: GamificationPanelP
         </div>
 
         <div className="bg-white rounded-xl border border-neutral-200 p-4 text-center">
-          <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-            <Zap className="w-5 h-5 text-green-600" />
+          <div className="w-10 h-10 bg-success/15 rounded-full flex items-center justify-center mx-auto mb-2">
+            <Zap className="w-5 h-5 text-success" />
           </div>
           <div className="text-2xl font-bold text-neutral-900">{completedAssignments}</div>
           <div className="text-xs text-neutral-600">Aufträge</div>
@@ -93,7 +93,7 @@ export function GamificationPanel({ gamification, userName }: GamificationPanelP
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 whileHover={{ scale: 1.05 }}
-                className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-lg p-3 border border-primary-200 cursor-pointer"
+                className="bg-linear-to-br from-primary-50 to-accent-50 rounded-lg p-3 border border-primary-200 cursor-pointer"
                 title={badge.description}
               >
                 <div className="text-3xl mb-2 text-center">{badge.icon}</div>
@@ -113,7 +113,7 @@ export function GamificationPanel({ gamification, userName }: GamificationPanelP
       </div>
 
       {/* Nächste Ziele */}
-      <div className="bg-gradient-to-r from-accent-50 to-primary-50 rounded-xl border border-accent-200 p-6">
+      <div className="bg-linear-to-r from-accent-50 to-primary-50 rounded-xl border border-accent-200 p-6">
         <div className="flex items-center gap-2 mb-4">
           <TrendingUp className="w-5 h-5 text-accent-600" />
           <h3 className="font-semibold text-neutral-900">Nächste Ziele</h3>
@@ -131,7 +131,7 @@ export function GamificationPanel({ gamification, userName }: GamificationPanelP
           )}
           {completedAssignments < 10 && (
             <li className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full" />
+              <div className="w-2 h-2 bg-success rounded-full" />
               <span>10 Aufträge abschließen ({10 - completedAssignments} verbleibend)</span>
             </li>
           )}
@@ -140,3 +140,5 @@ export function GamificationPanel({ gamification, userName }: GamificationPanelP
     </div>
   );
 }
+
+
