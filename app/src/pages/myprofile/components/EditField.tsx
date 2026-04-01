@@ -15,7 +15,7 @@ type EditFieldProps = {
   showLabel?: boolean;
 };
 
-const ROW_BASE = "flex w-full items-center gap-3 rounded-lg px-1 py-1 text-left text-neutral-800";
+const ROW_BASE = "flex w-full items-center gap-3 rounded-lg  text-left text-neutral-800";
 const ROW_HOVER = "transition-colors hover:bg-primary-50/60";
 const TEXT_BASE = "text-sm leading-6 sm:text-[15px]";
 const INPUT_BASE = "min-w-55 flex-1 rounded-lg border border-neutral-300 px-3 py-2 text-sm transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-primary-500";
@@ -110,8 +110,8 @@ export default function EditField({
       ) : editable ? (
         <button type="button" onClick={startEdit} className={`${ROW_BASE} ${ROW_HOVER}`}>
           {Icon && <Icon className="h-4 w-4 shrink-0 text-primary-700" />}
-          <span className={`${rowTextClass} flex-1`}>
-            {rowText}
+          <span className={`${rowTextClass} flex-1 `}>
+            <strong>{label}:</strong> {shownValue}
           </span>
           <Edit className="h-3.5 w-3.5 text-primary-500" />
         </button>
@@ -119,7 +119,7 @@ export default function EditField({
         <div className={ROW_BASE}>
           {Icon && <Icon className="h-4 w-4 shrink-0 text-primary-700" />}
           <span className={rowTextClass}>
-            {rowText}
+            <strong>{label}:</strong> {shownValue}
           </span>
         </div>
       )}

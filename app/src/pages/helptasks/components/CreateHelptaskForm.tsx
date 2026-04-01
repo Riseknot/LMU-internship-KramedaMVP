@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { Calendar, CheckCircle, CheckCircle2, Clock3, FileText, MapPin, Plus, Send, Sparkles, Wrench } from 'lucide-react';
+import { Calendar, CheckCircle, CheckCircle2, Clock3, FileText, MapPin, Plus, Send, Wrench } from 'lucide-react';
 import { AvailabilitySlot, User } from '../../../types';
 import { CreateHelptaskFormData } from '../types';
 
@@ -42,9 +42,10 @@ export function CreateHelptaskForm({
   const skillsSectionRef = useRef<HTMLDivElement>(null);
   const publishSectionRef = useRef<HTMLDivElement>(null);
 
-  const helperCount = helpers.length;
-  const slotCount = availabilitySlots.length;
   const hasValidWindow = !formData.start || !formData.end || formData.start < formData.end;
+  const hasAddress = Boolean(formData.zipCode.trim());
+  const hasDetails = Boolean(formData.title.trim() && formData.description.trim());
+  const hasSchedule = Boolean(formData.start && formData.end && hasValidWindow);
 
   const estimatedDurationHours = useMemo(() => {
     if (!formData.start || !formData.end) return null;
@@ -57,48 +58,18 @@ export function CreateHelptaskForm({
 
 
 
-  const progressStops = useMemo(() => {
-    const steps = [
-      {
-        key: 'address' as ProgressStepKey,
-        label: 'Adresse',
-        icon: MapPin,
-        done: formData.zipCode.trim().length > 0,
-      },
-      {
-        key: 'window' as ProgressStepKey,
-        label: 'Zeitfenster',
-        icon: Clock3,
-        done: formData.start.length > 0 && formData.end.length > 0 && hasValidWindow,
-      },
-      {
-        key: 'details' as ProgressStepKey,
-        label: 'Leistungsdetails',
-        icon: FileText,
-        done: formData.title.trim().length > 0 && formData.description.trim().length > 0,
-      },
-      {
-        key: 'skills' as ProgressStepKey,
-        label: 'Skills',
-        icon: Wrench,
-        done: formData.requiredSkills.length > 0,
-      },
-      {
-        key: 'publish' as ProgressStepKey,
-        label: 'Veroeffentlichen',
-        icon: Send,
-        done:
-          formData.title.trim().length > 0 &&
-          formData.description.trim().length > 0 &&
-          formData.zipCode.trim().length > 0 &&
-          formData.start.length > 0 &&
-          formData.end.length > 0 &&
-          hasValidWindow,
-      },
-    ];
+  const progressStops = useMemo(
+    () => [
+      { key: 'address' as ProgressStepKey, label: 'Adresse', icon: MapPin, done: hasAddress },
+      { key: 'window' as ProgressStepKey, label: 'Zeitfenster', icon: Clock3, done: hasSchedule },
+      { key: 'details' as ProgressStepKey, label: 'Leistungsdetails', icon: FileText, done: hasDetails },
+      { key: 'skills' as ProgressStepKey, label: 'Skills', icon: Wrench, done: formData.requiredSkills.length > 0 },
+      { key: 'publish' as ProgressStepKey, label: 'Veroeffentlichen', icon: Send, done: hasAddress && hasDetails && hasSchedule },
+    ],
+    [formData.requiredSkills.length, hasAddress, hasDetails, hasSchedule]
+  );
 
-    return steps;
-  }, [formData, hasValidWindow]);
+  const completedSteps = progressStops.filter(({ done }) => done).length;
 
   const timeWindowPreview = useMemo(() => {
     if (!formData.start || !formData.end || !hasValidWindow) {
@@ -113,27 +84,19 @@ export function CreateHelptaskForm({
     return { offset, width, startHour, endHour };
   }, [formData.start, formData.end, hasValidWindow]);
 
-  const canSubmit = useMemo(() => {
-    if (!formData.title.trim()) return false;
-    if (!formData.description.trim()) return false;
-    if (!formData.zipCode.trim()) return false;
-    if (!formData.start || !formData.end) return false;
-    if (!hasValidWindow) return false;
-    return true;
-  }, [formData, hasValidWindow]);
+  const canSubmit = hasAddress && hasDetails && hasSchedule;
+
+  const stepRefs: Record<ProgressStepKey, React.RefObject<HTMLDivElement | null>> = {
+    address: addressSectionRef,
+    window: addressSectionRef,
+    details: detailsSectionRef,
+    skills: skillsSectionRef,
+    publish: publishSectionRef,
+  };
 
   const jumpToStep = (step: ProgressStepKey) => {
     setActiveStep(step);
-    const targetRef =
-      step === 'address' || step === 'window'
-        ? addressSectionRef
-        : step === 'details'
-          ? detailsSectionRef
-          : step === 'skills'
-            ? skillsSectionRef
-            : publishSectionRef;
-
-    targetRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    stepRefs[step].current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
   const updateField = <K extends keyof CreateHelptaskFormData>(
@@ -178,44 +141,30 @@ export function CreateHelptaskForm({
         className="mb-4 flex flex-wrap items-center justify-between gap-3"
       >
         <div>
-          <p className="mb-2 inline-flex items-center gap-2 rounded-full bg-secondary-100 px-3 py-1 text-xs font-semibold text-secondary-700">
-            <Sparkles className="h-3.5 w-3.5" />
-            Uber-Flow: Erfassen • Pruefen • Veroeffentlichen
-          </p>
           <h2 className="text-xl font-semibold text-neutral-900 md:text-2xl">Hilfeleistung erstellen</h2>
           <p className="text-sm text-neutral-600">Koordinator: {coordinatorName}</p>
-        </div>
-        <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs text-neutral-600">
-          <p className="font-semibold text-neutral-900">Live-Verfugbarkeit</p>
-          <p className="mt-1">{helperCount} Helper, {slotCount} Slots aktiv</p>
         </div>
       </motion.div>
 
       <div className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
-        <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2.5">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Schritt 1</p>
-          <p className="text-sm font-medium text-neutral-800">Ort & Zeit</p>
-        </div>
-        <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2.5">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Schritt 2</p>
-          <p className="text-sm font-medium text-neutral-800">Details</p>
-        </div>
-        <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2.5">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Schritt 3</p>
-          <p className="text-sm font-medium text-neutral-800">Skills & Publish</p>
-        </div>
+        {['Ort & Zeit', 'Details', 'Skills & Publish'].map((label, index) => (
+          <div key={label} className="rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2.5">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Schritt {index + 1}</p>
+            <p className="text-sm font-medium text-neutral-800">{label}</p>
+          </div>
+        ))}
       </div>
 
       <div className="z-20 mb-4 rounded-xl border border-neutral-200 bg-neutral-50/95 p-3 md:sticky md:top-3 backdrop-blur-sm">
         <div className="mb-2 flex items-center justify-between">
           <p className="text-sm font-semibold text-neutral-900">Fortschritt</p>
-          <p className="text-xs font-medium text-neutral-500">{progressStops.filter((s) => s.done).length}/{progressStops.length} Schritte</p>
+          <p className="text-xs font-medium text-neutral-500">{completedSteps}/{progressStops.length} Schritte</p>
         </div>
 
         <div className="relative mb-3 h-1.5 rounded-full bg-neutral-200">
           <motion.div
             initial={{ width: 0 }}
-            animate={{ width: `${(progressStops.filter((s) => s.done).length / progressStops.length) * 100}%` }}
+            animate={{ width: `${(completedSteps / progressStops.length) * 100}%` }}
             transition={{ duration: 0.35 }}
             className="h-1.5 rounded-full bg-secondary-500"
           />
@@ -266,7 +215,7 @@ export function CreateHelptaskForm({
             >
               <div className="mb-4 flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-primary-600" />
-                <h3 className="text-sm font-semibold text-neutral-900">Schritt 1: Ort und Einsatzfenster</h3>
+                <h3 className="text-lg font-semibold text-neutral-900">Schritt 1: Ort und Einsatzfenster</h3>
               </div>
 
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
@@ -357,7 +306,7 @@ export function CreateHelptaskForm({
             >
               <div className="mb-4 flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-primary-600" />
-                <h3 className="text-sm font-semibold text-neutral-900">Schritt 2: Leistungsdetails</h3>
+                <h3 className="text-lg font-semibold text-neutral-900">Schritt 2: Leistungsdetails</h3>
               </div>
 
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
@@ -401,7 +350,7 @@ export function CreateHelptaskForm({
             >
               <div className="mb-4 flex items-center gap-2">
                 <Plus className="h-4 w-4 text-primary-600" />
-                <h3 className="text-sm font-semibold text-neutral-900">Schritt 3: Fahigkeiten</h3>
+                <h3 className="text-lg font-semibold text-neutral-900">Schritt 3: Fahigkeiten</h3>
               </div>
 
               <div className="flex gap-2">
@@ -450,9 +399,10 @@ export function CreateHelptaskForm({
             className="space-y-3 xl:sticky xl:top-24 xl:self-start"
           >
             <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4">
-              <h3 className="text-sm font-semibold text-neutral-900">Live-Zusammenfassung</h3>
+              <h3 className="text-lg font-semibold text-neutral-900">Dein Hilfsauftrag</h3>
               <div className="mt-3 space-y-2 text-sm text-neutral-600">
                 <p><span className="font-medium text-neutral-900">Titel:</span> {formData.title || '-'}</p>
+                <p><span className="font-medium text-neutral-900">Beschreibung:</span> {formData.description || '-'}</p>
                 <p><span className="font-medium text-neutral-900">Ort:</span> {formData.zipCode || '-'} {formData.city || ''}</p>
                 <p><span className="font-medium text-neutral-900">Skills:</span> {formData.requiredSkills.length}</p>
               </div>
@@ -470,7 +420,7 @@ export function CreateHelptaskForm({
              
 
               <div className="mt-4 rounded-lg border border-neutral-200 bg-white p-3 text-sm">
-                <p className="mb-2 font-medium text-neutral-900">Zeitfenster-Visualisierung</p>
+                <p className="mb-2 font-medium text-neutral-900">Dein Auftrag ist zwischen...</p>
                 <div className="relative h-3 rounded-full bg-neutral-200">
                   <AnimatePresence>
                     {timeWindowPreview.width > 0 && (

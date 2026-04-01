@@ -74,7 +74,7 @@ export function HelperRecommendations({
                         <h4 className="font-semibold text-neutral-900 mb-1">{rec.helperName}</h4>
                         <div className="flex items-center gap-2 text-sm text-neutral-600">
                           <MapPin className="w-4 h-4" />
-                          <span>{helper.zipCode || 'Keine PLZ'}</span>
+                          <span>{helper.address?.zipCode || 'Keine PLZ'}</span>
                           <span className="text-neutral-400">•</span>
                           <span>~{rec.distance} km entfernt</span>
                         </div>

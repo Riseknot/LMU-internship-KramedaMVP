@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { User } from '../../types';
 import { useHelptasks } from '../../hooks/useHelptasks';
 import { HelptaskListView } from '../../components/HelptaskListView';
 import { CreateHelptaskForm } from './components/CreateHelptaskForm';
-import { Search, Plus, List, Settings } from 'lucide-react';
+import { HelptaskMapView } from './components/HelptaskMapView';
+import { Search, Plus, List, Map as MapIcon, Settings } from 'lucide-react';
 import { Helptask } from '../../services/helptaskService';
 import { CreateHelptaskFormData, HelptaskSearchFilters, HelptaskStatus, HelptaskTab } from './types';
 
@@ -18,6 +19,7 @@ export function HelptasksPage({ currentUser, onNavigateBack }: HelptasksPageProp
   const defaultTab: HelptaskTab = isHelper ? 'browse' : 'create';
   
   const [activeTab, setActiveTab] = useState<HelptaskTab>(defaultTab);
+  const [browseViewMode, setBrowseViewMode] = useState<'list' | 'map'>(isHelper ? 'map' : 'list');
   const [searchFilters, setSearchFilters] = useState<HelptaskSearchFilters>({
     firstname: '',
     surname: '',
@@ -33,9 +35,14 @@ export function HelptasksPage({ currentUser, onNavigateBack }: HelptasksPageProp
     updateHelptask,
   } = useHelptasks({ autoFetch: true });
 
-  const openCount = helptasks.filter(task => task.status === 'open').length;
-  const activeCount = helptasks.filter(task => task.status === 'assigned').length;
-  const doneCount = helptasks.filter(task => task.status === 'completed').length;
+  const counts = useMemo(
+    () =>
+      helptasks.reduce(
+        (acc, task) => ({ ...acc, [task.status]: acc[task.status] + 1 }),
+        { open: 0, assigned: 0, completed: 0 } as Record<HelptaskStatus, number>
+      ),
+    [helptasks]
+  );
 
   const tabs: Array<{ id: HelptaskTab; label: string; icon: React.ComponentType<{ className?: string }>; roles: string[] }> = [
     { id: 'browse', label: 'Durchsuchen', icon: Search, roles: ['helper', 'coordinator'] },
@@ -43,17 +50,25 @@ export function HelptasksPage({ currentUser, onNavigateBack }: HelptasksPageProp
     { id: 'manage', label: 'Verwalten', icon: Settings, roles: ['helper', 'coordinator'] },
   ];
 
-  const filteredTabs = tabs.filter(tab => tab.roles.includes(currentUser.role));
+  const filteredTabs = tabs.filter(({ roles }) => roles.includes(currentUser.role));
+
+  const managedHelptasks = useMemo(() => helptasks.filter(({ status }) => status !== 'open'), [helptasks]);
+  const progressWidth = (count: number) => `${(count / Math.max(helptasks.length, 1)) * 100}%`;
+  const setSearchFilter = <K extends keyof HelptaskSearchFilters>(key: K, value: HelptaskSearchFilters[K]) =>
+    setSearchFilters((prev) => ({ ...prev, [key]: value }));
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     fetchHelptasks(searchFilters);
   };
 
+  const handleSelectTask = ({ title }: Helptask) => alert(`Task: ${title}`);
+  const handleStatusChange = (taskId: string, status: HelptaskStatus) => {
+    updateHelptask(taskId, { status });
+    alert(`Status updated to ${status}`);
+  };
 
   const handleCreateHelptask = async (helptaskData: CreateHelptaskFormData) => {
-    const normalizedStreet = [helptaskData.street, helptaskData.streetNumber].filter(Boolean).join(' ').trim();
-
     try {
       await createHelptask({
         taskType: 'help',
@@ -61,12 +76,9 @@ export function HelptasksPage({ currentUser, onNavigateBack }: HelptasksPageProp
         description: helptaskData.description,
         address: {
           zipCode: helptaskData.zipCode,
-          city: helptaskData.city.trim(),
-          street: normalizedStreet,
-        },
-        location: {
-          type: 'Point',
-          coordinates: [0, 0],
+          city: helptaskData.city,
+          street: helptaskData.street,
+          streetNumber: helptaskData.streetNumber,
         },
         start: new Date(helptaskData.start),
         end: new Date(helptaskData.end),
@@ -108,15 +120,15 @@ export function HelptasksPage({ currentUser, onNavigateBack }: HelptasksPageProp
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div className="rounded-xl border border-secondary-200 bg-secondary-50/70 p-3">
             <p className="text-xs uppercase tracking-wide text-secondary-700">Offen</p>
-            <p className="text-xl font-bold text-secondary-800">{openCount}</p>
+            <p className="text-xl font-bold text-secondary-800">{counts.open}</p>
           </div>
           <div className="rounded-xl border border-primary-200 bg-primary-50/70 p-3">
             <p className="text-xs uppercase tracking-wide text-primary-700">Zugewiesen</p>
-            <p className="text-xl font-bold text-primary-800">{activeCount}</p>
+            <p className="text-xl font-bold text-primary-800">{counts.assigned}</p>
           </div>
           <div className="rounded-xl border border-success/30 bg-success/10 p-3">
             <p className="text-xs uppercase tracking-wide text-neutral-700">Abgeschlossen</p>
-            <p className="text-xl font-bold text-neutral-900">{doneCount}</p>
+            <p className="text-xl font-bold text-neutral-900">{counts.completed}</p>
           </div>
         </div>
 
@@ -124,19 +136,19 @@ export function HelptasksPage({ currentUser, onNavigateBack }: HelptasksPageProp
           <div className="flex h-full w-full">
             <motion.div
               initial={{ width: 0 }}
-              animate={{ width: `${(openCount / Math.max(helptasks.length, 1)) * 100}%` }}
+              animate={{ width: progressWidth(counts.open) }}
               transition={{ duration: 0.45, delay: 0.1 }}
               className="bg-secondary-500"
             />
             <motion.div
               initial={{ width: 0 }}
-              animate={{ width: `${(activeCount / Math.max(helptasks.length, 1)) * 100}%` }}
+              animate={{ width: progressWidth(counts.assigned) }}
               transition={{ duration: 0.45, delay: 0.16 }}
               className="bg-primary-600"
             />
             <motion.div
               initial={{ width: 0 }}
-              animate={{ width: `${(doneCount / Math.max(helptasks.length, 1)) * 100}%` }}
+              animate={{ width: progressWidth(counts.completed) }}
               transition={{ duration: 0.45, delay: 0.22 }}
               className="bg-success"
             />
@@ -184,19 +196,19 @@ export function HelptasksPage({ currentUser, onNavigateBack }: HelptasksPageProp
                   type="text"
                   placeholder="Vorname..."
                   value={searchFilters.firstname}
-                  onChange={(e) => setSearchFilters({ ...searchFilters, firstname: e.target.value })}
+                  onChange={(e) => setSearchFilter('firstname', e.target.value)}
                   className="rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-500"
                 />
                 <input
                   type="text"
                   placeholder="Nachname..."
                   value={searchFilters.surname}
-                  onChange={(e) => setSearchFilters({ ...searchFilters, surname: e.target.value })}
+                  onChange={(e) => setSearchFilter('surname', e.target.value)}
                   className="rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-500"
                 />
                 <select
                   value={searchFilters.status}
-                  onChange={(e) => setSearchFilters({ ...searchFilters, status: e.target.value as HelptaskStatus })}
+                  onChange={(e) => setSearchFilter('status', e.target.value as HelptaskStatus)}
                   className="rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-500"
                 >
                   <option value="open">Offen</option>
@@ -212,6 +224,35 @@ export function HelptasksPage({ currentUser, onNavigateBack }: HelptasksPageProp
               </button>
             </form>
 
+            {isHelper && (
+              <div className="rounded-xl border border-neutral-200 bg-white/90 p-2 shadow-sm">
+                <div className="flex gap-2 overflow-x-auto">
+                  <button
+                    onClick={() => setBrowseViewMode('map')}
+                    className={`btn-base rounded-lg px-4 py-2.5 text-sm font-medium whitespace-nowrap flex items-center gap-2 ${
+                      browseViewMode === 'map'
+                        ? 'btn-secondary text-white'
+                        : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
+                    }`}
+                  >
+                    <MapIcon className="w-4 h-4" />
+                    Karte
+                  </button>
+                  <button
+                    onClick={() => setBrowseViewMode('list')}
+                    className={`btn-base rounded-lg px-4 py-2.5 text-sm font-medium whitespace-nowrap flex items-center gap-2 ${
+                      browseViewMode === 'list'
+                        ? 'btn-secondary text-white'
+                        : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
+                    }`}
+                  >
+                    <List className="w-4 h-4" />
+                    Liste
+                  </button>
+                </div>
+              </div>
+            )}
+
             {loading && (
               <div className="text-center py-8">
                 <p className="text-neutral-600">Lädt...</p>
@@ -225,16 +266,17 @@ export function HelptasksPage({ currentUser, onNavigateBack }: HelptasksPageProp
             )}
 
             {helptasks.length > 0 ? (
-              <HelptaskListView
-                helptasks={helptasks}
-                loading={loading}
-                error={error}
-                onSelectTask={(task: Helptask) => alert(`Task: ${task.title}`)}
-                onUpdateStatus={(taskId: string, status: HelptaskStatus) => {
-                  updateHelptask(taskId, { status });
-                  alert(`Status updated to ${status}`);
-                }}
-              />
+              isHelper && browseViewMode === 'map' ? (
+                <HelptaskMapView currentUser={currentUser} helptasks={helptasks} />
+              ) : (
+                <HelptaskListView
+                  helptasks={helptasks}
+                  loading={loading}
+                  error={error}
+                  onSelectTask={handleSelectTask}
+                  onUpdateStatus={handleStatusChange}
+                />
+              )
             ) : (
               <div className="rounded-xl border border-neutral-200 bg-neutral-50/80 p-8 text-center">
                 <List className="w-12 h-12 text-neutral-400 mx-auto mb-4" />
@@ -251,7 +293,7 @@ export function HelptasksPage({ currentUser, onNavigateBack }: HelptasksPageProp
             coordinatorName={currentUser.firstname}
             helpers={[]}
             availabilitySlots={[]}
-            onCreate={(assignment) => handleCreateHelptask(assignment)}
+            onCreate={handleCreateHelptask}
           />
         )}
 
@@ -273,16 +315,13 @@ export function HelptasksPage({ currentUser, onNavigateBack }: HelptasksPageProp
               </div>
             )}
 
-            {helptasks.filter(t => t.status !== 'open').length > 0 ? (
+            {managedHelptasks.length > 0 ? (
               <HelptaskListView
-                helptasks={helptasks.filter(t => t.status !== 'open')}
+                helptasks={managedHelptasks}
                 loading={loading}
                 error={error}
-                onSelectTask={(task: Helptask) => alert(`Task: ${task.title}`)}
-                onUpdateStatus={(taskId: string, status: HelptaskStatus) => {
-                  updateHelptask(taskId, { status });
-                  alert(`Status updated to ${status}`);
-                }}
+                onSelectTask={handleSelectTask}
+                onUpdateStatus={handleStatusChange}
               />
             ) : (
               <div className="rounded-xl border border-neutral-200 bg-neutral-50/80 p-8 text-center">

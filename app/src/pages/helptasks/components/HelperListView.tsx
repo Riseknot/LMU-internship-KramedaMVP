@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Assignment } from '../types';
+import { User, Assignment } from '../../../types';
 import { MapPin, Star, CheckCircle, MessageCircle, Send, Shield, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -17,10 +17,11 @@ export function HelperListView({
   onProposeAssignment 
 }: HelperListViewProps) {
   const [selectedHelper, setSelectedHelper] = useState<string | null>(null);
+  const currentZip = currentUser.address?.zipCode;
 
   const getDistanceLabel = (helperZip?: string) => {
-    if (!helperZip || !currentUser.zipCode) return 'Unbekannt';
-    const distance = Math.abs(parseInt(helperZip) - parseInt(currentUser.zipCode));
+    if (!helperZip || !currentZip) return 'Unbekannt';
+    const distance = Math.abs(parseInt(helperZip) - parseInt(currentZip));
     if (distance < 10) return '< 5 km';
     if (distance < 50) return '5-10 km';
     if (distance < 100) return '10-20 km';
@@ -95,10 +96,10 @@ export function HelperListView({
 
                       {/* Tags */}
                       <div className="flex flex-wrap gap-2 mb-3">
-                        {helper.zipCode && (
+                        {helper.address?.zipCode && (
                           <span className="inline-flex items-center gap-1 px-2 py-1 bg-neutral-100 text-neutral-700 text-xs rounded-full">
                             <MapPin className="w-3 h-3" />
-                            {helper.zipCode} · {getDistanceLabel(helper.zipCode)}
+                            {helper.address.zipCode} · {getDistanceLabel(helper.address.zipCode)}
                           </span>
                         )}
                         {verifiedCerts > 0 && (

@@ -12,7 +12,12 @@ type PendingRegistration = {
     password: string;
     role: "helper" | "coordinator";
     phone?: string;
-    zipCode?: string;
+    address?: {
+      zipCode?: string;
+      city?: string;
+      street?: string;
+      streetNumber?: string;
+    };
     skills?: string[];
   };
 };

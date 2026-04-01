@@ -1,14 +1,21 @@
 import User from "../models/User";
 import bcrypt from "bcryptjs";
 
-export async function createUser({ firstname, surname, email, password, role, phone, zipCode, languages, skills, emailVerified = false }: {
+type AddressPayload = {
+  zipCode?: string;
+  city?: string;
+  street?: string;
+  streetNumber?: string;
+};
+
+export async function createUser({ firstname, surname, email, password, role, phone, address, languages, skills, emailVerified = false }: {
   firstname: string;
   surname: string;
   email: string;
   password: string;
   role: string;
   phone?: string;
-  zipCode?: string;
+  address?: AddressPayload;
   languages?: string[];
   skills?: string[];
   emailVerified?: boolean;
@@ -18,7 +25,6 @@ export async function createUser({ firstname, surname, email, password, role, ph
   if (existing) throw new Error("USER_ALREADY_EXISTS");
 
   const hashedPassword = await bcrypt.hash(password, 10);
-
   return await User.create({
     firstname: firstname.trim(),
     surname: surname.trim(),
@@ -26,7 +32,7 @@ export async function createUser({ firstname, surname, email, password, role, ph
     password: hashedPassword,
     role,
     phone,
-    zipCode,
+    address,
     languages,
     skills,
     emailVerified,
@@ -37,13 +43,21 @@ export async function findOneUser(query: Partial<{ email: string; firstname: str
   return await User.findOne(query);
 }
 
+export async function findUsers(query: Partial<{ role: string; emailVerified: boolean }> = {}) {
+  return await User.find(query).select("firstname surname email role phone address skills languages bio avatarUrl coordinates certifications emailVerified");
+}
+
 export async function updateUser(
   email: string,
   fields: Partial<{
     firstname: string;
     surname: string;
     phone: string;
-    zipCode: string;
+    address: AddressPayload;
+    coordinates: {
+      lat: number;
+      lng: number;
+    };
     bio: string;
     avatarUrl: string;
     languages: string[];
@@ -57,7 +71,8 @@ export async function updateUser(
   if (fields.firstname !== undefined) updateData.firstname = fields.firstname;
   if (fields.surname !== undefined) updateData.surname = fields.surname;
   if (fields.phone !== undefined) updateData.phone = fields.phone;
-  if (fields.zipCode !== undefined) updateData.zipCode = fields.zipCode;
+  if (fields.address !== undefined) updateData.address = fields.address;
+  if (fields.coordinates !== undefined) updateData.coordinates = fields.coordinates;
   if (fields.bio !== undefined) updateData.bio = fields.bio;
   if (fields.avatarUrl !== undefined) updateData.avatarUrl = fields.avatarUrl;
   if (fields.languages !== undefined) updateData.languages = fields.languages;

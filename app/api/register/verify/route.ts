@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
           email: createdUser.email,
           role: createdUser.role,
           phone: createdUser.phone,
-          zipCode: createdUser.zipCode,
+          address: createdUser.address,
           skills: createdUser.skills,
           emailVerified: createdUser.emailVerified,
         },

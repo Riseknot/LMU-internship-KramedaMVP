@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/connectDB";
-import { createUser, findOneUser, updateUser } from "@/lib/services/user.service";
+import { createUser, findOneUser, findUsers, updateUser } from "@/lib/services/user.service";
 
 
 export async function POST(req: NextRequest) {
@@ -23,17 +23,27 @@ export async function GET(req: NextRequest) {
 
     const email = searchParams.get("email")?.trim() || undefined;
     const firstname = searchParams.get("firstname")?.trim() || undefined;
+    const role = searchParams.get("role")?.trim() || undefined;
+    const emailVerifiedParam = searchParams.get("emailVerified")?.trim();
+    const emailVerified = emailVerifiedParam === undefined
+      ? undefined
+      : emailVerifiedParam === "true";
 
-    if (!email && !firstname) {
-      return NextResponse.json(
-        { error: "Email or firstname must be provided" },
-        { status: 400 }
-      );
+    if (role) {
+      const users = await findUsers({ role, ...(emailVerified !== undefined ? { emailVerified } : {}) });
+      return NextResponse.json(users);
     }
 
     const query: any = {};
     if (email) query.email = email;
     if (firstname) query.firstname = firstname;
+
+    if (!email && !firstname) {
+      return NextResponse.json(
+        { error: "Email, firstname, or role must be provided" },
+        { status: 400 }
+      );
+    }
 
     const userData = await findOneUser(query);
 

@@ -58,13 +58,14 @@ export function AssignmentListView({
   };
 
   const getMatchScore = (assignment: Assignment) => {
-    if (!currentUser.skills || !currentUser.zipCode) return 0;
+    const currentZip = currentUser.address?.zipCode;
+    if (!currentUser.skills || !currentZip) return 0;
     
     const skillMatch = assignment.requiredSkills.filter(skill => 
       currentUser.skills?.includes(skill)
     ).length / Math.max(assignment.requiredSkills.length, 1) * 100;
     
-    const zipDiff = Math.abs(parseInt(assignment.address.zipCode) - parseInt(currentUser.zipCode));
+    const zipDiff = Math.abs(parseInt(assignment.address.zipCode) - parseInt(currentZip));
     const distanceScore = Math.max(0, 100 - zipDiff);
     
     return Math.round((skillMatch + distanceScore) / 2);

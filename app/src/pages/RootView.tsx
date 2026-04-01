@@ -15,7 +15,7 @@ import { SocialFundPage } from './SocialFundPage';
 import { CareGradePage } from './CareGradePage';
 import { NeedsCalculatorPage } from './NeedsCalculatorPage';
 import { GamificationPage } from './GamificationPage';
-import { HelpersPage } from './HelpersPage';
+import { HelpersPage } from './findHelper/HelpersPage';
 import { AvailabilityPage } from './AvailabilityPage';
 import { DashboardHome } from './DashboardHome';
 

@@ -174,7 +174,7 @@ export function SocialFundOverview({
                       </div>
                       
                       <p className="text-sm text-neutral-600 mb-3">
-                        {user.role === 'helper' ? 'Helper' : 'Coordinator'} · {user.zipCode}
+                        {user.role === 'helper' ? 'Helper' : 'Coordinator'} · {user.address?.zipCode || 'N/A'}
                       </p>
 
                       <div className="flex items-center gap-4 text-sm">

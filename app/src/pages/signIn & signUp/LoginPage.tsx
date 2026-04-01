@@ -13,15 +13,7 @@ interface LoginPageProps {
 
 type LoginApiResponse = {
   message?: string;
-  user?: {
-    id: string;
-    name: string;
-    email: string;
-    role: User['role'];
-    phone?: string;
-    zipCode?: string;
-    skills?: string[];
-  };
+  user?: User;
 };
 
 export function LoginPage({ onLogin, onShowRegister }: LoginPageProps) {
@@ -35,12 +27,11 @@ export function LoginPage({ onLogin, onShowRegister }: LoginPageProps) {
     e.preventDefault();
     setError('');
     setIsLoading(true);
+
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
@@ -59,9 +50,9 @@ export function LoginPage({ onLogin, onShowRegister }: LoginPageProps) {
       onLogin(data.user);
     } catch {
       setError('Server nicht erreichbar. Bitte versuchen Sie es erneut.');
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (

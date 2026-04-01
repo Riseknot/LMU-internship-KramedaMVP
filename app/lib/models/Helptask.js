@@ -7,7 +7,7 @@ const HelptaskSchema = new mongoose.Schema({
 
     description: { type: String, required: true },
 
-    location: {
+    public_loc: {
         type: {
             type: String,
             enum: ['Point'],
@@ -15,7 +15,7 @@ const HelptaskSchema = new mongoose.Schema({
         },
         coordinates: {
             type: [Number],
-            required: true
+            required: true,
         }
     },
 
@@ -23,6 +23,7 @@ const HelptaskSchema = new mongoose.Schema({
         zipCode: { type: String, index: true }, // Index direkt
         city: String,
         street: String,
+        streetNumber: String,
     },
 
     start: { type: Date, required: true },
@@ -39,8 +40,8 @@ const HelptaskSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-// 2dsphere index must target the geo object field, not location.type.
-HelptaskSchema.index({ location: '2dsphere' });
+// Public area used for privacy-safe map display.
+HelptaskSchema.index({ public_loc: '2dsphere' });
 
 // In Next.js dev/hot-reload, reusing mongoose.models.Helptask can keep an old
 // schema shape alive. Recreate the model so schema changes (e.g. start/end)

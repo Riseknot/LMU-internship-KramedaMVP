@@ -1,24 +1,38 @@
 /**
- * Frontend service for helptasks API
- * Handles all CRUD operations for helptasks
+ * Frontend service for the Helptasks API.
  */
+
+type GeoPoint = {
+  type: "Point";
+  coordinates: [number, number];
+};
+
+type HelptaskStatus = "open" | "assigned" | "completed";
+type HelptaskAddress = {
+  zipCode?: string;
+  city?: string;
+  street?: string;
+  streetNumber?: string;
+};
+
+export type HelptaskFilters = Partial<{
+  firstname: string;
+  surname: string;
+  email: string;
+  status: HelptaskStatus;
+  zipCode: string;
+  title: string;
+}>;
 
 export interface HelptaskCreatePayload {
   taskType: string;
   title: string;
   description: string;
-  location: {
-    type: "Point";
-    coordinates: [number, number];
-  };
-  address: {
-    zipCode?: string;
-    city?: string;
-    street?: string;
-  };
+  public_loc?: GeoPoint;
+  address: HelptaskAddress;
   start: Date | string;
   end: Date | string;
-  status?: "open" | "assigned" | "completed";
+  status?: HelptaskStatus;
   assignedHelper?: string;
   firstname: string;
   surname: string;
@@ -30,18 +44,11 @@ export interface HelptaskUpdatePayload {
   taskType?: string;
   title?: string;
   description?: string;
-  location?: {
-    type: "Point";
-    coordinates: [number, number];
-  };
-  address?: {
-    zipCode?: string;
-    city?: string;
-    street?: string;
-  };
+  public_loc?: GeoPoint;
+  address?: HelptaskAddress;
   start?: Date | string;
   end?: Date | string;
-  status?: "open" | "assigned" | "completed";
+  status?: HelptaskStatus;
   assignedHelper?: string;
 }
 
@@ -50,18 +57,13 @@ export interface Helptask {
   taskType: string;
   title: string;
   description: string;
-  location: {
-    type: "Point";
-    coordinates: [number, number];
-  };
-  address: {
-    zipCode?: string;
-    city?: string;
-    street?: string;
-  };
+  public_loc?: GeoPoint;
+  public_log?: GeoPoint;
+  location?: GeoPoint;
+  address: HelptaskAddress;
   start: string;
   end: string;
-  status: "open" | "assigned" | "completed";
+  status: HelptaskStatus;
   assignedHelper?: string;
   firstname: string;
   surname: string;
@@ -73,87 +75,37 @@ export interface Helptask {
 
 const BASE_URL = "/api/helptasks";
 
+const requestJson = async <T>(url: string, init?: RequestInit): Promise<T> => {
+  const response = await fetch(url, init);
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error((data as { error?: string }).error || `API error: ${response.statusText}`);
+  }
+
+  return data as T;
+};
+
+const buildUrl = (filters?: HelptaskFilters) => {
+  const params = new URLSearchParams();
+
+  Object.entries(filters ?? {}).forEach(([key, value]) => {
+    if (value) params.append(key, String(value));
+  });
+
+  const query = params.toString();
+  return query ? `${BASE_URL}?${query}` : BASE_URL;
+};
+
+const jsonRequest = (method: "POST" | "PUT", body: unknown): RequestInit => ({
+  method,
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(body),
+});
+
 export const helptaskService = {
-  /**
-   * Fetch helptasks with optional filters
-   */
-  async getHelptasks(filters?: {
-    firstname?: string;
-    surname?: string;
-    email?: string;
-    status?: "open" | "assigned" | "completed";
-    zipCode?: string;
-    title?: string;
-  }): Promise<Helptask[]> {
-    try {
-      const params = new URLSearchParams();
-      if (filters?.firstname) params.append("firstname", filters.firstname);
-      if (filters?.surname) params.append("surname", filters.surname);
-      if (filters?.email) params.append("email", filters.email);
-      if (filters?.status) params.append("status", filters.status);
-      if (filters?.zipCode) params.append("zipCode", filters.zipCode);
-      if (filters?.title) params.append("title", filters.title);
-
-      const url = params.toString() ? `${BASE_URL}?${params}` : BASE_URL;
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        throw new Error(`API error: ${response.statusText}`);
-      }
-
-      return response.json();
-    } catch (error) {
-      console.error("Error fetching helptasks:", error);
-      throw error;
-    }
-  },
-
-  /**
-   * Create a new helptask
-   */
-  async createHelptask(payload: HelptaskCreatePayload): Promise<Helptask> {
-    try {
-      const response = await fetch(BASE_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to create helptask");
-      }
-
-      return response.json();
-    } catch (error) {
-      console.error("Error creating helptask:", error);
-      throw error;
-    }
-  },
-
-  /**
-   * Update an existing helptask
-   */
-  async updateHelptask(
-    id: string,
-    payload: HelptaskUpdatePayload
-  ): Promise<Helptask> {
-    try {
-      const response = await fetch(`${BASE_URL}?id=${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, ...payload }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to update helptask");
-      }
-
-      return response.json();
-    } catch (error) {
-      console.error("Error updating helptask:", error);
-      throw error;
-    }
-  },
+  getHelptasks: (filters?: HelptaskFilters) => requestJson<Helptask[]>(buildUrl(filters)),
+  createHelptask: (payload: HelptaskCreatePayload) => requestJson<Helptask>(BASE_URL, jsonRequest("POST", payload)),
+  updateHelptask: (id: string, payload: HelptaskUpdatePayload) =>
+    requestJson<Helptask>(`${BASE_URL}?id=${encodeURIComponent(id)}`, jsonRequest("PUT", { id, ...payload })),
 };

@@ -100,7 +100,7 @@ export function BuddyManagement({
                   </span>
                 )}
               </div>
-              <p className="text-sm text-neutral-600">{buddyUser.zipCode}</p>
+              <p className="text-sm text-neutral-600">{buddyUser.address?.zipCode || 'N/A'}</p>
               {buddy.notes && (
                 <p className="text-sm text-neutral-500 mt-1 italic">{buddy.notes}</p>
               )}

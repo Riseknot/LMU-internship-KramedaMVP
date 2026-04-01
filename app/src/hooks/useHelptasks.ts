@@ -1,45 +1,34 @@
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   helptaskService,
   Helptask,
   HelptaskCreatePayload,
+  HelptaskFilters,
   HelptaskUpdatePayload,
 } from "../services/helptaskService";
 
 interface UseHelptasksOptions {
   autoFetch?: boolean;
-  filters?: {
-    firstname?: string;
-    surname?: string;
-    email?: string;
-    status?: "open" | "assigned" | "completed";
-    zipCode?: string;
-    title?: string;
-  };
+  filters?: HelptaskFilters;
 }
 
-/**
- * Custom hook for managing helptasks
- * Provides CRUD operations and state management
- */
-export function useHelptasks(options: UseHelptasksOptions = {}) {
-  const { autoFetch = false, filters } = options;
+const toMessage = (error: unknown, fallback: string) =>
+  error instanceof Error ? error.message : fallback;
 
+export function useHelptasks({ autoFetch = false, filters }: UseHelptasksOptions = {}) {
   const [helptasks, setHelptasks] = useState<Helptask[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch helptasks
   const fetchHelptasks = useCallback(
     async (queryFilters = filters) => {
       setLoading(true);
       setError(null);
+
       try {
-        const data = await helptaskService.getHelptasks(queryFilters);
-        setHelptasks(data);
+        setHelptasks(await helptaskService.getHelptasks(queryFilters));
       } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "Failed to fetch helptasks";
+        const message = toMessage(err, "Failed to fetch helptasks");
         setError(message);
         console.error(message);
       } finally {
@@ -49,63 +38,44 @@ export function useHelptasks(options: UseHelptasksOptions = {}) {
     [filters]
   );
 
-  // Auto-fetch on mount or filter changes
   useEffect(() => {
-    if (autoFetch) {
-      fetchHelptasks();
-    }
+    if (autoFetch) void fetchHelptasks();
   }, [autoFetch, fetchHelptasks]);
 
-  // Create helptask
+  const runMutation = useCallback(async <T,>(action: () => Promise<T>, fallback: string) => {
+    setError(null);
+
+    try {
+      return await action();
+    } catch (err) {
+      setError(toMessage(err, fallback));
+      throw err;
+    }
+  }, []);
+
   const createHelptask = useCallback(
-    async (payload: HelptaskCreatePayload) => {
-      setError(null);
-      try {
+    (payload: HelptaskCreatePayload) =>
+      runMutation(async () => {
         const newHelptask = await helptaskService.createHelptask(payload);
         setHelptasks((prev) => [newHelptask, ...prev]);
         return newHelptask;
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "Failed to create helptask";
-        setError(message);
-        throw err;
-      }
-    },
-    []
+      }, "Failed to create helptask"),
+    [runMutation]
   );
 
-  // Update helptask
   const updateHelptask = useCallback(
-    async (id: string, payload: HelptaskUpdatePayload) => {
-      setError(null);
-      try {
+    (id: string, payload: HelptaskUpdatePayload) =>
+      runMutation(async () => {
         const updatedHelptask = await helptaskService.updateHelptask(id, payload);
-        setHelptasks((prev) =>
-          prev.map((h) => (h._id === id ? updatedHelptask : h))
-        );
+        setHelptasks((prev) => prev.map((task) => (task._id === id ? updatedHelptask : task)));
         return updatedHelptask;
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "Failed to update helptask";
-        setError(message);
-        throw err;
-      }
-    },
-    []
+      }, "Failed to update helptask"),
+    [runMutation]
   );
 
-  // Delete helptask (local state only for now)
   const deleteHelptask = useCallback((id: string) => {
-    setHelptasks((prev) => prev.filter((h) => h._id !== id));
+    setHelptasks((prev) => prev.filter((task) => task._id !== id));
   }, []);
-
-  // Filter helptasks locally
-  const filterHelptasks = useCallback(
-    (filterFn: (task: Helptask) => boolean) => {
-      return helptasks.filter(filterFn);
-    },
-    [helptasks]
-  );
 
   return {
     helptasks,
@@ -115,6 +85,6 @@ export function useHelptasks(options: UseHelptasksOptions = {}) {
     createHelptask,
     updateHelptask,
     deleteHelptask,
-    filterHelptasks,
+    filterHelptasks: (filterFn: (task: Helptask) => boolean) => helptasks.filter(filterFn),
   };
 }

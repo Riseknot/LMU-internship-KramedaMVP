@@ -24,6 +24,31 @@
  * - Error state: error (+ subtle tint via /10-/20)
  */
 @theme {
+  /* ─────────────────────────────
+   * MAP DESIGN TOKENS
+   * Central source for all map area + marker colors.
+   * Adjust these values once to update all map views.
+   * ───────────────────────────── */
+
+  /* Current user / own position */
+  --map-user-area-stroke: #5e2028;
+  --map-user-area-fill: #5e2028;
+  --map-user-marker-color: #5e2028;
+
+  /* Helptasks / public task areas */
+  --map-helptask-area-stroke: #22315c;
+  --map-helptask-area-fill: #22315c;
+  --map-helptask-marker-color: #22315c;
+
+  /* Helpers / nearby people */
+  --map-helper-area-stroke: #0f766e;
+  --map-helper-area-fill: #14b8a6;
+  --map-helper-area-selected-stroke: #0f172a;
+  --map-helper-marker-color: #14b8a6;
+
+  /* Neutral map elements / assignment badges */
+  --map-assignment-marker-color: #d4d4d8;
+
   --color-primary-50: #e8f0ff;
   --color-primary-100: #cfdefa;
   --color-primary-200: #adc5f2;

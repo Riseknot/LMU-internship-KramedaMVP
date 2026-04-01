@@ -22,7 +22,12 @@ export async function PUT(
       firstname: string;
       surname: string;
       phone: string;
-      zipCode: string;
+      address: {
+        zipCode?: string;
+        city?: string;
+        street?: string;
+        streetNumber?: string;
+      };
       bio: string;
       avatarUrl: string;
       languages: string[];
@@ -32,7 +37,14 @@ export async function PUT(
     if (typeof data.firstname === "string") updatePayload.firstname = data.firstname;
     if (typeof data.surname === "string") updatePayload.surname = data.surname;
     if (typeof data.phone === "string") updatePayload.phone = data.phone;
-    if (typeof data.zipCode === "string") updatePayload.zipCode = data.zipCode;
+    if (data.address && typeof data.address === "object") {
+      const address: { zipCode?: string; city?: string; street?: string; streetNumber?: string } = {};
+      if (typeof data.address.zipCode === "string") address.zipCode = data.address.zipCode;
+      if (typeof data.address.city === "string") address.city = data.address.city;
+      if (typeof data.address.street === "string") address.street = data.address.street;
+      if (typeof data.address.streetNumber === "string") address.streetNumber = data.address.streetNumber;
+      updatePayload.address = address;
+    }
     if (typeof data.bio === "string") updatePayload.bio = data.bio;
     if (typeof data.avatarUrl === "string") updatePayload.avatarUrl = data.avatarUrl;
 

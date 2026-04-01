@@ -39,7 +39,12 @@ export interface User {
   role: UserRole;
   email: string;
   phone?: string;
-  zipCode?: string;
+  address?: {
+    zipCode?: string;
+    city?: string;
+    street?: string;
+    streetNumber?: string;
+  };
   languages?: string[];
   skills?: string[];
   avatarUrl?: string;

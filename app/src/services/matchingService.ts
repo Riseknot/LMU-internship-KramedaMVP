@@ -88,7 +88,7 @@ export function findBestHelpers(
   const scores: HelperScore[] = helpers.map(helper => {
     const helperSlots = availabilitySlots.filter(slot => slot.userId === helper.id);
     
-    const distance = calculateDistance(assignment.address?.zipCode, helper.zipCode);
+    const distance = calculateDistance(assignment.address?.zipCode, helper.address?.zipCode);
     const availabilityMatch = checkAvailability(assignment, helperSlots);
     const skillMatch = calculateSkillMatch(assignment.requiredSkills, helper.skills);
     const score = calculateOverallScore(availabilityMatch, skillMatch, distance);

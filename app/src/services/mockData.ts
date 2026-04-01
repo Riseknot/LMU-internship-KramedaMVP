@@ -1,5 +1,12 @@
 import { User, Assignment, AvailabilitySlot, ChatMessage, TodoItem, HelperEarning, SocialFundContribution, BuddyRelationship } from '../types';
 
+const makeAddress = (zipCode: string, city = 'Berlin', street = '', streetNumber = '') => ({
+  zipCode,
+  city,
+  street,
+  streetNumber,
+});
+
 // Mock users
 export const mockUsers: User[] = [
   {
@@ -9,7 +16,7 @@ export const mockUsers: User[] = [
     role: 'coordinator',
     email: 'anna.schmidt@care.de',
     phone: '+49 30 12345678',
-    zipCode: '10115',
+    address: makeAddress('10115'),
     bio: 'Pflegekoordinatorin mit 10 Jahren Erfahrung in der häuslichen Pflege.',
     coordinates: { lat: 52.5200, lng: 13.4050 },
     careGrade: 3,
@@ -43,7 +50,7 @@ export const mockUsers: User[] = [
     role: 'helper',
     email: 'max.mueller@care.de',
     phone: '+49 30 98765432',
-    zipCode: '10115',
+    address: makeAddress('10115'),
     skills: ['Körperpflege', 'Mobilität', 'Medikamentengabe'],
     bio: 'Examinierter Pflegehelfer mit Schwerpunkt auf ganzheitliche Betreuung.',
     coordinates: { lat: 52.5230, lng: 13.4090 },
@@ -117,7 +124,7 @@ export const mockUsers: User[] = [
     role: 'helper',
     email: 'sophie.weber@care.de',
     phone: '+49 30 55555555',
-    zipCode: '10117',
+    address: makeAddress('10117'),
     skills: ['Körperpflege', 'Haushalt', 'Begleitung'],
     bio: 'Erfahrene Betreuungskraft mit Herz und Geduld für Senioren.',
     coordinates: { lat: 52.5190, lng: 13.3980 },
@@ -169,7 +176,7 @@ export const mockUsers: User[] = [
     role: 'helper',
     email: 'tom.fischer@care.de',
     phone: '+49 30 44444444',
-    zipCode: '10119',
+    address: makeAddress('10119'),
     skills: ['Mobilität', 'Begleitung', 'Haushalt'],
     bio: 'Flexibler Helper für spontane Einsätze und Begleitdienste.',
     coordinates: { lat: 52.5280, lng: 13.4120 },
@@ -206,7 +213,7 @@ export const mockUsers: User[] = [
     role: 'helper',
     email: 'lisa.hoffmann@care.de',
     phone: '+49 30 77777777',
-    zipCode: '10115',
+    address: makeAddress('10115'),
     skills: ['Körperpflege', 'Haushalt', 'Begleitung'],
     bio: 'Alleinerziehende Mutter, die durch Pflegehilfe ihre Familie unterstützt.',
     coordinates: { lat: 52.5210, lng: 13.4030 },
@@ -260,7 +267,7 @@ export const mockUsers: User[] = [
     role: 'helper',
     email: 'michael.klein@care.de',
     phone: '+49 30 88888888',
-    zipCode: '10117',
+    address: makeAddress('10117'),
     skills: ['Mobilität', 'Medikamentengabe', 'Begleitung'],
     bio: 'Student der Pflegewissenschaft, nutzt Sozialfond zur Finanzierung des Studiums.',
     coordinates: { lat: 52.5180, lng: 13.4000 },

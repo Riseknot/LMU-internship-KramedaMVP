@@ -1,6 +1,6 @@
 import React from 'react';
 import { User, Assignment } from '../types';
-import { MapView } from '../components/MapView';
+import { MapView } from './findHelper/components/MapView';
 
 interface MapPageProps {
   user: User;

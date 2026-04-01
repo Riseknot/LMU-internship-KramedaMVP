@@ -45,7 +45,7 @@ export function Sidebar({ user, activePage, onLogout, onRoleChange, isOpen = tru
     { id: 'dashboard', label: 'Home', icon: Home},
     { id: 'helptasks', label: 'Meine Hilfeleistungen', icon: Briefcase },
     { id: 'helpers', label: 'Helper finden', icon: Users },
-    { id: 'map', label: 'Karte', icon: Map },
+    // { id: 'map', label: 'Karte', icon: Map },
     { id: 'finance', label: 'Finanzen', icon: Euro },
     { id: 'bedarfsermittlung', label: 'Bedarfsermittlung', icon: Calculator },
     { id: 'pflegegrad', label: 'Pflegegrad', icon: Shield },

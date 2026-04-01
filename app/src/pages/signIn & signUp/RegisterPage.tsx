@@ -32,6 +32,9 @@ type RegisterForm = {
   confirmPassword: string;
   phone: string;
   zipCode: string;
+  city: string;
+  street: string;
+  streetNumber: string;
   skills: string[];
   acceptTerms: boolean;
 };
@@ -51,7 +54,7 @@ type VerifyApiResponse = RegisterApiError & {
     email: string;
     role: UserRole;
     phone?: string;
-    zipCode?: string;
+    address?: User['address'];
     skills?: string[];
     emailVerified?: boolean;
   };
@@ -91,6 +94,9 @@ const mapFieldErrors = (x?: Record<string, string>): FieldErrors => ({
   confirmPassword: x?.confirmPassword,
   phone: x?.phone,
   zipCode: x?.zipCode,
+  city: x?.city,
+  street: x?.street,
+  streetNumber: x?.streetNumber,
   skills: x?.skills,
   acceptTerms: x?.acceptTerms,
   role: x?.role,
@@ -107,6 +113,9 @@ function validate(form: RegisterForm, role: UserRole): FieldErrors {
   if (form.phone.trim() && !phoneRegex.test(form.phone)) e.phone = 'Bitte geben Sie eine gültige Telefonnummer ein.';
   if (role === 'helper') {
     if (!zipRegex.test(form.zipCode.trim())) e.zipCode = 'Bitte geben Sie eine gültige 5-stellige Postleitzahl ein.';
+    if (form.city.trim().length < 2) e.city = 'Bitte geben Sie die Stadt an.';
+    if (form.street.trim().length < 2) e.street = 'Bitte geben Sie die Straße an.';
+    if (form.streetNumber.trim().length < 1) e.streetNumber = 'Bitte geben Sie die Hausnummer an.';
     if (!form.skills.length) e.skills = 'Bitte wählen Sie mindestens eine Fähigkeit aus.';
   }
   if (!form.acceptTerms) e.acceptTerms = 'Bitte akzeptieren Sie die Nutzungsbedingungen und Datenschutzerklärung.';
@@ -123,6 +132,9 @@ export function RegisterPage({ onRegister, onBackToLogin }: RegisterPageProps) {
     confirmPassword: '',
     phone: '',
     zipCode: '',
+    city: '',
+    street: '',
+    streetNumber: '',
     skills: [],
     acceptTerms: false,
   });
@@ -180,7 +192,12 @@ const submitRegister = async () => {
         password: form.password,
         confirmPassword: form.confirmPassword,
         phone: form.phone.trim(),
-        zipCode: form.zipCode.trim(),
+        address: {
+          zipCode: form.zipCode.trim(),
+          city: form.city.trim(),
+          street: form.street.trim(),
+          streetNumber: form.streetNumber.trim(),
+        },
         skills: form.skills,
         role,
         acceptTerms: form.acceptTerms,
@@ -387,6 +404,19 @@ const submitRegister = async () => {
                 </InputField>
               </div>
               {(errors.phone || errors.zipCode) && <p className="-mt-3 text-xs text-error">{errors.phone || errors.zipCode}</p>}
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <InputField label={`Stadt ${role === 'helper' ? '*' : ''}`} icon={MapPin}>
+                  <input id="city" type="text" value={form.city} onChange={setValue('city')} required={role === 'helper'} placeholder="Berlin" className={errCls(INPUT_CLS, errors.city)} />
+                </InputField>
+                <InputField label={`Straße ${role === 'helper' ? '*' : ''}`} icon={MapPin}>
+                  <input id="street" type="text" value={form.street} onChange={setValue('street')} required={role === 'helper'} placeholder="Musterstraße" className={errCls(INPUT_CLS, errors.street)} />
+                </InputField>
+                <InputField label={`Hausnummer ${role === 'helper' ? '*' : ''}`} icon={MapPin}>
+                  <input id="streetNumber" type="text" value={form.streetNumber} onChange={setValue('streetNumber')} required={role === 'helper'} placeholder="12A" className={errCls(INPUT_CLS, errors.streetNumber)} />
+                </InputField>
+              </div>
+              {(errors.city || errors.street || errors.streetNumber) && <p className="-mt-3 text-xs text-error">{errors.city || errors.street || errors.streetNumber}</p>}
 
               {role === 'helper' && (
                 <div>

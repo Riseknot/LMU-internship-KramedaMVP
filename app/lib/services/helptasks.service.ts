@@ -1,38 +1,24 @@
-
 import mongoose from "mongoose";
 import Helptask from "../models/Helptask";
 
-let helptaskIndexSyncPromise: Promise<unknown> | null = null;
-
-function ensureHelptaskIndexes() {
-  if (!helptaskIndexSyncPromise) {
-    // Keeps existing databases in sync (e.g. removes legacy wrong index
-    // on location.type and creates the correct 2dsphere index on location).
-    helptaskIndexSyncPromise = Helptask.syncIndexes().catch((error) => {
-      helptaskIndexSyncPromise = null;
-      throw error;
-    });
-  }
-
-  return helptaskIndexSyncPromise;
-}
+type HelptaskStatus = "open" | "assigned" | "completed";
+type GeoPoint = { type: "Point"; coordinates: [number, number] };
+type AddressInput = {
+  zipCode?: string;
+  city?: string;
+  street?: string;
+  streetNumber?: string;
+};
 
 type CreateHelptaskInput = {
   taskType: string;
   title: string;
   description: string;
-  location: {
-    type: "Point";
-    coordinates: [number, number];
-  };
-  address: {
-    zipCode?: string;
-    city?: string;
-    street?: string;
-  };
+  public_loc: GeoPoint;
+  address: AddressInput;
   start: Date;
   end: Date;
-  status: "open" | "assigned" | "completed";
+  status: HelptaskStatus;
   assignedHelper?: mongoose.Types.ObjectId;
   createdBy?: mongoose.Types.ObjectId | null;
   firstname: string;
@@ -40,22 +26,25 @@ type CreateHelptaskInput = {
   email: string;
 };
 
-type HelptaskFilters = Partial<{
+export type HelptaskFilters = Partial<{
   firstname: string;
   surname: string;
   email: string;
-  status: "open" | "assigned" | "completed";
+  status: HelptaskStatus;
   zipCode: string;
   title: string;
 }>;
 
-function escapeRegex(input: string) {
-  return input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
+let helptaskIndexSyncPromise: Promise<unknown> | null = null;
 
-function buildContainsRegex(value: string) {
-  return new RegExp(escapeRegex(value.trim()), "i");
-}
+const ensureHelptaskIndexes = () =>
+  (helptaskIndexSyncPromise ??= Helptask.syncIndexes().catch((error) => {
+    helptaskIndexSyncPromise = null;
+    throw error;
+  }));
+
+const escapeRegex = (input: string) => input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const contains = (value: string) => new RegExp(escapeRegex(value.trim()), "i");
 
 export async function createHelptask(input: CreateHelptaskInput) {
   await ensureHelptaskIndexes();
@@ -63,18 +52,17 @@ export async function createHelptask(input: CreateHelptaskInput) {
 }
 
 export async function findHelptasks(filters: HelptaskFilters = {}) {
-  const query: Record<string, unknown> = {};
-
-  if (filters.firstname) query.firstname = buildContainsRegex(filters.firstname);
-  if (filters.surname) query.surname = buildContainsRegex(filters.surname);
-  if (filters.email) query.email = filters.email.trim().toLowerCase();
-  if (filters.status) query.status = filters.status;
-  if (filters.zipCode) query["address.zipCode"] = filters.zipCode.trim();
-  if (filters.title) query.title = buildContainsRegex(filters.title);
+  const query: Record<string, unknown> = {
+    ...(filters.firstname ? { firstname: contains(filters.firstname) } : {}),
+    ...(filters.surname ? { surname: contains(filters.surname) } : {}),
+    ...(filters.email ? { email: filters.email.trim().toLowerCase() } : {}),
+    ...(filters.status ? { status: filters.status } : {}),
+    ...(filters.zipCode ? { "address.zipCode": filters.zipCode.trim() } : {}),
+    ...(filters.title ? { title: contains(filters.title) } : {}),
+  };
 
   return Helptask.find(query).sort({ createdAt: -1 }).lean();
 }
 
-export async function updateHelptaskById(id: string, fields: Record<string, unknown>) {
-  return Helptask.findByIdAndUpdate(id, { $set: fields }, { new: true, runValidators: true }).lean();
-}
+export const updateHelptaskById = (id: string, fields: Record<string, unknown>) =>
+  Helptask.findByIdAndUpdate(id, { $set: fields }, { new: true, runValidators: true }).lean();

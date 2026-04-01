@@ -2,7 +2,7 @@ import { Certification, User } from "../../types";
 import { CertificationManager } from "../../components/CertificationManager";
 import { BriefcaseBusiness, Languages, LucideIcon, MapPin, Phone, Quote, ShieldCheck, Star, User as UserIcon } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
-import EditField from "@/src/utils/EditField";
+import EditField from "./components/EditField";
 
 const STAR_COUNT = 5;
 
@@ -56,6 +56,9 @@ type ProfileState = {
   email: string;
   phone: string;
   zipCode: string;
+  city: string;
+  street: string;
+  streetNumber: string;
   languages: string;
   bio: string;
   avatarUrl: string;
@@ -204,12 +207,16 @@ function parseCsvList(value: string) {
 }
 
 function toProfileState(userData: Partial<User>): ProfileState {
+  const address = userData.address || {};
   return {
     firstname: userData.firstname || "",
     surname: userData.surname || "",
     email: userData.email || "",
     phone: userData.phone || "",
-    zipCode: userData.zipCode || "",
+    zipCode: address.zipCode || "",
+    street: address.street || "",
+    city: address.city || "",
+    streetNumber: address.streetNumber || "",
     languages: (userData.languages || ["Deutsch", "Englisch"]).join(", "),
     bio: userData.bio || "",
     avatarUrl: userData.avatarUrl || "",
@@ -226,12 +233,16 @@ export default function MyProfile({
   onLogout: () => void;
   onUserUpdate?: (updates: Partial<User>) => void;
 }) {
+  const initialAddress = user.address || {};
   const [profile, setProfile] = useState<ProfileState>({
     firstname: user.firstname || "",
     surname: user.surname || "",
     email: user.email || "",
     phone: user.phone || "",
-    zipCode: user.zipCode || "",
+    zipCode: initialAddress.zipCode || "",
+    street: initialAddress.street || "",
+    city: initialAddress.city || "",
+    streetNumber: initialAddress.streetNumber || "",
     languages: (user.languages || ["Deutsch", "Englisch"]).join(", "),
     bio: user.bio || "",
     avatarUrl: user.avatarUrl || "",
@@ -244,7 +255,7 @@ export default function MyProfile({
   const hostingYears = user.gamification?.level ? Math.max(1, user.gamification.level) : 1;
   const reviewCount = user.gamification?.completedAssignments || 0;
   const ratingValue = user.gamification ? (4 + Math.min(0.9, user.gamification.level / 10)).toFixed(1) : "4.7";
-  const locationText = profile.zipCode ? `PLZ ${profile.zipCode}` : "Nicht angegeben";
+  const locationText = `${profile.zipCode} ${profile.city}, ${profile.street} ${profile.streetNumber}`;
 
   const aboutFields: AboutField[] = [
     { id: "role", icon: BriefcaseBusiness, label: "Rolle", value: roleLabel, editable: false },
@@ -280,15 +291,11 @@ export default function MyProfile({
       field: "languages",
       placeholder: "Deutsch, Englisch",
     },
-    {
-      id: "zipCode",
-      icon: MapPin,
-      label: "Standort / PLZ",
-      value: profile.zipCode,
-      displayValue: locationText,
-      field: "zipCode",
-      placeholder: "z. B. 81543",
-    },
+    { id: "street", icon: MapPin, label: "Straße", value: profile.street, field: "street", placeholder: "Straße" },
+    { id: "streetNumber", icon: MapPin, label: "Hausnummer", value: profile.streetNumber, field: "streetNumber", placeholder: "Hausnummer" },
+    { id: "zipCode", icon: MapPin, label: "PLZ", value: profile.zipCode, field: "zipCode", placeholder: "PLZ" },
+      { id: "city", icon: MapPin, label: "Stadt", value: profile.city, field: "city", placeholder: "Stadt" },
+
     {
       id: "identity",
       icon: ShieldCheck,
