@@ -6,7 +6,11 @@ type GeoPoint = {
   type: "Point";
   coordinates: [number, number];
 };
-
+type AddressAsCircle = {
+  lat: number;
+  lng: number;
+  radiusM: number;
+}
 type HelptaskStatus = "open" | "assigned" | "completed";
 type HelptaskAddress = {
   zipCode?: string;
@@ -28,7 +32,7 @@ export interface HelptaskCreatePayload {
   taskType: string;
   title: string;
   description: string;
-  public_loc?: GeoPoint;
+  public_loc?: AddressAsCircle;
   address: HelptaskAddress;
   start: Date | string;
   end: Date | string;
@@ -44,7 +48,7 @@ export interface HelptaskUpdatePayload {
   taskType?: string;
   title?: string;
   description?: string;
-  public_loc?: GeoPoint;
+  public_loc?: AddressAsCircle;
   address?: HelptaskAddress;
   start?: Date | string;
   end?: Date | string;
@@ -57,8 +61,7 @@ export interface Helptask {
   taskType: string;
   title: string;
   description: string;
-  public_loc?: GeoPoint;
-  public_log?: GeoPoint;
+  public_loc: AddressAsCircle;
   location?: GeoPoint;
   address: HelptaskAddress;
   start: string;

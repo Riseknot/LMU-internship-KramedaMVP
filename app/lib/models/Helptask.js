@@ -8,13 +8,16 @@ const HelptaskSchema = new mongoose.Schema({
     description: { type: String, required: true },
 
     public_loc: {
-        type: {
-            type: String,
-            enum: ['Point'],
+        lat: {
+            type: Number,
             required: true,
         },
-        coordinates: {
-            type: [Number],
+        lng: {
+            type: Number,
+            required: true,
+        },
+        radiusM: {
+            type: Number,
             required: true,
         }
     },

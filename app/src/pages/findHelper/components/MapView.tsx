@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { Assignment, User } from '../../../types';
 import { Calendar, MapPin, Navigation } from 'lucide-react';
-import { GoogleAreaMap, MapArea } from '../../../components/GoogleAreaMap';
-import { DEFAULT_CENTER, GeoSource, distanceByZip, escapeHtml, resolveUserCenter } from '../../helptasks/components/utils';
+import { GoogleAreaMap, MapArea, MapMarker } from '../../../components/GoogleAreaMap';
+import { DEFAULT_CENTER, GeoSource, createCurrentUserMarker, distanceByZip, escapeHtml, formatAddress, resolveUserCenter } from '../../helptasks/components/utils';
 
 interface MapViewProps {
   currentUser: User;
@@ -12,8 +12,6 @@ interface MapViewProps {
 }
 
 const COORDINATE_AREA_RADIUS_M = 1200;
-const ADDRESS_AREA_RADIUS_M = 2200;
-const USER_AREA_RADIUS_M = 1500;
 
 const Stat = ({ label, value, isPrimary }: { label: string; value: string | number; isPrimary?: boolean }) => (
   <div className={`rounded-lg border p-3 ${isPrimary ? 'border-primary-500/30 bg-primary-500/10' : 'border-neutral-700 bg-neutral-800'}`}>
@@ -30,7 +28,7 @@ const Legend = ({ color, label }: { color: string; label: string }) => (
 );
 
 const formatSource = (source: GeoSource) =>
-  source === 'coordinates' ? 'koordinatenbasiert' : source === 'address' ? 'adresse-basiert' : 'kein Standort';
+  source === 'coordinates' ? 'Koordinaten' : source === 'address' ? 'Adresse aus DB' : 'kein Standort';
 
 export function MapView({ currentUser, helpers, assignments, loadingHelpers }: MapViewProps) {
   const [selectedHelper, setSelectedHelper] = useState<User | null>(null);
@@ -59,7 +57,7 @@ export function MapView({ currentUser, helpers, assignments, loadingHelpers }: M
                 helper,
                 position: resolved.position,
                 source: resolved.source,
-                radius: resolved.source === 'coordinates' ? COORDINATE_AREA_RADIUS_M : ADDRESS_AREA_RADIUS_M,
+                radius: COORDINATE_AREA_RADIUS_M,
               }
             : null;
         })
@@ -73,23 +71,13 @@ export function MapView({ currentUser, helpers, assignments, loadingHelpers }: M
   );
 
   const currentUserArea = resolveUserCenter(currentUser);
+  const currentUserAddress = formatAddress(currentUser.address);
   const mapCenter = currentUserArea.position || helperAreas[0]?.position || DEFAULT_CENTER;
   const userZip = currentUser.address?.zipCode;
 
-
   const mapAreas = useMemo<MapArea[]>(
-    () => [
-      ...(currentUserArea.position
-        ? [{
-            id: 'current-user',
-            center: currentUserArea.position,
-            radius: USER_AREA_RADIUS_M,
-            strokeColor: 'var(--map-user-area-stroke)',
-            fillColor: 'var(--map-user-area-fill)',
-            content: `<div class="text-sm font-semibold">Ihr Bereich (${formatSource(currentUserArea.source)})</div>`,
-          }]
-        : []),
-      ...helperAreas.map(({ helper, position, source, radius }) => ({
+    () =>
+      helperAreas.map(({ helper, position, source, radius }) => ({
         id: helper.id,
         center: position,
         radius,
@@ -98,8 +86,12 @@ export function MapView({ currentUser, helpers, assignments, loadingHelpers }: M
         onClick: () => setSelectedHelper(helper),
         content: `<div class="w-48 text-sm"><div class="font-bold">${escapeHtml(helper.firstname)} ${escapeHtml(helper.surname)}</div><div style="margin:4px 0;font-size:12px;color:#6b7280">PLZ ${escapeHtml(helper.address?.zipCode || 'N/A')}</div><div style="font-size:12px;color:#6b7280">Standort: ${formatSource(source)}</div></div>`,
       })),
-    ],
-    [currentUserArea.position, currentUserArea.source, helperAreas, selectedHelper?.id]
+    [helperAreas, selectedHelper?.id]
+  );
+
+  const mapMarkers = useMemo<MapMarker[]>(
+    () => createCurrentUserMarker(currentUserAddress, currentUserArea.position ?? undefined),
+    [currentUserAddress, currentUserArea.position]
   );
 
   return (
@@ -112,12 +104,12 @@ export function MapView({ currentUser, helpers, assignments, loadingHelpers }: M
         </div>
 
         <div className="relative mb-6 h-96 w-full overflow-hidden rounded-lg border border-neutral-700">
-          <GoogleAreaMap center={mapCenter} areas={mapAreas} className="h-full w-full" />
+          <GoogleAreaMap center={mapCenter} areas={mapAreas} markers={mapMarkers} className="h-full w-full" />
 
-          {!currentUserArea.position && helperAreas.length === 0 && !loadingHelpers && (
+          {!currentUserAddress && helperAreas.length === 0 && !loadingHelpers && (
             <div className="pointer-events-none absolute inset-0 grid place-items-center bg-neutral-900/70">
               <div className="rounded-lg border border-neutral-700 bg-neutral-900/95 px-4 py-3 text-sm text-neutral-300">
-                Keine Standortdaten in der Datenbank gefunden.
+                Keine echten Standortdaten in der Datenbank gefunden.
               </div>
             </div>
           )}
@@ -132,7 +124,7 @@ export function MapView({ currentUser, helpers, assignments, loadingHelpers }: M
         </div>
 
         <div className="flex flex-wrap gap-4 text-sm">
-          <Legend color="var(--map-user-area-fill)" label="Ihr Bereich" />
+          <Legend color="var(--map-user-area-fill)" label="Ihr Personenmarker" />
           <Legend color="var(--map-helper-area-fill)" label="Helper-Bereiche" />
           <Legend color="var(--map-assignment-marker-color)" label="Aktive Einsätze" />
         </div>
@@ -140,7 +132,7 @@ export function MapView({ currentUser, helpers, assignments, loadingHelpers }: M
 
       <div className="bg-white rounded-xl border border-neutral-200 p-6">
         <h3 className="text-lg font-semibold text-neutral-900 mb-1">Helper in Ihrer Nähe</h3>
-        <p className="mb-4 text-sm text-neutral-600">Standort primär aus Koordinaten, sonst grob über Adresse approximiert.</p>
+        <p className="mb-4 text-sm text-neutral-600">Ihr eigener Standort kommt direkt aus Ihrer gespeicherten DB-Adresse. Ohne echte Daten wird nichts angezeigt.</p>
 
         <div className="space-y-3">
           {helpers.length === 0 ? (

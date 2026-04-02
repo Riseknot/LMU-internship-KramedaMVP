@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 /*
@@ -30,76 +30,77 @@
    * Adjust these values once to update all map views.
    * ───────────────────────────── */
 
+  /* ─────────────────────────────
+   * BRAND COLORS
+   * Nur diese 2 Werte anpassen.
+   * Der Rest leitet sich automatisch davon ab.
+   * ───────────────────────────── */
+  --brand-blue: #2563eb;
+  --brand-wine: #872847;
+  --brand-accent: color-mix(in srgb, var(--brand-blue) 55%, var(--brand-wine));
+
   /* Current user / own position */
-  --map-user-area-stroke: #5e2028;
-  --map-user-area-fill: #5e2028;
-  --map-user-marker-color: #5e2028;
+  --map-user-area-stroke: var(--brand-wine);
+  --map-user-area-fill: color-mix(in srgb, var(--brand-wine) 88%, white);
 
   /* Helptasks / public task areas */
-  --map-helptask-area-stroke: #22315c;
-  --map-helptask-area-fill: #22315c;
-  --map-helptask-marker-color: #22315c;
+  --map-helptask-area-stroke: color-mix(in srgb, var(--brand-blue) 55%, black);
+  --map-helptask-area-fill: color-mix(in srgb, var(--brand-blue) 72%, black);
 
   /* Helpers / nearby people */
-  --map-helper-area-stroke: #0f766e;
-  --map-helper-area-fill: #14b8a6;
-  --map-helper-area-selected-stroke: #0f172a;
-  --map-helper-marker-color: #14b8a6;
+  --map-helper-area-stroke: var(--brand-blue);
+  --map-helper-area-fill: color-mix(in srgb, var(--brand-blue) 70%, white);
+  --map-helper-area-selected-stroke: color-mix(in srgb, var(--brand-blue) 55%, black);
 
   /* Neutral map elements / assignment badges */
-  --map-assignment-marker-color: #d4d4d8;
+  --map-assignment-marker-color: color-mix(in srgb, var(--brand-blue) 12%, #d4d4d8);
 
-  --color-primary-50: #e8f0ff;
-  --color-primary-100: #cfdefa;
-  --color-primary-200: #adc5f2;
-  --color-primary-300: #86a9e8;
-  --color-primary-400: #648ddd;
-  --color-primary-500: #4d78d0;
-  --color-primary-600: #3a60b7;
-  --color-primary-700: #2c4a92;
-  --color-primary-800: #1f366c;
-  --color-primary-900: #13244a;
-  --color-primary-950: #0a1429;
+  --color-primary-50: color-mix(in srgb, var(--brand-blue) 6%, white);
+  --color-primary-100: color-mix(in srgb, var(--brand-blue) 12%, white);
+  --color-primary-200: color-mix(in srgb, var(--brand-blue) 22%, white);
+  --color-primary-300: color-mix(in srgb, var(--brand-blue) 36%, white);
+  --color-primary-400: color-mix(in srgb, var(--brand-blue) 58%, white);
+  --color-primary-500: var(--brand-blue);
+  --color-primary-600: color-mix(in srgb, var(--brand-blue) 88%, black);
+  --color-primary-700: color-mix(in srgb, var(--brand-blue) 74%, black);
+  --color-primary-800: color-mix(in srgb, var(--brand-blue) 62%, black);
+  --color-primary-900: color-mix(in srgb, var(--brand-blue) 50%, black); 
+  --color-primary-950: color-mix(in srgb, var(--brand-blue) 36%, black);
 
-  --color-accent-50: #e7fbff;
-  --color-accent-100: #c8f5ff;
-  --color-accent-200: #93e8ff;
-  --color-accent-300: #56d8f5;
-  --color-accent-400: #28c2e0;
-  --color-accent-500: #10a8c8;
-  --color-accent-600: #0c8aa8;
-  --color-accent-700: #0d6f87;
-  --color-accent-800: #0f596a;
-  --color-accent-900: #124b58;
-  --color-accent-950: #0a2f39;
+  --color-accent-50: color-mix(in srgb, var(--brand-accent) 6%, white);
+  --color-accent-100: color-mix(in srgb, var(--brand-accent) 12%, white);
+  --color-accent-200: color-mix(in srgb, var(--brand-accent) 22%, white);
+  --color-accent-400: color-mix(in srgb, var(--brand-accent) 58%, white);
+  --color-accent-500: var(--brand-accent);
+  --color-accent-600: color-mix(in srgb, var(--brand-accent) 86%, black);
+  --color-accent-700: color-mix(in srgb, var(--brand-accent) 72%, black);
+  --color-accent-800: color-mix(in srgb, var(--brand-accent) 60%, black);
+  --color-accent-900: color-mix(in srgb, var(--brand-accent) 48%, black);
 
-  --color-secondary-50: #e6f7ff;
-  --color-secondary-100: #cceefe;
-  --color-secondary-200: #9cddff;
-  --color-secondary-300: #67c8ff;
-  --color-secondary-400: #33b3ff;
-  --color-secondary-500: #0894e6;
-  --color-secondary-600: #0678bf;
-  --color-secondary-700: #055d95;
-  --color-secondary-800: #044670;
-  --color-secondary-900: #03334f;
-  --color-secondary-950: #021d31;
+  --color-secondary-50: color-mix(in srgb, var(--brand-wine) 6%, white);
+  --color-secondary-100: color-mix(in srgb, var(--brand-wine) 12%, white);
+  --color-secondary-200: color-mix(in srgb, var(--brand-wine) 22%, white);
+  --color-secondary-300: color-mix(in srgb, var(--brand-wine) 38%, white);
+  --color-secondary-500: var(--brand-wine);
+  --color-secondary-600: color-mix(in srgb, var(--brand-wine) 88%, black);
+  --color-secondary-700: color-mix(in srgb, var(--brand-wine) 74%, black);
+  --color-secondary-800: color-mix(in srgb, var(--brand-wine) 60%, black);
 
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-  --color-error: #f43f5e;
+  --color-success: var(--brand-blue);
+  --color-warning: color-mix(in srgb, var(--brand-blue) 58%, white);
+  --color-error: var(--brand-wine);
 
-  --color-neutral-50: #f5f7fb;
-  --color-neutral-100: #e5ecf8;
-  --color-neutral-200: #cfd9eb;
-  --color-neutral-300: #aebcd4;
-  --color-neutral-400: #8392b1;
-  --color-neutral-500: #647392;
-  --color-neutral-600: #4d5b76;
-  --color-neutral-700: #394760;
-  --color-neutral-800: #25324a;
-  --color-neutral-900: #141f33;
-  --color-neutral-950: #0a101d;
+  --color-neutral-50: color-mix(in srgb, var(--brand-blue) 2%, white);
+  --color-neutral-100: color-mix(in srgb, var(--brand-blue) 4%, white);
+  --color-neutral-200: color-mix(in srgb, var(--brand-blue) 8%, white);
+  --color-neutral-300: color-mix(in srgb, var(--brand-blue) 16%, white);
+  --color-neutral-400: color-mix(in srgb, var(--brand-blue) 28%, white);
+  --color-neutral-500: color-mix(in srgb, var(--brand-blue) 40%, #64748b);
+  --color-neutral-600: color-mix(in srgb, var(--brand-blue) 28%, #475569);
+  --color-neutral-700: color-mix(in srgb, var(--brand-blue) 20%, #334155);
+  --color-neutral-800: color-mix(in srgb, var(--brand-blue) 16%, #1f2937);
+  --color-neutral-900: color-mix(in srgb, var(--brand-blue) 12%, #111827);
+  --color-neutral-950: color-mix(in srgb, var(--brand-blue) 8%, #030712);
 }
 
 * {
@@ -110,37 +111,68 @@ body {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   margin: 0;
   padding: 0;
+  min-height: 100vh;
   background:
-    radial-gradient(circle at 10% 8%, rgba(77, 120, 208, 0.07) 0%, transparent 34%),
-    radial-gradient(circle at 88% 14%, rgba(8, 148, 230, 0.06) 0%, transparent 30%),
-    linear-gradient(180deg, #f7f9fc 0%, #f3f6fb 56%, #edf2f8 100%);
+    radial-gradient(circle at top left, color-mix(in srgb, var(--color-secondary-500) 10%, transparent) 0%, transparent 24%),
+    radial-gradient(circle at top right, color-mix(in srgb, var(--color-accent-500) 8%, transparent) 0%, transparent 18%),
+    linear-gradient(
+      180deg,
+      var(--color-neutral-50) 0%,
+      color-mix(in srgb, var(--color-primary-50) 24%, white) 52%,
+      color-mix(in srgb, var(--color-neutral-100) 88%, var(--color-primary-50)) 100%
+    );
   color: var(--color-neutral-900);
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
-  line-height: 1.3;
-  font-family: 'Fraunces', 'Times New Roman', serif;
+  line-height: 1.2;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  letter-spacing: -0.03em;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-secondary-500) 18%, white);
 }
 
 button {
   font-family: inherit;
 }
 
+.btn-reset {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+
 .btn-base {
-  border-radius: 0.625rem;
-  font-weight: 600;
-  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease, opacity 160ms ease;
+  border-radius: 0.875rem;
+  font-weight: 700;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease,
+    opacity 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.btn-base:hover {
+  transform: translateY(-1px);
 }
 
 .btn-primary {
-  background: var(--color-secondary-500);
+  background: linear-gradient(135deg, var(--color-secondary-500) 0%, var(--color-secondary-600) 100%);
   color: #fff;
+  box-shadow: 0 12px 26px color-mix(in srgb, var(--color-secondary-500) 28%, transparent);
 }
 
 .btn-primary:hover {
-  background: var(--color-secondary-600);
+  background: linear-gradient(135deg, var(--color-secondary-600) 0%, var(--color-secondary-700) 100%);
 }
 
 .btn-primary:disabled {
@@ -150,51 +182,152 @@ button {
 }
 
 .btn-secondary {
-  background: var(--color-primary-600);
+  background: var(--color-secondary-800);
   color: #fff;
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--color-secondary-800) 24%, transparent);
 }
 
 .btn-secondary:hover {
-  background: var(--color-primary-700);
+  background: var(--color-secondary-700);
 }
 
 .btn-secondary:disabled {
-  background: var(--color-primary-300);
+  background: var(--color-secondary-300);
   cursor: not-allowed;
   opacity: 0.8;
 }
 
 .btn-ghost {
-  border: 1px solid var(--color-neutral-300);
-  background: #fff;
-  color: var(--color-neutral-700);
+  border: 1px solid var(--color-secondary-200);
+  background: color-mix(in srgb, var(--color-secondary-50) 52%, white);
+  color: var(--color-secondary-700);
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--color-secondary-500) 8%, transparent);
 }
 
 .btn-ghost:hover {
-  background: var(--color-neutral-100);
+  background: var(--color-secondary-50);
+  border-color: var(--color-secondary-300);
 }
 
 .btn-link {
-  color: var(--color-secondary-300);
+  color: var(--color-secondary-600);
 }
 
 .btn-link:hover {
-  color: var(--color-secondary-200);
+  color: var(--color-secondary-500);
 }
 
 .btn-dark-ghost {
-  border: 1px solid var(--color-neutral-700);
-  background: rgba(10, 16, 29, 0.95);
-  color: var(--color-neutral-200);
+  border: 1px solid color-mix(in srgb, var(--color-secondary-700) 70%, white);
+  background: color-mix(in srgb, var(--color-secondary-900, var(--color-secondary-800)) 70%, black);
+  color: color-mix(in srgb, var(--color-secondary-100) 75%, white);
 }
 
 .btn-dark-ghost:hover {
-  background: var(--color-neutral-900);
+  background: color-mix(in srgb, var(--color-secondary-800) 86%, black);
   color: #fff;
 }
 
 input, textarea, select {
   font-family: inherit;
+}
+
+.page-shell {
+  margin: 0 auto;
+  max-width: 78rem;
+  padding: 0.75rem;
+}
+
+.page-header-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(230, 232, 238, 0.95);
+  border-radius: 1.6rem;
+  padding: 0.9rem;
+  background:
+    radial-gradient(circle at top right, rgba(34, 160, 107, 0.09) 0%, transparent 20%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(247, 249, 246, 0.95) 100%);
+  box-shadow: 0 12px 30px rgba(12, 13, 12, 0.06);
+  backdrop-filter: blur(10px);
+}
+
+.page-header-card::after {
+  content: '';
+  position: absolute;
+  inset: auto -1.5rem -1.5rem auto;
+  width: 7rem;
+  height: 7rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(22, 163, 74, 0.14) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.page-eyebrow {
+  margin-bottom: 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-secondary-700);
+}
+
+.page-title {
+  font-size: clamp(2.5rem, 4.8vw, 4.4rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.055em;
+  color: var(--color-neutral-950);
+}
+
+.page-description {
+  margin-top: 0.6rem;
+  max-width: 38rem;
+  font-size: 0.95rem;
+  color: var(--color-neutral-600);
+}
+
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.surface-card {
+  border: 1px solid rgba(230, 232, 238, 0.95);
+  border-radius: 1rem;
+  padding: 0.85rem;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 8px 22px rgba(12, 13, 12, 0.05);
+}
+
+.surface-card-muted {
+  border: 1px solid rgba(230, 232, 238, 0.9);
+  border-radius: 1rem;
+  background: rgba(247, 249, 246, 0.92);
+}
+
+.mini-bar-track {
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: rgba(230, 232, 238, 0.95);
+  overflow: hidden;
+}
+
+.mini-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--color-primary-950), var(--color-secondary-500));
+}
+
+@media (min-width: 768px) {
+  .page-shell {
+    padding: 1.15rem;
+  }
+
+  .page-header-card,
+  .surface-card {
+    padding: 1rem;
+  }
 }
 
 @keyframes slide-in-from-bottom {
@@ -204,17 +337,6 @@ input, textarea, select {
   }
   to {
     transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slide-in-from-left {
-  from {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
     opacity: 1;
   }
 }
@@ -230,38 +352,6 @@ input, textarea, select {
   }
 }
 
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse-soft {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.75;
-  }
-  50% {
-    transform: scale(1.08);
-    opacity: 1;
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
 .animate-in {
   animation-duration: 200ms;
   animation-fill-mode: both;
@@ -271,27 +361,8 @@ input, textarea, select {
   animation-name: slide-in-from-bottom;
 }
 
-.slide-in-from-left {
-  animation-name: slide-in-from-left;
-  animation-duration: 300ms;
-}
-
 .zoom-in-95 {
   animation-name: zoom-in-95;
-}
-
-.fade-up {
-  animation: fade-up 320ms ease-out both;
-}
-
-.pulse-soft {
-  animation: pulse-soft 1.8s ease-in-out infinite;
-}
-
-.shimmer-surface {
-  background: linear-gradient(100deg, rgba(255, 255, 255, 0.08) 20%, rgba(255, 255, 255, 0.25) 45%, rgba(255, 255, 255, 0.08) 70%);
-  background-size: 220% 100%;
-  animation: shimmer 2.5s linear infinite;
 }
 
 .auth-shell {

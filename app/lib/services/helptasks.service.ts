@@ -10,11 +10,17 @@ type AddressInput = {
   streetNumber?: string;
 };
 
+type AddressAsCircle = {
+  lat: number;
+  lng: number;
+  radiusM: number;
+}
+
 type CreateHelptaskInput = {
   taskType: string;
   title: string;
   description: string;
-  public_loc: GeoPoint;
+  public_loc: AddressAsCircle;
   address: AddressInput;
   start: Date;
   end: Date;

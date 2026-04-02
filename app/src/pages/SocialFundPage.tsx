@@ -1,6 +1,7 @@
 import React from 'react';
 import { User, SocialFundContribution } from '../types';
 import { SocialFundOverview } from '../components/SocialFundOverview';
+import { PageShell, SectionCard } from '../components/PageShell';
 
 interface SocialFundPageProps {
   user: User;
@@ -9,18 +10,23 @@ interface SocialFundPageProps {
 
 export function SocialFundPage({ user, contributions }: SocialFundPageProps) {
   return (
-    <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Sozialfond</h1>
-        <p className="text-neutral-600">Übersicht über Sozialfond-Beiträge</p>
-      </div>
-
-      <SocialFundOverview
-        coordinatorId={user.id}
-        contributions={contributions}
-        users={[]}
-        onViewProfile={(userId) => alert(`Profil ${userId} wird angezeigt`)}
-      />
-    </div>
+    <PageShell
+      eyebrow="Support"
+      title="Sozialfond"
+      description="Beiträge und Unterstützungen in einer klareren Übersicht anzeigen."
+      metrics={[
+        { label: 'Beiträge', value: contributions.length, hint: 'erfasste Vorgänge', tone: 'success' },
+        { label: 'Profil', value: user.firstname, hint: 'aktiver Bereich', tone: 'neutral' },
+      ]}
+    >
+      <SectionCard title="Übersicht Sozialfond" description="Alle relevanten Einzahlungen und Unterstützungen transparent dargestellt.">
+        <SocialFundOverview
+          coordinatorId={user.id}
+          contributions={contributions}
+          users={[]}
+          onViewProfile={(userId) => alert(`Profil ${userId} wird angezeigt`)}
+        />
+      </SectionCard>
+    </PageShell>
   );
 }

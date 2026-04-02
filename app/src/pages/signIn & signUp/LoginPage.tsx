@@ -71,7 +71,7 @@ export function LoginPage({ onLogin, onShowRegister }: LoginPageProps) {
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <button type="button" className="cursor-help" aria-label="Login-Hinweis anzeigen">
+                <button type="button" className="btn-link cursor-help" aria-label="Login-Hinweis anzeigen">
                   <Badge variant="secondary" className="bg-warning/20 text-warning hover:bg-warning/30">
                     Hinweis zum einloggen/registrieren
                   </Badge>
@@ -124,7 +124,7 @@ export function LoginPage({ onLogin, onShowRegister }: LoginPageProps) {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-300 hover:text-neutral-100 transition-colors"
+                  className="btn-link absolute right-3 top-1/2 transform -translate-y-1/2 p-1 transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>

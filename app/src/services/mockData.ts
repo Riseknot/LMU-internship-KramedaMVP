@@ -1,6 +1,6 @@
 import { User, Assignment, AvailabilitySlot, ChatMessage, TodoItem, HelperEarning, SocialFundContribution, BuddyRelationship } from '../types';
 
-const makeAddress = (zipCode: string, city = 'Berlin', street = '', streetNumber = '') => ({
+const makeAddress = (zipCode: string, city = '', street = '', streetNumber = '') => ({
   zipCode,
   city,
   street,
@@ -316,92 +316,6 @@ export const mockUsers: User[] = [
   },
 ];
 
-// Mock assignments
-export const mockAssignments: Assignment[] = [
-  {
-    id: 'assign-1',
-    title: 'Morgenroutine Unterstützung',
-    description: 'Hilfe bei der Morgenroutine, Körperpflege und Frühstückszubereitung',
-    coordinatorId: 'coord-1',
-    coordinatorName: 'Anna Schmidt',
-    helperId: 'helper-1',
-    helperName: 'Max Müller',
-    status: 'ASSIGNED',
-    start: '2026-02-10T08:00:00',
-    end: '2026-02-10T10:00:00',
-    address: {
-      zipCode: '10115',
-      city: 'Berlin',
-      street: 'Prenzlauer Berg',
-      streetNumber: '42'
-    },
-    requiredSkills: ['Körperpflege', 'Mobilität'],
-    createdAt: '2026-02-05T10:00:00',
-  },
-  {
-    id: 'assign-2',
-    title: 'Arztbesuch Begleitung',
-    description: 'Begleitung zum Facharzt und zurück',
-    coordinatorId: 'coord-1',
-    coordinatorName: 'Anna Schmidt',
-    status: 'OPEN',
-    start: '2026-02-12T14:00:00',
-    end: '2026-02-12T17:00:00',
-    address: {
-      zipCode: '10115',
-      city: 'Berlin',
-      street: 'Friedrichshain',
-      streetNumber: '15'
-    },
-    requiredSkills: ['Begleitung', 'Mobilität'],
-    createdAt: '2026-02-08T09:00:00',
-  },
-  {
-    id: 'assign-3',
-    title: 'Nachmittagsbetreuung',
-    description: 'Gesellschaft, leichte Haushaltsarbeiten',
-    coordinatorId: 'coord-1',
-    coordinatorName: 'Anna Schmidt',
-    helperId: 'helper-2',
-    helperName: 'Sophie Weber',
-    status: 'IN_PROGRESS',
-    start: '2026-02-08T14:00:00',
-    end: '2026-02-08T17:00:00',
-    address: {
-      zipCode: '10178',
-      city: 'Berlin',
-      street: 'Kreuzberg',
-      streetNumber: '88'
-    },
-    requiredSkills: ['Haushalt', 'Begleitung'],
-    createdAt: '2026-02-01T10:00:00',
-  },
-  {
-    id: 'assign-4',
-    title: 'Medikamentengabe',
-    description: 'Tägliche Medikamentengabe am Abend',
-    coordinatorId: 'coord-1',
-    coordinatorName: 'Anna Schmidt',
-    helperId: 'helper-1',
-    helperName: 'Max Müller',
-    status: 'DONE',
-    start: '2026-01-15T18:00:00',
-    end: '2026-01-15T19:00:00',
-    address: {
-      zipCode: '10115',
-      city: 'Berlin',
-      street: 'Charlottenburg',
-      streetNumber: '33'
-    },
-    requiredSkills: ['Medikamentengabe', 'Körperpflege'],
-    createdAt: '2026-01-10T10:00:00',
-    rating: {
-      stars: 5,
-      comment: 'Max war sehr zuverlässig und freundlich. Danke!',
-      createdAt: '2026-01-15T19:30:00',
-    },
-  },
-];
 
 // Mock availability slots
 export const mockAvailabilitySlots: AvailabilitySlot[] = [

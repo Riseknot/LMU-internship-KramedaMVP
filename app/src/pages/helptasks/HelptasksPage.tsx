@@ -8,6 +8,7 @@ import { HelptaskMapView } from './components/HelptaskMapView';
 import { Search, Plus, List, Map as MapIcon, Settings } from 'lucide-react';
 import { Helptask } from '../../services/helptaskService';
 import { CreateHelptaskFormData, HelptaskSearchFilters, HelptaskStatus, HelptaskTab } from './types';
+import { PageShell } from '../../components/PageShell';
 
 interface HelptasksPageProps {
   currentUser: User;
@@ -94,79 +95,30 @@ export function HelptasksPage({ currentUser, onNavigateBack }: HelptasksPageProp
   };
 
   return (
-    <div className="space-y-4 p-4 md:space-y-5 md:p-6">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35 }}
-        className="rounded-2xl border border-neutral-200 bg-linear-to-br from-white via-neutral-50/90 to-primary-50/50 p-4 shadow-sm md:p-5"
-      >
-        <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="mb-1.5 text-2xl font-bold text-neutral-900 md:text-3xl">Hilfeleistungen</h1>
-          <p className="text-sm text-neutral-600 md:text-base">
-            {isHelper ? 'Schnell finden, direkt zusagen, sauber abschließen.' : 'Ruhig erfassen, gezielt vermitteln, transparent steuern.'}
-          </p>
-        </div>
-        <button
-          onClick={onNavigateBack}
-          className="btn-base btn-ghost rounded-lg px-4 py-2 text-sm"
-        >
+    <PageShell
+      eyebrow="Marketplace"
+      title="Hilfeleistungen"
+      description={isHelper ? 'Schnell finden, direkt zusagen und entspannt verwalten.' : 'Anfragen ruhig erfassen, filtern und koordinieren.'}
+      actions={
+        <button onClick={onNavigateBack} className="btn-base btn-ghost rounded-xl px-4 py-2 text-sm">
           ← Zurück
         </button>
-        </div>
-
-        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <div className="rounded-xl border border-secondary-200 bg-secondary-50/70 p-3">
-            <p className="text-xs uppercase tracking-wide text-secondary-700">Offen</p>
-            <p className="text-xl font-bold text-secondary-800">{counts.open}</p>
-          </div>
-          <div className="rounded-xl border border-primary-200 bg-primary-50/70 p-3">
-            <p className="text-xs uppercase tracking-wide text-primary-700">Zugewiesen</p>
-            <p className="text-xl font-bold text-primary-800">{counts.assigned}</p>
-          </div>
-          <div className="rounded-xl border border-success/30 bg-success/10 p-3">
-            <p className="text-xs uppercase tracking-wide text-neutral-700">Abgeschlossen</p>
-            <p className="text-xl font-bold text-neutral-900">{counts.completed}</p>
-          </div>
-        </div>
-
-        <div className="mt-4 h-2 overflow-hidden rounded-full bg-neutral-200">
-          <div className="flex h-full w-full">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: progressWidth(counts.open) }}
-              transition={{ duration: 0.45, delay: 0.1 }}
-              className="bg-secondary-500"
-            />
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: progressWidth(counts.assigned) }}
-              transition={{ duration: 0.45, delay: 0.16 }}
-              className="bg-primary-600"
-            />
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: progressWidth(counts.completed) }}
-              transition={{ duration: 0.45, delay: 0.22 }}
-              className="bg-success"
-            />
-          </div>
-        </div>
-      </motion.div>
-
+      }
+      metrics={[
+        { label: 'Offen', value: counts.open, hint: 'verfügbare Hilfeleistungen', tone: 'accent' },
+        { label: 'Zugewiesen', value: counts.assigned, hint: 'aktive Matches', tone: 'primary' },
+        { label: 'Erledigt', value: counts.completed, hint: 'abgeschlossen', tone: 'success' },
+      ]}
+    >
       {/* Tabs */}
-      <div className="rounded-xl border border-neutral-200 bg-white/90 p-2 shadow-sm">
+      <div className="surface-card p-2">
         <div className="flex gap-2 overflow-x-auto">
           {filteredTabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`btn-base rounded-lg px-4 py-2.5 text-sm font-medium whitespace-nowrap flex items-center gap-2 ${
-                activeTab === tab.id
-                  ? 'btn-secondary text-white'
-                  : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
+                activeTab === tab.id ? 'btn-secondary text-white' : 'btn-ghost'
               }`}
             >
               <tab.icon className="w-4 h-4" />
@@ -188,51 +140,100 @@ export function HelptasksPage({ currentUser, onNavigateBack }: HelptasksPageProp
         {/* Browse Tab */}
         {activeTab === 'browse' && (
           <div className="space-y-4">
-            <form onSubmit={handleSearch} className="space-y-3 rounded-xl border border-neutral-200 bg-linear-to-br from-white to-neutral-50 p-4 shadow-sm md:p-5">
-              <h2 className="text-lg font-semibold text-neutral-900">Hilfeleistungen durchsuchen</h2>
-              <p className="text-sm text-neutral-600">Filter setzen, vergleichen, dann direkt entscheiden.</p>
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-                <input
-                  type="text"
-                  placeholder="Vorname..."
-                  value={searchFilters.firstname}
-                  onChange={(e) => setSearchFilter('firstname', e.target.value)}
-                  className="rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-500"
-                />
-                <input
-                  type="text"
-                  placeholder="Nachname..."
-                  value={searchFilters.surname}
-                  onChange={(e) => setSearchFilter('surname', e.target.value)}
-                  className="rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-500"
-                />
-                <select
-                  value={searchFilters.status}
-                  onChange={(e) => setSearchFilter('status', e.target.value as HelptaskStatus)}
-                  className="rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-500"
+            <div className="grid gap-4 xl:grid-cols-[1.12fr_0.88fr]">
+              <form onSubmit={handleSearch} className="surface-card space-y-3 md:p-5">
+                <h2 className="text-xl font-bold tracking-[-0.03em] text-neutral-950">Hilfeleistungen durchsuchen</h2>
+                <p className="text-sm text-neutral-600">Filter setzen, vergleichen und direkt entscheiden.</p>
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                  <input
+                    type="text"
+                    placeholder="Vorname..."
+                    value={searchFilters.firstname}
+                    onChange={(e) => setSearchFilter('firstname', e.target.value)}
+                    className="rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-500"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Nachname..."
+                    value={searchFilters.surname}
+                    onChange={(e) => setSearchFilter('surname', e.target.value)}
+                    className="rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-500"
+                  />
+                  <select
+                    value={searchFilters.status}
+                    onChange={(e) => setSearchFilter('status', e.target.value as HelptaskStatus)}
+                    className="rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-secondary-500"
+                  >
+                    <option value="open">Offen</option>
+                    <option value="assigned">Zugewiesen</option>
+                    <option value="completed">Abgeschlossen</option>
+                  </select>
+                </div>
+                <button
+                  type="submit"
+                  className="btn-base btn-primary w-full px-4 py-2.5 text-sm sm:w-auto"
                 >
-                  <option value="open">Offen</option>
-                  <option value="assigned">Zugewiesen</option>
-                  <option value="completed">Abgeschlossen</option>
-                </select>
+                  Suchen
+                </button>
+              </form>
+
+              <div className="surface-card space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-lg font-bold tracking-[-0.03em] text-neutral-950">Markt-Überblick</h3>
+                    <p className="text-sm text-neutral-600">Status und Auslastung direkt auf einen Blick.</p>
+                  </div>
+                  <span className="rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-semibold text-neutral-800">
+                    {helptasks.length} gesamt
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { label: 'Offen', value: counts.open },
+                    { label: 'Zugewiesen', value: counts.assigned },
+                    { label: 'Erledigt', value: counts.completed },
+                  ].map((item) => (
+                    <div key={item.label} className="rounded-xl border border-neutral-200 bg-neutral-50/80 px-3 py-2.5">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500">{item.label}</p>
+                      <p className="mt-1 text-lg font-black text-neutral-950">{item.value}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="space-y-2">
+                  {[
+                    { label: 'Offen', value: counts.open },
+                    { label: 'Zugewiesen', value: counts.assigned },
+                    { label: 'Abgeschlossen', value: counts.completed },
+                  ].map((item) => (
+                    <div key={item.label}>
+                      <div className="mb-1 flex items-center justify-between text-sm">
+                        <span className="text-neutral-600">{item.label}</span>
+                        <span className="font-semibold text-neutral-950">{item.value}</span>
+                      </div>
+                      <div className="mini-bar-track">
+                        <div className="mini-bar-fill" style={{ width: progressWidth(item.value) }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <p className="rounded-xl bg-neutral-50 px-3 py-2 text-xs text-neutral-600">
+                  {isHelper
+                    ? 'Tipp: Wechseln Sie zwischen Karte und Liste, um schneller passende Hilfeleistungen zu finden.'
+                    : 'Tipp: Neue Anfragen können direkt erstellt und anschließend im Bereich „Verwalten“ nachverfolgt werden.'}
+                </p>
               </div>
-              <button
-                type="submit"
-                className="btn-base btn-primary w-full px-4 py-2.5 text-sm sm:w-auto"
-              >
-                Suchen
-              </button>
-            </form>
+            </div>
 
             {isHelper && (
-              <div className="rounded-xl border border-neutral-200 bg-white/90 p-2 shadow-sm">
+              <div className="surface-card p-2">
                 <div className="flex gap-2 overflow-x-auto">
                   <button
                     onClick={() => setBrowseViewMode('map')}
                     className={`btn-base rounded-lg px-4 py-2.5 text-sm font-medium whitespace-nowrap flex items-center gap-2 ${
-                      browseViewMode === 'map'
-                        ? 'btn-secondary text-white'
-                        : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
+                      browseViewMode === 'map' ? 'btn-secondary text-white' : 'btn-ghost'
                     }`}
                   >
                     <MapIcon className="w-4 h-4" />
@@ -241,9 +242,7 @@ export function HelptasksPage({ currentUser, onNavigateBack }: HelptasksPageProp
                   <button
                     onClick={() => setBrowseViewMode('list')}
                     className={`btn-base rounded-lg px-4 py-2.5 text-sm font-medium whitespace-nowrap flex items-center gap-2 ${
-                      browseViewMode === 'list'
-                        ? 'btn-secondary text-white'
-                        : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
+                      browseViewMode === 'list' ? 'btn-secondary text-white' : 'btn-ghost'
                     }`}
                   >
                     <List className="w-4 h-4" />
@@ -300,7 +299,7 @@ export function HelptasksPage({ currentUser, onNavigateBack }: HelptasksPageProp
         {/* Manage Tab */}
         {activeTab === 'manage' && (
           <div className="space-y-4">
-            <div className="rounded-xl border border-neutral-200 bg-white/90 p-4">
+            <div className="surface-card">
             <h2 className="text-lg font-semibold text-neutral-900">
               {isHelper ? 'Meine angenommenen Hilfeleistungen' : 'Meine Hilfeleistungen'}
             </h2>
@@ -335,6 +334,6 @@ export function HelptasksPage({ currentUser, onNavigateBack }: HelptasksPageProp
         )}
       </motion.div>
       </AnimatePresence>
-    </div>
+    </PageShell>
   );
 }

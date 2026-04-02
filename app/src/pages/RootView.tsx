@@ -68,7 +68,7 @@ export function RootView({
   onLogout,
   onUserUpdate,
 }: RootViewProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
 
   const helpers = users.filter(u => u.role === 'helper');
@@ -174,8 +174,7 @@ export function RootView({
   };
 
   return (
-    <div className="flex h-screen bg-neutral-50">
-      {/* Sidebar */}
+    <div className="flex min-h-screen bg-transparent">
       <Sidebar
         user={user}
         activePage={activePage}
@@ -188,8 +187,7 @@ export function RootView({
         onToggle={() => setSidebarOpen(!sidebarOpen)}
       />
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="min-w-0 flex-1 overflow-auto">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={activePage}

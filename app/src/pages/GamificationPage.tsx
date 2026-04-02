@@ -1,6 +1,7 @@
 import React from 'react';
 import { User } from '../types';
 import { GamificationPanel } from '../components/GamificationPanel';
+import { PageShell, SectionCard } from '../components/PageShell';
 
 interface GamificationPageProps {
   user: User;
@@ -9,23 +10,31 @@ interface GamificationPageProps {
 export function GamificationPage({ user }: GamificationPageProps) {
   if (!user.gamification) {
     return (
-      <div className="p-6 space-y-6">
-        <h1 className="text-3xl font-bold mb-2">Erfolge</h1>
-        <div className="bg-white rounded-xl border border-neutral-200 p-8 text-center">
+      <PageShell
+        eyebrow="Motivation"
+        title="Erfolge"
+        description="Sobald Fortschritte vorliegen, erscheinen sie hier in einer übersichtlichen Ansicht."
+      >
+        <SectionCard className="text-center">
           <p className="text-neutral-500">Gamification-Daten nicht verfügbar</p>
-        </div>
-      </div>
+        </SectionCard>
+      </PageShell>
     );
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Erfolge</h1>
-        <p className="text-neutral-600">Ihre Fortschritte und Erreichungen</p>
-      </div>
-
-      <GamificationPanel gamification={user.gamification} userName={user.firstname} />
-    </div>
+    <PageShell
+      eyebrow="Motivation"
+      title="Erfolge"
+      description="Fortschritt und Anerkennung kompakt und visuell ruhiger dargestellt."
+      metrics={[
+        { label: 'Level', value: user.gamification.level, hint: 'aktueller Rang', tone: 'primary' },
+        { label: 'Punkte', value: user.gamification.points, hint: 'gesammelt', tone: 'success' },
+      ]}
+    >
+      <SectionCard title="Fortschritt" description="Alle Erfolge und Meilensteine an einem Ort.">
+        <GamificationPanel gamification={user.gamification} userName={user.firstname} />
+      </SectionCard>
+    </PageShell>
   );
 }

@@ -5,8 +5,8 @@ import { CreateHelptaskForm } from './helptasks/components/CreateHelptaskForm';
 import { ChatModal } from '../components/ChatModal';
 import { TodoModal } from '../components/TodoModal';
 import { HelperRecommendations } from '../components/HelperRecommendations';
-import { ClipboardList, CheckCircle, Calendar } from 'lucide-react';
 import { CreateHelptaskFormData } from './helptasks/types';
+import { PageShell, SectionCard } from '../components/PageShell';
 
 interface AssignmentsPageProps {
   user: User;
@@ -88,71 +88,33 @@ export function AssignmentsPage({
 
   return (
     <>
-      <div className="p-6 space-y-6">
-        {/* Header */}
-        <div className="rounded-2xl border border-neutral-200 bg-white/85 p-6 shadow-sm">
-          <h1 className="text-3xl font-bold mb-2 text-neutral-900">Aufträge</h1>
-          <p className="text-neutral-600">
-            {isCoordinator ? 'Verwalten Sie Ihre Pflegeaufträge' : 'Ihre verfügbaren Aufträge'}
-          </p>
-          <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
-            <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Schritt 1</p>
-              <p className="text-sm font-medium text-neutral-800">Anfrage erfassen</p>
+      <PageShell
+        eyebrow="Operations"
+        title="Aufträge"
+        description={isCoordinator ? 'Pflegeaufträge klarer erfassen und koordinieren.' : 'Ihre Einsätze ruhig und übersichtlich verwalten.'}
+        metrics={[
+          { label: 'Offen', value: openAssignments.length, hint: 'warten auf Match', tone: 'accent' },
+          { label: isCoordinator ? 'Laufend' : 'Meine', value: myAssignments.length, hint: 'aktive Einsätze', tone: 'primary' },
+          { label: 'Erledigt', value: completedAssignments.length, hint: 'abgeschlossen', tone: 'success' },
+        ]}
+      >
+        <SectionCard title="Ablauf" description="Drei einfache Schritte vom Auftrag bis zum laufenden Einsatz.">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+            <div className="surface-card-muted px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500">01</p>
+              <p className="mt-1 text-sm font-semibold text-neutral-900">Anfrage erfassen</p>
             </div>
-            <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Schritt 2</p>
-              <p className="text-sm font-medium text-neutral-800">Helper matchen</p>
+            <div className="surface-card-muted px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500">02</p>
+              <p className="mt-1 text-sm font-semibold text-neutral-900">Helper matchen</p>
             </div>
-            <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Schritt 3</p>
-              <p className="text-sm font-medium text-neutral-800">Einsatz starten</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white/85 rounded-xl border border-neutral-200 p-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-secondary-100 rounded-lg">
-                <ClipboardList className="w-5 h-5 text-secondary-700" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-neutral-900">{openAssignments.length}</div>
-                <div className="text-sm text-neutral-600">Offene Aufträge</div>
-              </div>
+            <div className="surface-card-muted px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500">03</p>
+              <p className="mt-1 text-sm font-semibold text-neutral-900">Einsatz starten</p>
             </div>
           </div>
+        </SectionCard>
 
-          <div className="bg-white/85 rounded-xl border border-neutral-200 p-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary-100 rounded-lg">
-                <Calendar className="w-5 h-5 text-primary-700" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-neutral-900">{myAssignments.length}</div>
-                <div className="text-sm text-neutral-600">
-                  {isCoordinator ? 'Laufende' : 'Meine Aufträge'}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white/85 rounded-xl border border-neutral-200 p-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-accent-100 rounded-lg">
-                <CheckCircle className="w-5 h-5 text-accent-700" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-neutral-900">{completedAssignments.length}</div>
-                <div className="text-sm text-neutral-600">Abgeschlossen</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Create Assignment (Coordinator only) */}
         {isCoordinator && (
           <CreateHelptaskForm
             coordinatorId={user.id}
@@ -163,59 +125,57 @@ export function AssignmentsPage({
           />
         )}
 
-        {/* Open Assignments */}
         {isCoordinator && openAssignments.length > 0 && (
-          <div>
-            <h2 className="text-xl font-semibold mb-4 text-neutral-900">Offene Aufträge</h2>
-            <div className="space-y-6">
-              {openAssignments.map(assignment => (
-                <div key={assignment.id}>
-                  <button
-                    onClick={() =>
-                      setShowRecommendations(
-                        showRecommendations === assignment.id ? null : assignment.id
-                      )
-                    }
-                    className="w-full text-left"
-                  >
-                    <AssignmentCard assignment={assignment} currentUser={user} />
-                  </button>
-                  {showRecommendations === assignment.id && (
-                    <div className="ml-0 sm:ml-4 mt-4">
-                      <HelperRecommendations
-                        assignment={assignment}
-                        helpers={helpers}
-                        availabilitySlots={availabilitySlots}
-                        onAssignHelper={onAssignHelper}
-                      />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+          <SectionCard title="Offene Aufträge" description="Neue Anfragen mit passenden Helfer:innen abgleichen." bodyClassName="space-y-6">
+            {openAssignments.map(assignment => (
+              <div key={assignment.id}>
+                <button
+                  onClick={() =>
+                    setShowRecommendations(
+                      showRecommendations === assignment.id ? null : assignment.id
+                    )
+                  }
+                  className="btn-reset w-full text-left"
+                >
+                  <AssignmentCard assignment={assignment} currentUser={user} />
+                </button>
+                {showRecommendations === assignment.id && (
+                  <div className="ml-0 sm:ml-4 mt-4">
+                    <HelperRecommendations
+                      assignment={assignment}
+                      helpers={helpers}
+                      availabilitySlots={availabilitySlots}
+                      onAssignHelper={onAssignHelper}
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
+          </SectionCard>
         )}
 
-        {/* My Assignments */}
-        {myAssignments.length > 0 && (
-          <div>
-            <h2 className="text-xl font-semibold mb-4 text-neutral-900">
-              {isCoordinator ? 'Laufende Aufträge' : 'Meine Aufträge'}
-            </h2>
-            <div className="grid gap-4">
-              {myAssignments.map(assignment => (
-                <AssignmentCard
-                  key={assignment.id}
-                  assignment={assignment}
-                  currentUser={user}
-                  onOpenChat={handleOpenChat}
-                  onOpenTodo={handleOpenTodo}
-                />
-              ))}
+        <SectionCard
+          title={isCoordinator ? 'Laufende Aufträge' : 'Meine Aufträge'}
+          description={myAssignments.length > 0 ? 'Alle aktiven Einsätze an einem Ort.' : 'Sobald neue Einsätze aktiv sind, erscheinen sie hier.'}
+          bodyClassName="grid gap-4"
+        >
+          {myAssignments.length > 0 ? (
+            myAssignments.map(assignment => (
+              <AssignmentCard
+                key={assignment.id}
+                assignment={assignment}
+                currentUser={user}
+                onOpenChat={handleOpenChat}
+                onOpenTodo={handleOpenTodo}
+              />
+            ))
+          ) : (
+            <div className="rounded-2xl border border-dashed border-neutral-200 bg-neutral-50/80 px-4 py-8 text-center text-sm text-neutral-500">
+              Aktuell gibt es keine laufenden Aufträge.
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </SectionCard>
+      </PageShell>
 
       {/* Modals */}
       {chatModalOpen && selectedAssignment && (

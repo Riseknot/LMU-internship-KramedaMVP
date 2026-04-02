@@ -298,7 +298,7 @@ const submitRegister = async () => {
   };
 
   const roleBtn = (r: UserRole) =>
-    `p-4 border-2 rounded-lg transition-all ${role === r ? 'border-secondary-500 bg-secondary-500/15 text-neutral-100' : 'border-neutral-700 bg-neutral-950 text-neutral-100 hover:border-primary-500'}`;
+    `btn-base w-full rounded-lg p-4 text-center transition-all ${role === r ? 'btn-secondary text-white' : 'btn-ghost'}`;
 
   return (
     <div className="auth-shell">
@@ -363,7 +363,7 @@ const submitRegister = async () => {
 
               <InputField label="Passwort *" icon={Lock}>
                 <input id="password" type={showPw ? 'text' : 'password'} value={form.password} onChange={setValue('password')} required placeholder="••••••••" className={errCls(PW_INPUT_CLS, errors.password)} />
-                <button type="button" onClick={() => setShowPw((s) => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-300 hover:text-neutral-100">
+                <button type="button" onClick={() => setShowPw((s) => !s)} className="btn-link absolute right-3 top-1/2 -translate-y-1/2 p-1">
                   {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </InputField>
@@ -389,7 +389,7 @@ const submitRegister = async () => {
 
               <InputField label="Passwort bestätigen *" icon={Lock}>
                 <input id="confirm-password" type={showConfirmPw ? 'text' : 'password'} value={form.confirmPassword} onChange={setValue('confirmPassword')} required placeholder="••••••••" className={errCls(PW_INPUT_CLS, errors.confirmPassword)} />
-                <button type="button" onClick={() => setShowConfirmPw((s) => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-300 hover:text-neutral-100">
+                <button type="button" onClick={() => setShowConfirmPw((s) => !s)} className="btn-link absolute right-3 top-1/2 -translate-y-1/2 p-1">
                   {showConfirmPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </InputField>
@@ -407,7 +407,7 @@ const submitRegister = async () => {
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <InputField label={`Stadt ${role === 'helper' ? '*' : ''}`} icon={MapPin}>
-                  <input id="city" type="text" value={form.city} onChange={setValue('city')} required={role === 'helper'} placeholder="Berlin" className={errCls(INPUT_CLS, errors.city)} />
+                  <input id="city" type="text" value={form.city} onChange={setValue('city')} required={role === 'helper'} placeholder="München" className={errCls(INPUT_CLS, errors.city)} />
                 </InputField>
                 <InputField label={`Straße ${role === 'helper' ? '*' : ''}`} icon={MapPin}>
                   <input id="street" type="text" value={form.street} onChange={setValue('street')} required={role === 'helper'} placeholder="Musterstraße" className={errCls(INPUT_CLS, errors.street)} />
@@ -427,7 +427,7 @@ const submitRegister = async () => {
                         key={s}
                         type="button"
                         onClick={() => toggleSkill(s)}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${form.skills.includes(s) ? 'bg-primary-600 text-white' : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'}`}
+                        className={`btn-base px-4 py-2 rounded-lg text-sm font-medium transition-all ${form.skills.includes(s) ? 'btn-secondary text-white' : 'btn-ghost'}`}
                       >
                         {s}
                       </button>

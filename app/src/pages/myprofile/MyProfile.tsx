@@ -551,7 +551,7 @@ export default function MyProfile({
 
       <div className=" p-6">
         <button
-          className="p-12 rounded-xl bg-primary-600  py-2.5 font-semibold text-white transition-colors hover:bg-primary-700"
+          className="btn-base btn-primary rounded-xl px-12 py-2.5 font-semibold text-white"
           onClick={onLogout}
         >
           Abmelden

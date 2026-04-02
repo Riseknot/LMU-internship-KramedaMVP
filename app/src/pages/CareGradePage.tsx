@@ -1,6 +1,7 @@
 import React from 'react';
 import { User, CareGrade } from '../types';
 import { CareGradeProfile } from '../components/CareGradeProfile';
+import { PageShell, SectionCard } from '../components/PageShell';
 
 interface CareGradePageProps {
   user: User;
@@ -12,13 +13,17 @@ export function CareGradePage({ user }: CareGradePageProps) {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Pflegegrad</h1>
-        <p className="text-neutral-600">Definieren Sie Ihren Pflegegrad</p>
-      </div>
-
-      <CareGradeProfile careGrade={user.careGrade} onUpdateCareGrade={handleUpdateCareGrade} />
-    </div>
+    <PageShell
+      eyebrow="Pflege"
+      title="Pflegegrad"
+      description="Pflegestufe verständlich erfassen und aktuell halten."
+      metrics={[
+        { label: 'Aktuell', value: user.careGrade ?? '-', hint: 'gespeicherter Pflegegrad', tone: 'primary' },
+      ]}
+    >
+      <SectionCard title="Pflegeprofil" description="Halten Sie den aktuellen Pflegegrad konsistent und nachvollziehbar fest.">
+        <CareGradeProfile careGrade={user.careGrade} onUpdateCareGrade={handleUpdateCareGrade} />
+      </SectionCard>
+    </PageShell>
   );
 }

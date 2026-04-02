@@ -108,7 +108,7 @@ export default function EditField({
           </div>
         </div>
       ) : editable ? (
-        <button type="button" onClick={startEdit} className={`${ROW_BASE} ${ROW_HOVER}`}>
+        <button type="button" onClick={startEdit} className={`btn-reset ${ROW_BASE} ${ROW_HOVER}`}>
           {Icon && <Icon className="h-4 w-4 shrink-0 text-primary-700" />}
           <span className={`${rowTextClass} flex-1 `}>
             <strong>{label}:</strong> {shownValue}

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { User, Assignment, AvailabilitySlot, ChatMessage, TodoItem, CareFinance, CostEntry, HelperEarning, SocialFundContribution, BuddyRelationship } from '../types';
-import { mockUsers, mockAssignments, mockAvailabilitySlots, mockChatMessages, mockTodos, mockHelperEarnings, mockSocialFundContributions, mockBuddyRelationships } from '../services/mockData';
+import { mockUsers, mockAvailabilitySlots, mockChatMessages, mockTodos, mockHelperEarnings, mockSocialFundContributions, mockBuddyRelationships } from '../services/mockData';
 
 const AUTH_USER_STORAGE_KEY = 'mvpkrameda.auth.user';
 
@@ -39,7 +39,7 @@ export function useAppState() {
   const [currentUser, setCurrentUser] = useState<User | null>(() => readCachedUser());
   const [isAuthenticated, setIsAuthenticated] = useState(() => Boolean(readCachedUser()));
   const [users, setUsers] = useState<User[]>(mockUsers);
-  const [assignments, setAssignments] = useState<Assignment[]>(mockAssignments);
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [availabilitySlots, setAvailabilitySlots] = useState<AvailabilitySlot[]>(mockAvailabilitySlots);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>(mockChatMessages);
   const [todos, setTodos] = useState<TodoItem[]>(mockTodos);

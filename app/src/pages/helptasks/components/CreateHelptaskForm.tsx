@@ -13,6 +13,8 @@ interface CreateHelptaskFormProps {
 }
 
 type ProgressStepKey = 'address' | 'window' | 'details' | 'skills' | 'publish';
+type AddressInput = Pick<CreateHelptaskFormData, 'street' | 'streetNumber' | 'zipCode' | 'city'>;
+type NominatimSearchResult = { place_id: number };
 
 const initialFormState: CreateHelptaskFormData = {
   title: '',
@@ -56,7 +58,50 @@ export function CreateHelptaskForm({
     return diff;
   }, [formData.start, formData.end]);
 
+  async function validateAddress({
+    street,
+    streetNumber,
+    zipCode,
+    city,
+  }: AddressInput): Promise<boolean> {
+    const normalizedStreet = street.trim();
+    const normalizedStreetNumber = streetNumber.trim();
+    const normalizedZipCode = zipCode.trim();
+    const normalizedCity = city.trim();
 
+    if (!normalizedStreet || !normalizedStreetNumber || !normalizedZipCode || !normalizedCity) {
+      return false;
+    }
+
+    const params = new URLSearchParams({
+      street: `${normalizedStreet} ${normalizedStreetNumber}`.trim(),
+      postalcode: normalizedZipCode,
+      city: normalizedCity,
+      country: 'Deutschland',
+      format: 'jsonv2',
+      limit: '1',
+      addressdetails: '1',
+    });
+
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`, {
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+
+      if (!res.ok) {
+        console.error('Address validation failed:', res.status, res.statusText);
+        return false;
+      }
+
+      const data = (await res.json()) as NominatimSearchResult[];
+      return data.length > 0;
+    } catch (error) {
+      console.error('Address validation failed:', error);
+      return false;
+    }
+  }
 
   const progressStops = useMemo(
     () => [
@@ -124,9 +169,16 @@ export function CreateHelptaskForm({
     );
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!canSubmit) return;
+
+    const isValid = await validateAddress(formData);
+    if (!isValid) {
+      alert("Adresse existiert nicht!");
+      return;
+    }
+
     onCreate(formData);
     setFormData(initialFormState);
     setSkillInput('');
@@ -180,14 +232,9 @@ export function CreateHelptaskForm({
                 key={step.key}
                 type="button"
                 onClick={() => jumpToStep(step.key)}
-                className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold transition-colors ${
-                  isActive
-                    ? 'border-primary-300 bg-primary-100 text-primary-800'
-                    :
-                  step.done
-                    ? 'border-secondary-300 bg-secondary-50 text-secondary-800'
-                    : 'border-neutral-200 bg-white text-neutral-600'
-                }`}
+                className={`btn-base inline-flex cursor-pointer items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+                  isActive ? 'btn-secondary text-white' : 'btn-ghost'
+                } ${!isActive && !step.done ? 'opacity-80' : ''}`}
                 aria-label={`Gehe zu ${step.label}`}
               >
                 {step.done ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Icon className="h-3.5 w-3.5" />}
@@ -238,7 +285,7 @@ export function CreateHelptaskForm({
                     value={formData.city}
                     onChange={(e) => updateField('city', e.target.value)}
                     className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-3 py-2.5 text-neutral-900 focus:border-primary-500 focus:outline-none"
-                    placeholder="Berlin"
+                    placeholder="München"
                   />
                 </label>
 
@@ -383,7 +430,7 @@ export function CreateHelptaskForm({
                       key={skill}
                       type="button"
                       onClick={() => removeSkill(skill)}
-                      className="btn-base rounded-full border border-primary-200 bg-primary-100 px-3 py-1 text-xs font-medium text-primary-700 hover:bg-primary-200"
+                      className="btn-base btn-ghost rounded-full px-3 py-1 text-xs font-medium"
                     >
                       {skill} x
                     </button>

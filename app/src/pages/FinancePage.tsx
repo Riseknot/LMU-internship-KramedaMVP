@@ -1,6 +1,7 @@
 import React from 'react';
 import { User, CareFinance, CostEntry } from '../types';
 import { CareFinanceOverview } from '../components/CareFinanceOverview';
+import { PageShell, SectionCard } from '../components/PageShell';
 
 interface FinancePageProps {
   user: User;
@@ -18,19 +19,24 @@ export function FinancePage({
   onAddCostEntry,
 }: FinancePageProps) {
   return (
-    <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Kostenübersicht</h1>
-        <p className="text-neutral-600">Verwalten Sie Ihr Pflegebudget und Ausgaben</p>
-      </div>
-
-      <CareFinanceOverview
-        finances={finances}
-        costEntries={costEntries}
-        coordinatorId={user.id}
-        onUpdateFinance={onUpdateFinance}
-        onAddCostEntry={onAddCostEntry}
-      />
-    </div>
+    <PageShell
+      eyebrow="Finanzen"
+      title="Kostenübersicht"
+      description="Budget und Ausgaben in einer ruhigeren, klaren Übersicht verwalten."
+      metrics={[
+        { label: 'Budgets', value: finances.length, hint: 'aktive Pläne', tone: 'primary' },
+        { label: 'Einträge', value: costEntries.length, hint: 'erfasste Kosten', tone: 'accent' },
+      ]}
+    >
+      <SectionCard title="Finanz-Cockpit" description="Alle relevanten Positionen sauber an einem Ort.">
+        <CareFinanceOverview
+          finances={finances}
+          costEntries={costEntries}
+          coordinatorId={user.id}
+          onUpdateFinance={onUpdateFinance}
+          onAddCostEntry={onAddCostEntry}
+        />
+      </SectionCard>
+    </PageShell>
   );
 }
