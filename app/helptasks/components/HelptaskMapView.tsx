@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
-import { GoogleAreaMap, MapArea, MapMarker } from '../../../components/GoogleAreaMap';
-import { Helptask } from '../../../services/helptaskService';
-import { User } from '../../../types';
+import { GoogleAreaMap, MapArea, MapMarker } from './GoogleAreaMap';
+import { Helptask } from '../../src/services/helptaskService';
+import { User } from '../../src/types';
 import { DEFAULT_CENTER, createCurrentUserMarker, escapeHtml, formatAddress, isCoordinatePair, resolveUserCenter, TASK_RADIUS_M } from './utils';
 
 interface HelptaskMapViewProps {
@@ -56,7 +56,19 @@ export function HelptaskMapView({ currentUser, helptasks }: HelptaskMapViewProps
         radius,
         strokeColor: 'var(--map-helptask-area-stroke)',
         fillColor: 'var(--map-helptask-area-fill)',
-        content: `<div class="w-56 text-sm"><p class="font-semibold">${escapeHtml(task.title)}</p><p style="margin:4px 0 0">${escapeHtml(task.description)}</p><p style="margin:8px 0 0;font-size:12px;color:#6b7280">Bereich: ${escapeHtml(task.address?.zipCode || '-')} ${escapeHtml(task.address?.city || '')}</p><p style="margin:4px 0 0;font-size:12px;color:#1d4ed8">Status: ${escapeHtml(task.status)}</p></div>`,
+        content: `
+        <div class="w-56 text-sm">
+          <p class="font-semibold">${escapeHtml(task.title)}</p>
+          <p style="margin:4px 0 0">${escapeHtml(task.description)}</p>
+          <p style="margin:8px 0 0;font-size:12px;color:#6b7280">Bereich: ${escapeHtml(task.address?.zipCode || '-')} ${escapeHtml(task.address?.city || '')}</p>
+          <p style="margin:4px 0 0;font-size:12px;color:#1d4ed8">Status: ${escapeHtml(task.status)}</p>
+          <a
+            href="/helptasks/${encodeURIComponent(task._id)}"
+            style="display:inline-block;margin-top:8px;padding:4px 8px;font-size:12px;color:#2563eb;border:1px solid #2563eb;border-radius:4px;background:none;text-decoration:none;cursor:pointer"
+          >
+            Details ansehen
+          </a>
+          </div>`,
       })),
     [taskAreas]
   );

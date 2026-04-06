@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { User, Assignment, AvailabilitySlot, ChatMessage, TodoItem } from '../types';
 import { AssignmentCard } from '../components/AssignmentCard';
-import { CreateHelptaskForm } from './helptasks/components/CreateHelptaskForm';
+import { CreateHelptaskForm } from '../../helptasks/components/CreateHelptaskForm';
 import { ChatModal } from '../components/ChatModal';
 import { TodoModal } from '../components/TodoModal';
 import { HelperRecommendations } from '../components/HelperRecommendations';
-import { CreateHelptaskFormData } from './helptasks/types';
+import { CreateHelptaskFormData } from '../../helptasks/types';
 import { PageShell, SectionCard } from '../components/PageShell';
 
 interface AssignmentsPageProps {

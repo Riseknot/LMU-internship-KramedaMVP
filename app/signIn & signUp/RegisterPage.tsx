@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
-import { User, UserRole } from '../../types';
+import { User, UserRole } from '../src/types';
 import {
   Mail,
   Lock,
@@ -15,9 +15,9 @@ import {
   ShieldCheck,
   RefreshCcw,
 } from 'lucide-react';
-import { Slogan } from '../../components/Slogan';
-import { AppLogo } from '../../components/AppLogo';
-import InputField from '../../components/InputField';
+import { Slogan } from '../src/components/Slogan';
+import { AppLogo } from '../src/components/AppLogo';
+import InputField from '../src/components/InputField';
 
 interface RegisterPageProps {
   onRegister: (user: User) => void;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Assignment } from '../../../types';
+import { User, Assignment } from '../../src/types';
 import { MapPin, Star, CheckCircle, MessageCircle, Send, Shield, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 

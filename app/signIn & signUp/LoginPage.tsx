@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { User } from '../../types';
+import { User } from '../src/types';
 import { Lock, Mail, Eye, EyeOff } from 'lucide-react';
-import { AppLogo } from '../../components/AppLogo';
-import { Slogan } from '../../components/Slogan';
+import { AppLogo } from '../src/components/AppLogo';
+import { Slogan } from '../src/components/Slogan';
 import { Badge } from '@/src/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/src/components/ui/tooltip';
 

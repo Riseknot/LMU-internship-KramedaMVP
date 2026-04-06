@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { geocodeAddress } from '@/src/utils/geocode';
+
 
 declare global {
   interface Window {
@@ -60,21 +62,7 @@ const resolveMapColor = (value: string | undefined, fallback: string) => {
   return getComputedStyle(document.documentElement).getPropertyValue(match[1]).trim() || fallback;
 };
 
-const geocodeAddress = (google: any, address: string): Promise<[number, number] | null> => {
-  if (!address.trim()) return Promise.resolve(null);
 
-  return new Promise((resolve) => {
-    new google.maps.Geocoder().geocode({ address }, (results: any[], status: string) => {
-      const location = results?.[0]?.geometry?.location;
-      if (status !== 'OK' || !location) {
-        resolve(null);
-        return;
-      }
-
-      resolve([location.lat(), location.lng()]);
-    });
-  });
-};
 
 const createMarkerIcon = (google: any, color: string, kind: MapMarker['kind'] = 'default') => {
   if (kind === 'user') {

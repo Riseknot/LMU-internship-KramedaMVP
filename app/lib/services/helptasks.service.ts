@@ -33,6 +33,7 @@ type CreateHelptaskInput = {
 };
 
 export type HelptaskFilters = Partial<{
+  id: string;
   firstname: string;
   surname: string;
   email: string;
@@ -58,7 +59,12 @@ export async function createHelptask(input: CreateHelptaskInput) {
 }
 
 export async function findHelptasks(filters: HelptaskFilters = {}) {
+  if (filters.id && !mongoose.Types.ObjectId.isValid(filters.id.trim())) {
+    return [];
+  }
+
   const query: Record<string, unknown> = {
+    ...(filters.id ? { _id: filters.id.trim() } : {}),
     ...(filters.firstname ? { firstname: contains(filters.firstname) } : {}),
     ...(filters.surname ? { surname: contains(filters.surname) } : {}),
     ...(filters.email ? { email: filters.email.trim().toLowerCase() } : {}),

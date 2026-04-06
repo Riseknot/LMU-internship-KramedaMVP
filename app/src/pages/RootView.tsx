@@ -6,7 +6,7 @@ import { Sidebar } from '../components/Sidebar';
 
 // Import all page components
 import { AssignmentsPage } from './AssignmentsPage';
-import { HelptasksPage } from './helptasks/HelptasksPage';
+import { HelptasksPage } from '../../helptasks/HelptasksPage';
 import { BuddiesPage } from './BuddiesPage';
 import { MapPage } from './MapPage';
 import { FinancePage } from './FinancePage';

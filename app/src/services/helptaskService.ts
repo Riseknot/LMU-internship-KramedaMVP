@@ -20,6 +20,7 @@ type HelptaskAddress = {
 };
 
 export type HelptaskFilters = Partial<{
+  id: string;
   firstname: string;
   surname: string;
   email: string;
@@ -108,6 +109,10 @@ const jsonRequest = (method: "POST" | "PUT", body: unknown): RequestInit => ({
 
 export const helptaskService = {
   getHelptasks: (filters?: HelptaskFilters) => requestJson<Helptask[]>(buildUrl(filters)),
+  getHelptaskById: async (id: string) => {
+    const tasks = await requestJson<Helptask[]>(buildUrl({ id }));
+    return tasks[0] ?? null;
+  },
   createHelptask: (payload: HelptaskCreatePayload) => requestJson<Helptask>(BASE_URL, jsonRequest("POST", payload)),
   updateHelptask: (id: string, payload: HelptaskUpdatePayload) =>
     requestJson<Helptask>(`${BASE_URL}?id=${encodeURIComponent(id)}`, jsonRequest("PUT", { id, ...payload })),

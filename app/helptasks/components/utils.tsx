@@ -1,5 +1,5 @@
-import type { MapMarker } from '../../../components/GoogleAreaMap';
-import { User } from '../../../types';
+import type { MapMarker } from './GoogleAreaMap';
+import { User } from '../../src/types';
 
 export type GeoSource = 'coordinates' | 'address' | 'none';
 

@@ -45,6 +45,33 @@ Use this as the default map for new work:
 - Prefer extending existing `services` and `hooks` over creating parallel fetch logic.
 - Delete dead files immediately when replacing flows.
 
+## Adding a new route/page
+
+This project uses the **Next.js App Router** under `app/` and the authenticated in-app navigation via `app/src/pages/RootView.tsx`.
+
+### Example: Helptask detail page
+
+1. Create a route file such as `app/helptasks/[id]/page.tsx`.
+2. Read the route parameter (`id`) and load the matching data, e.g. via `GET /api/helptasks?id=<id>`.
+3. Link to the page:
+   - in real JSX with `Link` from `next/link`
+   - in plain HTML strings (for example Google Maps info windows) with a normal `<a href="/helptasks/...">`, because `Link` only works inside React/JSX.
+4. If the page should also be reachable from the logged-in shell navigation, add the page key in `Sidebar.tsx` and render it in `RootView.tsx`.
+
+Example link patterns:
+
+```tsx
+import Link from 'next/link';
+
+<Link href={`/helptasks/${task._id}`}>Details ansehen</Link>
+```
+
+```ts
+content: `
+  <a href="/helptasks/${task._id}">Details ansehen</a>
+`;
+```
+
 ## Recent cleanup
 
 Removed legacy/unreferenced UI files and stale assets to reduce cognitive load:

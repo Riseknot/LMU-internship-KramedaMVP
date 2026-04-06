@@ -1,14 +1,14 @@
 import React, { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { User } from '../../types';
-import { useHelptasks } from '../../hooks/useHelptasks';
-import { HelptaskListView } from '../../components/HelptaskListView';
+import { User } from '../src/types';
+import { useHelptasks } from '../src/hooks/useHelptasks';
+import { HelptaskListView } from '../src/components/HelptaskListView';
 import { CreateHelptaskForm } from './components/CreateHelptaskForm';
 import { HelptaskMapView } from './components/HelptaskMapView';
 import { Search, Plus, List, Map as MapIcon, Settings } from 'lucide-react';
-import { Helptask } from '../../services/helptaskService';
+import { Helptask } from '../src/services/helptaskService';
 import { CreateHelptaskFormData, HelptaskSearchFilters, HelptaskStatus, HelptaskTab } from './types';
-import { PageShell } from '../../components/PageShell';
+import { PageShell } from '../src/components/PageShell';
 
 interface HelptasksPageProps {
   currentUser: User;

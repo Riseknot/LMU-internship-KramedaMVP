@@ -118,6 +118,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(
       (await findHelptasks({
+        id: searchParams.get("id")?.trim() || undefined,
         firstname: searchParams.get("firstname")?.trim() || undefined,
         surname: searchParams.get("surname")?.trim() || undefined,
         email: searchParams.get("email")?.trim()?.toLowerCase() || undefined,

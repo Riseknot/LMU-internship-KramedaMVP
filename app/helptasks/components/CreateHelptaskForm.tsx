@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Calendar, CheckCircle, CheckCircle2, Clock3, FileText, MapPin, Plus, Send, Wrench } from 'lucide-react';
-import { AvailabilitySlot, User } from '../../../types';
+import { AvailabilitySlot, User } from '../../src/types';
 import { CreateHelptaskFormData } from '../types';
 
 interface CreateHelptaskFormProps {

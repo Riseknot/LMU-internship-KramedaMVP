@@ -3,10 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useAppState } from './hooks/useAppState';
-import { LoginPage } from './pages/signIn & signUp/LoginPage';
-import { RegisterPage } from './pages/signIn & signUp/RegisterPage';
+import { LoginPage } from '../signIn & signUp/LoginPage';
+import { RegisterPage } from '../signIn & signUp/RegisterPage';
 import { RootView } from './pages/RootView';
-import { LoginAnimation } from './pages/signIn & signUp/LoginAnimation';
+import { LoginAnimation } from '../signIn & signUp/LoginAnimation';
 import { Assignment, User } from './types';
 
 

@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { Assignment, User } from '../../../types';
 import { Calendar, MapPin, Navigation } from 'lucide-react';
-import { GoogleAreaMap, MapArea, MapMarker } from '../../../components/GoogleAreaMap';
-import { DEFAULT_CENTER, GeoSource, createCurrentUserMarker, distanceByZip, escapeHtml, formatAddress, resolveUserCenter } from '../../helptasks/components/utils';
+import { GoogleAreaMap, MapArea, MapMarker } from '../../../../helptasks/components/GoogleAreaMap';
+import { DEFAULT_CENTER, GeoSource, createCurrentUserMarker, distanceByZip, escapeHtml, formatAddress, resolveUserCenter } from '../../../../helptasks/components/utils';
 
 interface MapViewProps {
   currentUser: User;
@@ -84,7 +84,18 @@ export function MapView({ currentUser, helpers, assignments, loadingHelpers }: M
         strokeColor: selectedHelper?.id === helper.id ? 'var(--map-helper-area-selected-stroke)' : 'var(--map-helper-area-stroke)',
         fillColor: 'var(--map-helper-area-fill)',
         onClick: () => setSelectedHelper(helper),
-        content: `<div class="w-48 text-sm"><div class="font-bold">${escapeHtml(helper.firstname)} ${escapeHtml(helper.surname)}</div><div style="margin:4px 0;font-size:12px;color:#6b7280">PLZ ${escapeHtml(helper.address?.zipCode || 'N/A')}</div><div style="font-size:12px;color:#6b7280">Standort: ${formatSource(source)}</div></div>`,
+        content: `
+        <div class="w-48 text-sm">
+          <div class="font-bold">
+            ${escapeHtml(helper.firstname)} ${escapeHtml(helper.surname)}
+          </div>
+          <div style="margin:4px 0;font-size:12px;color:#6b7280">
+            PLZ ${escapeHtml(helper.address?.zipCode || 'N/A')}
+          </div>
+          <div style="font-size:12px;color:#6b7280">
+            Standort: ${formatSource(source)}
+          </div>
+        </div>`,
       })),
     [helperAreas, selectedHelper?.id]
   );

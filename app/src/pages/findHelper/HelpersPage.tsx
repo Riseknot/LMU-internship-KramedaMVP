@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { User, AvailabilitySlot } from '../../types';
-import { HelperListView } from '../helptasks/components/HelperListView';
+import { HelperListView } from '../../../helptasks/components/HelperListView';
 import { MapView } from './components/MapView';
 import { Map as MapIcon, List } from 'lucide-react';
 import { Assignment } from '../../types';
