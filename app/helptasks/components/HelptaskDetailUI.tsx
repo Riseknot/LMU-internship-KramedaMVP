@@ -1,7 +1,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { BadgeCheck, CalendarDays, Clipboard, Clock, HeartHandshake, Mail, MapPin, Route, ShieldCheck, X } from 'lucide-react';
+import { BadgeCheck, CalendarDays, Car, Clipboard, Clock, Footprints, HeartHandshake, Mail, MapPin, Route, ShieldCheck, TrainFront, X } from 'lucide-react';
 
 type Address = { zipCode?: string; city?: string; street?: string; streetNumber?: string };
 export type HelptaskStatus = 'open' | 'assigned' | 'completed';
@@ -60,13 +60,35 @@ const getCreatorData = (task: HelptaskDetail) => {
   };
 };
 
-type CardProps = { icon?: ReactNode; label: string; value: string; hint?: string; compact?: boolean };
+type CardProps = { icon?: ReactNode; label: string; value: ReactNode; hint?: ReactNode; compact?: boolean };
+const TravelModeBadges = ({ text }: { text: string }) => {
+  const modeIcons = {
+    Auto: { icon: <Car className="h-3.5 w-3.5" />, tone: 'bg-slate-100 text-slate-700' },
+    'Zu Fuß': { icon: <Footprints className="h-3.5 w-3.5" />, tone: 'bg-emerald-50 text-emerald-700' },
+    Bahn: { icon: <TrainFront className="h-3.5 w-3.5" />, tone: 'bg-sky-50 text-sky-700' },
+  } as const;
+
+  return (
+    <div className="mt-2 flex flex-wrap gap-2">
+      {text.split(' • ').map((entry) => {
+        const [label, value = '—'] = entry.split(': ');
+        const meta = modeIcons[label as keyof typeof modeIcons] ?? { icon: <Route className="h-3.5 w-3.5" />, tone: 'bg-slate-100 text-slate-700' };
+        return (
+          <span key={entry} className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ${meta.tone}`}>
+            {meta.icon}
+            <span>{label}: {value}</span>
+          </span>
+        );
+      })}
+    </div>
+  );
+};
 const Card = ({ icon, label, value, hint, compact = false }: CardProps) => (
   <div className={`rounded-2xl border border-slate-200/80 bg-white ${compact ? 'p-3' : 'p-4'}`}>
     <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-xl bg-white text-secondary-600 shadow-sm">{icon}</div>
     <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">{label}</p>
-    <p className="mt-1 text-sm leading-6 text-slate-800">{value}</p>
-    {hint ? <p className="mt-1 text-xs text-slate-500">{hint}</p> : null}
+    <div className="mt-1 text-sm leading-6 text-slate-800">{value}</div>
+    {hint ? <div className="mt-1 text-xs text-slate-500">{hint}</div> : null}
   </div>
 );
 
@@ -97,14 +119,12 @@ export function HelptaskDetailContent({ helptaskData, distanceText, travelTimeTe
     { icon: <MapPin className="h-4 w-4" />, label: 'Einsatzgebiet', value: publicArea, hint: 'Exakte Adresse bleibt geschützt' },
     { icon: <CalendarDays className="h-4 w-4" />, label: 'Termin', value: formatDateTime(helptaskData.start), hint: helptaskData.end ? `Ende: ${formatDateTime(helptaskData.end)}` : 'Zeit flexibel' },
     { icon: <Clock className="h-4 w-4" />, label: 'Dauer', value: formatDuration(helptaskData.start, helptaskData.end) },
-    { icon: <Route className="h-4 w-4" />, label: 'Distanz', value: distanceText, hint: travelTimeText },
+    { icon: <Route className="h-4 w-4" />, label: 'Distanz', value: distanceText, hint: <TravelModeBadges text={travelTimeText} /> },
     { icon: <CalendarDays className="h-4 w-4" />, label: 'Veröffentlicht am', value: formatShortDate(helptaskData.createdAt) },
+    { icon: <Clipboard className="h-4 w-4" />, label: 'Aufgabentyp', value: helptaskData.taskType || 'Alltagsunterstützung' },
   ];
   const detailRows = [
     { icon: <MapPin className="h-4 w-4" />, label: 'Beschreibung', value: helptaskData.description },
-    { icon: <Clipboard className="h-4 w-4" />, label: 'Aufgabentyp', value: helptaskData.taskType || 'Alltagsunterstützung' },
-    { icon: <Clock className="h-4 w-4" />, label: 'Einsatzdauer', value: formatDuration(helptaskData.start, helptaskData.end) },
-    { icon: <CalendarDays className="h-4 w-4" />, label: 'Veröffentlicht am', value: formatShortDate(helptaskData.createdAt) },
   ];
 
   return (
@@ -161,13 +181,12 @@ export function HelptaskDetailContent({ helptaskData, distanceText, travelTimeTe
       <section className="grid">
         <article className="rounded-[28px] border border-white/70 bg-white/85 p-5 shadow-lg shadow-slate-200/60 backdrop-blur sm:p-6">
           <h2 className="text-xl font-bold text-slate-900">Aufgabenübersicht</h2>
-          <p className="mt-2 text-sm text-slate-600">Die wichtigsten Details sind bewusst in kurze, scannbare Abschnitte gegliedert – das reduziert kognitive Last und erhöht die Verständlichkeit.</p>
           <div className="mt-5 grid gap-3">
             <article className="rounded-[28px] border border-white/70 bg-white/85 p-5 shadow-lg shadow-slate-200/60 backdrop-blur sm:p-6">
               <h2 className="text-xl font-bold text-slate-900">Ort & Ablauf</h2>
-              <div className="mt-4 grid gap-3 sm:grid-cols-4">{processCards.map((card) => <Card key={card.label} {...card} />)}</div>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">{processCards.map((card) => <Card key={card.label} {...card} />)}</div>
             </article>
-            {detailRows.map((row) => <Card key={row.label} {...row} />)}
+            Beschreibung: {detailRows.map((row) => <Card key={row.label} {...row} />)}
           </div>
         </article>
       </section>

@@ -11,7 +11,7 @@ import {
   HelptaskLoadingState,
   type HelptaskDetail,
 } from '@/helptasks/components/HelptaskDetailUI';
-import { formatTravelMinutes, getTravelMetrics } from '@/helptasks/components/googleDistance';
+import { getTravelMetrics } from '@/helptasks/components/googleDistance';
 
 export default function HelptaskDetailPage() {
   const [helptaskData, setHelptaskData] = useState<HelptaskDetail | null>(null);
@@ -19,7 +19,7 @@ export default function HelptaskDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [distanceText, setDistanceText] = useState('Entfernung nicht verfügbar');
-  const [travelTimeText, setTravelTimeText] = useState('Fahrzeit nicht verfügbar');
+  const [travelTimeText, setTravelTimeText] = useState('Auto: — • Zu Fuß: — • Bahn: —');
 
   const { user, isLoading: isUserLoading } = useUser();
   const params = useParams();
@@ -73,7 +73,7 @@ export default function HelptaskDetailPage() {
   useEffect(() => {
     if (isUserLoading) {
       setDistanceText('Entfernung wird geladen...');
-      setTravelTimeText('Fahrzeit wird geladen...');
+      setTravelTimeText('Auto: lädt • Zu Fuß: lädt • Bahn: lädt');
       return;
     }
 
@@ -92,22 +92,22 @@ export default function HelptaskDetailPage() {
 
     if (!origin || !destination) {
       setDistanceText('Entfernung nicht verfügbar');
-      setTravelTimeText('Fahrzeit nicht verfügbar');
+      setTravelTimeText('Auto: — • Zu Fuß: — • Bahn: —');
       return;
     }
 
     let cancelled = false;
 
     getTravelMetrics(origin, destination)
-      .then(({ distanceText: nextDistance, durationMinutes }) => {
+      .then(({ distanceText: nextDistance, travelTimesText: nextTimes }) => {
         if (cancelled) return;
         setDistanceText(nextDistance);
-        setTravelTimeText(formatTravelMinutes(durationMinutes));
+        setTravelTimeText(nextTimes);
       })
       .catch(() => {
         if (cancelled) return;
         setDistanceText('Entfernung nicht verfügbar');
-        setTravelTimeText('Fahrzeit nicht verfügbar');
+        setTravelTimeText('Auto: — • Zu Fuß: — • Bahn: —');
       });
 
     return () => {

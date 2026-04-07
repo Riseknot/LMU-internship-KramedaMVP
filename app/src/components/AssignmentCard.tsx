@@ -144,7 +144,6 @@ export function AssignmentCard({
         </div>
       )}
 
-      {/* Action Buttons – Uber-style: big, clear, minimal friction */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {canAcceptReject && (
           <>

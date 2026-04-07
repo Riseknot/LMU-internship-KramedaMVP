@@ -19,22 +19,45 @@ const loadGoogleMaps = async () => {
   }));
 };
 
-export const formatTravelMinutes = (minutes?: number | null) =>
-  minutes == null || Number.isNaN(minutes) ? 'Fahrzeit nicht verfügbar' : `ca. ${minutes} Min. zum Job`;
+const formatModeTime = (label: string, minutes?: number | null) =>
+  `${label}: ${minutes == null || Number.isNaN(minutes) ? '—' : `ca. ${minutes} Min.`}`;
 
 export const getTravelMetrics = async (origin: string, destination: string) => {
   const google = await loadGoogleMaps();
-  return new Promise<{ distanceText: string; durationMinutes: number | null }>((resolve, reject) =>
-    new google.maps.DistanceMatrixService().getDistanceMatrix(
-      { origins: [origin], destinations: [destination], travelMode: google.maps.TravelMode.DRIVING, unitSystem: google.maps.UnitSystem.METRIC },
-      (response: any, status: string) => {
-        const element = response?.rows?.[0]?.elements?.[0];
-        if (status !== 'OK' || !element || element.status !== 'OK') return reject(new Error(element?.status ?? status));
-        resolve({
-          distanceText: element.distance?.text ?? 'Entfernung nicht verfügbar',
-          durationMinutes: typeof element.duration?.value === 'number' ? Math.max(1, Math.round(element.duration.value / 60)) : null,
-        });
-      }
-    )
-  );
+  const service = new google.maps.DistanceMatrixService();
+  const readMode = (travelMode: any) =>
+    new Promise<{ distanceText: string | null; durationMinutes: number | null }>((resolve) =>
+      service.getDistanceMatrix(
+        {
+          origins: [origin],
+          destinations: [destination],
+          travelMode,
+          unitSystem: google.maps.UnitSystem.METRIC,
+          ...(travelMode === google.maps.TravelMode.TRANSIT ? { transitOptions: { departureTime: new Date() } } : {}),
+        },
+        (response: any, status: string) => {
+          const element = response?.rows?.[0]?.elements?.[0];
+          if (status !== 'OK' || !element || element.status !== 'OK') return resolve({ distanceText: null, durationMinutes: null });
+          resolve({
+            distanceText: element.distance?.text ?? null,
+            durationMinutes: typeof element.duration?.value === 'number' ? Math.max(1, Math.round(element.duration.value / 60)) : null,
+          });
+        }
+      )
+    );
+
+  const [driving, walking, transit] = await Promise.all([
+    readMode(google.maps.TravelMode.DRIVING),
+    readMode(google.maps.TravelMode.WALKING),
+    readMode(google.maps.TravelMode.TRANSIT),
+  ]);
+
+  return {
+    distanceText: driving.distanceText ?? walking.distanceText ?? transit.distanceText ?? 'Entfernung nicht verfügbar',
+    travelTimesText: [
+      formatModeTime('Auto', driving.durationMinutes),
+      formatModeTime('Bahn', transit.durationMinutes),
+      formatModeTime('Zu Fuß', walking.durationMinutes),
+    ].join(' • '),
+  };
 };

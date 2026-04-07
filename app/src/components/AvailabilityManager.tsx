@@ -55,7 +55,6 @@ export function AvailabilityManager({ userId, slots, onSave }: AvailabilityManag
   return (
     <div className="bg-white/85 rounded-xl border border-neutral-200 p-6">
       <h2 className="text-xl font-semibold mb-2">Verfügbarkeit verwalten</h2>
-      <p className="mb-6 text-sm text-neutral-600">Uber-ähnlicher Ablauf: Slot hinzufügen, prüfen, speichern.</p>
 
       {/* Add new slot */}
       <div className="mb-6 p-4 bg-neutral-50 rounded-lg border border-neutral-200">

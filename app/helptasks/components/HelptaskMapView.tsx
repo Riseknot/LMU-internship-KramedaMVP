@@ -57,7 +57,7 @@ export function HelptaskMapView({ currentUser, helptasks }: HelptaskMapViewProps
         strokeColor: 'var(--map-helptask-area-stroke)',
         fillColor: 'var(--map-helptask-area-fill)',
         content: `
-        <div class="w-56 text-sm">
+        <div class="w-48 text-sm">
           <p class="font-semibold">${escapeHtml(task.title)}</p>
           <p style="margin:4px 0 0">${escapeHtml(task.description)}</p>
           <p style="margin:8px 0 0;font-size:12px;color:#6b7280">Bereich: ${escapeHtml(task.address?.zipCode || '-')} ${escapeHtml(task.address?.city || '')}</p>
@@ -83,7 +83,6 @@ export function HelptaskMapView({ currentUser, helptasks }: HelptaskMapViewProps
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <h3 className="text-base font-semibold text-neutral-950">Kartenansicht</h3>
-          <p className="text-sm text-neutral-600">Ihr Standort kommt direkt aus der in der DB gespeicherten Adresse.</p>
         </div>
         <div className="flex flex-wrap gap-2 text-xs">
           <span className="rounded-full border border-primary-200 bg-primary-50 px-3 py-1 font-semibold text-primary-700">Ihr Standort</span>
