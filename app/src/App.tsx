@@ -7,6 +7,7 @@ import { LoginPage } from '../signIn & signUp/LoginPage';
 import { RegisterPage } from '../signIn & signUp/RegisterPage';
 import { RootView } from './pages/RootView';
 import { LoginAnimation } from '../signIn & signUp/LoginAnimation';
+import { PageLoadingState } from '../loadingpage/components/PageLoadingState';
 import { Assignment, User } from './types';
 
 
@@ -117,14 +118,7 @@ export default function App() {
   };
 
   if (isRestoringSession && !currentUser) {
-    return (
-      <div className="auth-shell">
-        <div className="auth-loader-card text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-          <p className="text-neutral-100">Sitzung wird geladen...</p>
-        </div>
-      </div>
-    );
+    return <PageLoadingState subtitle="Willkommen – wir bereiten gerade deinen sicheren Start vor." />;
   }
 
   // Show register page
@@ -158,14 +152,7 @@ export default function App() {
   }
 
   if (!currentUser) {
-    return (
-      <div className="auth-shell">
-        <div className="auth-loader-card text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-          <p className="text-neutral-100">Lädt...</p>
-        </div>
-      </div>
-    );
+    return <PageLoadingState subtitle="Noch einen Moment – dein persönlicher Überblick wird geöffnet." />;
   }
 
   return (

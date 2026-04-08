@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Assignment, User } from '../../../types';
 import { Calendar, MapPin, Navigation } from 'lucide-react';
+import { PageLoadingState } from '../../../../loadingpage/components/PageLoadingState';
 import { GoogleAreaMap, MapArea, MapMarker } from '../../../../helptasks/components/GoogleAreaMap';
 import { DEFAULT_CENTER, GeoSource, createCurrentUserMarker, distanceByZip, escapeHtml, formatAddress, resolveUserCenter } from '../../../../helptasks/components/utils';
 
@@ -126,9 +127,9 @@ export function MapView({ currentUser, helpers, assignments, loadingHelpers }: M
           )}
 
           {loadingHelpers && (
-            <div className="pointer-events-none absolute inset-0 grid place-items-center bg-neutral-900/60">
-              <div className="rounded-lg border border-neutral-700 bg-neutral-900/95 px-4 py-3 text-sm text-neutral-300">
-                Lade Helper aus der Datenbank...
+            <div className="pointer-events-none absolute inset-0 overflow-hidden bg-neutral-950/70">
+              <div className="flex h-full items-center justify-center px-3 py-4 scale-[0.78] origin-center md:scale-[0.88]">
+                <PageLoadingState fullScreen={false} subtitle="Wir suchen gerade passende Helfer:innen in deiner Nähe." />
               </div>
             </div>
           )}

@@ -63,10 +63,17 @@ export function HelptasksPage({ currentUser, onNavigateBack }: HelptasksPageProp
     fetchHelptasks(searchFilters);
   };
 
-  const handleSelectTask = ({ title }: Helptask) => alert(`Task: ${title}`);
-  const handleStatusChange = (taskId: string, status: HelptaskStatus) => {
-    updateHelptask(taskId, { status });
-    alert(`Status updated to ${status}`);
+  const handleSelectTask = (task: Helptask) => {
+    window.location.assign(`/helptasks/${task._id}`);
+  };
+
+  const handleStatusChange = async (taskId: string, status: HelptaskStatus) => {
+    try {
+      await updateHelptask(taskId, { status });
+      alert(status === 'assigned' ? 'Auftrag erfolgreich angenommen.' : `Status aktualisiert: ${status}`);
+    } catch (err) {
+      console.error('Error updating helptask status:', err);
+    }
   };
 
   const handleCreateHelptask = async (helptaskData: CreateHelptaskFormData) => {
@@ -218,12 +225,6 @@ export function HelptasksPage({ currentUser, onNavigateBack }: HelptasksPageProp
                     </div>
                   ))}
                 </div>
-
-                <p className="rounded-xl bg-neutral-50 px-3 py-2 text-xs text-neutral-600">
-                  {isHelper
-                    ? 'Tipp: Wechseln Sie zwischen Karte und Liste, um schneller passende Hilfeleistungen zu finden.'
-                    : 'Tipp: Neue Anfragen können direkt erstellt und anschließend im Bereich „Verwalten“ nachverfolgt werden.'}
-                </p>
               </div>
             </div>
 

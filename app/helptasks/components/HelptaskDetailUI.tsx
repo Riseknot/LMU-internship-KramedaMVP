@@ -63,9 +63,9 @@ const getCreatorData = (task: HelptaskDetail) => {
 type CardProps = { icon?: ReactNode; label: string; value: ReactNode; hint?: ReactNode; compact?: boolean };
 const TravelModeBadges = ({ text }: { text: string }) => {
   const modeIcons = {
-    Auto: { icon: <Car className="h-3.5 w-3.5" />, tone: 'bg-slate-100 text-slate-700' },
-    'Zu Fuß': { icon: <Footprints className="h-3.5 w-3.5" />, tone: 'bg-emerald-50 text-emerald-700' },
-    Bahn: { icon: <TrainFront className="h-3.5 w-3.5" />, tone: 'bg-sky-50 text-sky-700' },
+    "Auto": { icon: <Car className="h-3.5 w-3.5" />, tone: 'bg-slate-100 text-slate-700' },
+    "Zu Fuß": { icon: <Footprints className="h-3.5 w-3.5" />, tone: 'bg-emerald-50 text-emerald-700' },
+    "Bahn": { icon: <TrainFront className="h-3.5 w-3.5" />, tone: 'bg-sky-50 text-sky-700' },
   } as const;
 
   return (
@@ -74,9 +74,12 @@ const TravelModeBadges = ({ text }: { text: string }) => {
         const [label, value = '—'] = entry.split(': ');
         const meta = modeIcons[label as keyof typeof modeIcons] ?? { icon: <Route className="h-3.5 w-3.5" />, tone: 'bg-slate-100 text-slate-700' };
         return (
-          <span key={entry} className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ${meta.tone}`}>
+          <span key={entry} className={` group relative inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-medium ${meta.tone}`}>
             {meta.icon}
-            <span>{label}: {value}</span>
+            <span>{value}</span>
+              <span className="absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-black px-2 py-1 text-[10px] text-white opacity-0 transition-opacity duration-75 group-hover:opacity-100">
+                {label}
+              </span>
           </span>
         );
       })}
@@ -87,7 +90,7 @@ const Card = ({ icon, label, value, hint, compact = false }: CardProps) => (
   <div className={`rounded-2xl border border-slate-200/80 bg-white ${compact ? 'p-3' : 'p-4'}`}>
     <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-xl bg-white text-secondary-600 shadow-sm">{icon}</div>
     <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">{label}</p>
-    <div className="mt-1 text-sm leading-6 text-slate-800">{value}</div>
+    <div className="leading-relaxed mt-1 text-xs sm:text-base text-slate-800">{value}</div>
     {hint ? <div className="mt-1 text-xs text-slate-500">{hint}</div> : null}
   </div>
 );
@@ -116,11 +119,11 @@ export function HelptaskDetailContent({ helptaskData, distanceText, travelTimeTe
     { icon: <ShieldCheck className="h-4 w-4" />, label: 'Status & Sicherheit', value: STATUS_META[helptaskData.status].note, hint: 'Verifizierter Auftrag' },
   ];
   const processCards = [
-    { icon: <MapPin className="h-4 w-4" />, label: 'Einsatzgebiet', value: publicArea, hint: 'Exakte Adresse bleibt geschützt' },
+    { icon: <MapPin className="h-4 w-4" />, label: 'Ort', value: publicArea, hint: 'Exakte Adresse bleibt geschützt' },
     { icon: <CalendarDays className="h-4 w-4" />, label: 'Termin', value: formatDateTime(helptaskData.start), hint: helptaskData.end ? `Ende: ${formatDateTime(helptaskData.end)}` : 'Zeit flexibel' },
     { icon: <Clock className="h-4 w-4" />, label: 'Dauer', value: formatDuration(helptaskData.start, helptaskData.end) },
     { icon: <Route className="h-4 w-4" />, label: 'Distanz', value: distanceText, hint: <TravelModeBadges text={travelTimeText} /> },
-    { icon: <CalendarDays className="h-4 w-4" />, label: 'Veröffentlicht am', value: formatShortDate(helptaskData.createdAt) },
+    { icon: <CalendarDays className="h-4 w-4" />, label: 'Vom', value: formatShortDate(helptaskData.createdAt) },
     { icon: <Clipboard className="h-4 w-4" />, label: 'Aufgabentyp', value: helptaskData.taskType || 'Alltagsunterstützung' },
   ];
   const detailRows = [
@@ -179,14 +182,15 @@ export function HelptaskDetailContent({ helptaskData, distanceText, travelTimeTe
       </section>
 
       <section className="grid">
-        <article className="rounded-[28px] border border-white/70 bg-white/85 p-5 shadow-lg shadow-slate-200/60 backdrop-blur sm:p-6">
+        <article className="rounded-[28px] border border-white/70 bg-white/85 md:p-5 shadow-lg shadow-slate-200/60 backdrop-blur sm:p-6">
           <h2 className="text-xl font-bold text-slate-900">Aufgabenübersicht</h2>
-          <div className="mt-5 grid gap-3">
-            <article className="rounded-[28px] border border-white/70 bg-white/85 p-5 shadow-lg shadow-slate-200/60 backdrop-blur sm:p-6">
-              <h2 className="text-xl font-bold text-slate-900">Ort & Ablauf</h2>
-              <div className="mt-4 grid gap-3 sm:grid-cols-3">{processCards.map((card) => <Card key={card.label} {...card} />)}</div>
+          <div className="grid gap-3">
+            <article className="rounded-[28px] border border-white/70 bg-white/85 md:p-5">
+              <div className="mt-4 grid gap-3  sm:grid-cols-3 grid-cols-2">{processCards.map((card) => <Card key={card.label} {...card} />)}</div>
+              <div className="pt-6">
+                {detailRows.map((row) => <Card key={row.label} {...row} />)}
+              </div>
             </article>
-            Beschreibung: {detailRows.map((row) => <Card key={row.label} {...row} />)}
           </div>
         </article>
       </section>
