@@ -30,12 +30,27 @@ const parseIsoDate = (value: unknown): Date | null => {
   return Number.isNaN(date.getTime()) ? null : date;
 };
 
+const pickString = (value: unknown): string | undefined =>
+  typeof value === "string" && value.trim() ? value.trim() : undefined;
+
+const pickStringArray = (value: unknown): string[] | undefined =>
+  Array.isArray(value)
+    ? value
+        .filter((item): item is string => typeof item === "string")
+        .map((item) => item.trim())
+        .filter(Boolean)
+    : undefined;
 
 const pickStatus = (value: string | null | undefined): HelptaskStatus | undefined =>
   value && VALID_STATUSES.has(value as HelptaskStatus) ? (value as HelptaskStatus) : undefined;
 
 const redactAddress = (task: any) => ({
   ...task,
+  requirements: {
+    skills: task.requirements?.skills ?? task.requiredSkills ?? [],
+    languages: task.requirements?.languages ?? task.requiredLanguages ?? [],
+    notes: task.requirements?.notes ?? task.qualificationNotes ?? "",
+  },
   address: task.address ? { zipCode: task.address.zipCode, city: task.address.city } : undefined,
 });
 
@@ -89,6 +104,12 @@ export async function POST(req: NextRequest) {
       return jsonError("start and end must be valid ISO datetime values", 400);
     }
 
+    const requirements = {
+      skills: pickStringArray(data.requirements?.skills ?? data.requiredSkills) ?? [],
+      languages: pickStringArray(data.requirements?.languages ?? data.requiredLanguages) ?? [],
+      notes: pickString(data.requirements?.notes ?? data.qualificationNotes) ?? "",
+    };
+
     const helptask = await createHelptask({
       taskType: data.taskType || "help",
       title: data.title,
@@ -98,6 +119,7 @@ export async function POST(req: NextRequest) {
       start,
       end,
       status: pickStatus(data.status) ?? "open",
+      requirements,
       firstname: data.firstname?.trim(),
       surname: data.surname?.trim(),
       email: data.email?.trim()?.toLowerCase(),

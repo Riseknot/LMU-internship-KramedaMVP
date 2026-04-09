@@ -1,6 +1,7 @@
 /**
  * Frontend service for the Helptasks API.
  */
+import type { QualificationKey } from "../../src/utils/qualifications";
 
 type GeoPoint = {
   type: "Point";
@@ -17,6 +18,12 @@ type HelptaskAddress = {
   city?: string;
   street?: string;
   streetNumber?: string;
+};
+
+type HelptaskRequirements = {
+  skills: QualificationKey[];
+  languages: string[];
+  notes: string;
 };
 
 export type HelptaskFilters = Partial<{
@@ -39,6 +46,7 @@ export interface HelptaskCreatePayload {
   end: Date | string;
   status?: HelptaskStatus;
   assignedHelper?: string;
+  requirements: HelptaskRequirements;
   firstname: string;
   surname: string;
   email: string;
@@ -55,6 +63,7 @@ export interface HelptaskUpdatePayload {
   end?: Date | string;
   status?: HelptaskStatus;
   assignedHelper?: string;
+  requirements?: Partial<HelptaskRequirements>;
 }
 
 export interface Helptask {
@@ -73,6 +82,7 @@ export interface Helptask {
   surname: string;
   email: string;
   createdBy: string;
+  requirements: HelptaskRequirements;
   createdAt: string;
   updatedAt: string;
 }

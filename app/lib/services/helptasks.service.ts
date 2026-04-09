@@ -27,6 +27,11 @@ type CreateHelptaskInput = {
   status: HelptaskStatus;
   assignedHelper?: mongoose.Types.ObjectId;
   createdBy?: mongoose.Types.ObjectId | null;
+  requirements?: {
+    skills?: string[];
+    languages?: string[];
+    notes?: string;
+  };
   firstname: string;
   surname: string;
   email: string;

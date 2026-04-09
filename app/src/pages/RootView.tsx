@@ -187,7 +187,7 @@ export function RootView({
         onToggle={() => setSidebarOpen(!sidebarOpen)}
       />
 
-      <main className="min-w-0 flex-1 overflow-auto">
+      <main className="min-w-0 flex-1">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={activePage}

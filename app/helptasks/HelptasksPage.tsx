@@ -90,6 +90,7 @@ export function HelptasksPage({ currentUser, onNavigateBack }: HelptasksPageProp
         },
         start: new Date(helptaskData.start),
         end: new Date(helptaskData.end),
+        requirements: helptaskData.requirements,
         firstname: currentUser.firstname,
         surname: currentUser.surname,
         email: currentUser.email,

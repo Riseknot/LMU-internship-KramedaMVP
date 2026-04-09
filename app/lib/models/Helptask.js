@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { QUALIFICATION_KEYS } from "../../src/utils/qualifications";
 
 const HelptaskSchema = new mongoose.Schema({
     taskType: { type: String, required: true },
@@ -36,6 +37,12 @@ const HelptaskSchema = new mongoose.Schema({
 
     assignedHelper: { type: mongoose.Schema.Types.ObjectId, ref: "User", index: true },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", index: true }, // Optional for now
+
+    requirements: {
+        skills: { type: [{ type: String, enum: QUALIFICATION_KEYS }], default: [] },
+        languages: { type: [String], default: [] },
+        notes: { type: String, trim: true, default: "" },
+    },
 
     firstname: { type: String, required: true, index: true },
     surname: { type: String, required: true, index: true },

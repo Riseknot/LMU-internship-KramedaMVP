@@ -1,3 +1,11 @@
+import type { QualificationKey } from "../src/utils/qualifications";
+
+export interface HelptaskRequirements {
+  skills: QualificationKey[];
+  languages: string[];
+  notes: string;
+}
+
 export type HelptaskStatus = "open" | "assigned" | "completed";
 
 export type HelptaskTab = "browse" | "create" | "manage";
@@ -17,5 +25,5 @@ export interface CreateHelptaskFormData {
   streetNumber: string;
   start: string;
   end: string;
-  requiredSkills: string[];
+  requirements: HelptaskRequirements;
 }
