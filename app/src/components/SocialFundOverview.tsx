@@ -83,7 +83,7 @@ export function SocialFundOverview({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-br from-pink-600 via-pink-700 to-rose-800 text-white rounded-xl p-8 relative overflow-hidden">
+      <div className="bg-linear-to-br from-accent-600 via-accent-700 to-accent-900 text-white rounded-xl p-8 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32"></div>
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -ml-24 -mb-24"></div>
         
@@ -94,13 +94,13 @@ export function SocialFundOverview({
             </div>
             <div>
               <h2 className="text-3xl font-bold">Sozialfond-Übersicht</h2>
-              <p className="text-pink-100 text-sm mt-1">Ihr Beitrag zur Gemeinschaft</p>
+              <p className="text-accent-100 text-sm mt-1">Ihr Beitrag zur Gemeinschaft</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-              <div className="flex items-center gap-2 text-pink-100 text-sm mb-2">
+              <div className="flex items-center gap-2 text-accent-100 text-sm mb-2">
                 <DollarSign className="w-4 h-4" />
                 <span>Ihr Gesamtbeitrag</span>
               </div>
@@ -108,7 +108,7 @@ export function SocialFundOverview({
             </div>
 
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-              <div className="flex items-center gap-2 text-pink-100 text-sm mb-2">
+              <div className="flex items-center gap-2 text-accent-100 text-sm mb-2">
                 <Users className="w-4 h-4" />
                 <span>Menschen geholfen</span>
               </div>
@@ -116,7 +116,7 @@ export function SocialFundOverview({
             </div>
 
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-              <div className="flex items-center gap-2 text-pink-100 text-sm mb-2">
+              <div className="flex items-center gap-2 text-accent-100 text-sm mb-2">
                 <Calendar className="w-4 h-4" />
                 <span>Aufträge unterstützt</span>
               </div>
@@ -131,7 +131,7 @@ export function SocialFundOverview({
         <div className="bg-white rounded-xl border border-neutral-200 shadow-sm">
           <div className="p-6 border-b border-neutral-200">
             <h3 className="text-xl font-bold text-neutral-900 flex items-center gap-2">
-              <Users className="w-5 h-5 text-pink-600" />
+              <Users className="w-5 h-5 text-accent-600" />
               Menschen, denen Sie geholfen haben
             </h3>
             <p className="text-sm text-neutral-600 mt-1">
@@ -148,16 +148,16 @@ export function SocialFundOverview({
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-4 flex-1">
                     {/* Avatar */}
-                    <div className="w-12 h-12 bg-gradient-to-br from-pink-400 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg">
+                    <div className="w-12 h-12 bg-linear-to-br from-accent-400 to-accent-600 rounded-full flex items-center justify-center shrink-0 shadow-lg">
                       {user.avatarUrl ? (
                         <img 
                           src={user.avatarUrl} 
-                          alt={user.name} 
+                          alt={`${user.firstname} ${user.surname}`} 
                           className="w-full h-full rounded-full object-cover" 
                         />
                       ) : (
                         <span className="text-white font-bold text-lg">
-                          {user.name.charAt(0)}
+                          {user.firstname?.charAt(0)}{user.surname?.charAt(0)}
                         </span>
                       )}
                     </div>
@@ -165,20 +165,20 @@ export function SocialFundOverview({
                     {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-bold text-neutral-900">{user.name}</h4>
+                        <h4 className="font-bold text-neutral-900">{user.firstname} {user.surname}</h4>
                         {user.socialFundEligible && (
-                          <span className="px-2 py-0.5 bg-pink-100 text-pink-700 text-xs font-medium rounded-full">
+                          <span className="px-2 py-0.5 bg-accent-100 text-accent-700 text-xs font-medium rounded-full">
                             Sozialfond-berechtigt
                           </span>
                         )}
                       </div>
                       
                       <p className="text-sm text-neutral-600 mb-3">
-                        {user.role === 'helper' ? 'Helper' : 'Coordinator'} · {user.zipCode}
+                        {user.role === 'helper' ? 'Helper' : 'Coordinator'} · {user.address?.zipCode || 'N/A'}
                       </p>
 
                       <div className="flex items-center gap-4 text-sm">
-                        <div className="flex items-center gap-1.5 text-pink-600">
+                        <div className="flex items-center gap-1.5 text-accent-600">
                           <DollarSign className="w-4 h-4" />
                           <span className="font-medium">{totalReceived.toFixed(2)} € erhalten</span>
                         </div>
@@ -193,7 +193,7 @@ export function SocialFundOverview({
                   {/* View Profile Button */}
                   <button
                     onClick={() => onViewProfile(user.id)}
-                    className="px-4 py-2 bg-gradient-to-r from-pink-600 to-pink-700 text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2"
+                    className="px-4 py-2 bg-linear-to-r from-accent-600 to-accent-700 text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2"
                   >
                     Profil anzeigen
                     <ExternalLink className="w-4 h-4" />
@@ -210,7 +210,7 @@ export function SocialFundOverview({
         <div className="bg-white rounded-xl border border-neutral-200 shadow-sm">
           <div className="p-6 border-b border-neutral-200">
             <h3 className="text-xl font-bold text-neutral-900 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-pink-600" />
+              <TrendingUp className="w-5 h-5 text-accent-600" />
               Monatliche Beiträge
             </h3>
             <p className="text-sm text-neutral-600 mt-1">
@@ -227,11 +227,11 @@ export function SocialFundOverview({
                   <div key={month}>
                     <div className="flex items-center justify-between text-sm mb-1.5">
                       <span className="font-medium text-neutral-700">{formatMonth(month)}</span>
-                      <span className="font-bold text-pink-600">{amount.toFixed(2)} €</span>
+                      <span className="font-bold text-accent-600">{amount.toFixed(2)} €</span>
                     </div>
                     <div className="w-full bg-neutral-200 rounded-full h-2">
                       <div 
-                        className="bg-gradient-to-r from-pink-500 to-pink-600 h-2 rounded-full transition-all duration-500"
+                        className="bg-linear-to-r from-accent-500 to-accent-600 h-2 rounded-full transition-all duration-500"
                         style={{ width: `${percentage}%` }}
                       />
                     </div>
@@ -248,7 +248,7 @@ export function SocialFundOverview({
         <div className="bg-white rounded-xl border border-neutral-200 shadow-sm">
           <div className="p-6 border-b border-neutral-200">
             <h3 className="text-xl font-bold text-neutral-900 flex items-center gap-2">
-              <Heart className="w-5 h-5 text-pink-600" />
+              <Heart className="w-5 h-5 text-accent-600" />
               Letzte Beiträge
             </h3>
             <p className="text-sm text-neutral-600 mt-1">
@@ -279,7 +279,7 @@ export function SocialFundOverview({
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-pink-600">{contribution.amount.toFixed(2)} €</p>
+                      <p className="font-bold text-accent-600">{contribution.amount.toFixed(2)} €</p>
                     </div>
                   </div>
                 </div>
@@ -291,8 +291,8 @@ export function SocialFundOverview({
       {/* Empty State */}
       {myContributions.length === 0 && (
         <div className="bg-white rounded-xl border border-neutral-200 p-12 text-center">
-          <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Heart className="w-8 h-8 text-pink-600" />
+          <div className="w-16 h-16 bg-accent-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Heart className="w-8 h-8 text-accent-600" />
           </div>
           <h3 className="text-xl font-bold text-neutral-900 mb-2">
             Noch keine Beiträge
@@ -307,3 +307,5 @@ export function SocialFundOverview({
     </div>
   );
 }
+
+

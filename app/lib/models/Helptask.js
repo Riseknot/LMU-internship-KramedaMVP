@@ -1,25 +1,57 @@
 import mongoose from "mongoose";
 
-const UserSchema = new mongoose.Schema({
-    createdBy: {type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+const HelptaskSchema = new mongoose.Schema({
     taskType: { type: String, required: true },
+    
+    title: { type: String, required: true },
+
     description: { type: String, required: true },
-    location: {
-        type: {
-            type: String,
-            enum: ['Point'],
-            required: true
+
+    public_loc: {
+        lat: {
+            type: Number,
+            required: true,
         },
-        coordinates: {
-            type: [Number],
-            required: true
+        lng: {
+            type: Number,
+            required: true,
+        },
+        radiusM: {
+            type: Number,
+            required: true,
         }
     },
-    date: { type: Date, required: true },
-    time: { type: String, required: true },
-    status: { type: String, required: true, enum: ["open", "assigned", "completed"] },
-    assignedHelper: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+
+    address: {
+        zipCode: { type: String, index: true }, // Index direkt
+        city: String,
+        street: String,
+        streetNumber: String,
+    },
+
+    start: { type: Date, required: true },
+    end: { type: Date, required: true },
+
+    status: { type: String, required: true, enum: ["open", "assigned", "completed"], index: true },
+
+    assignedHelper: { type: mongoose.Schema.Types.ObjectId, ref: "User", index: true },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", index: true }, // Optional for now
+
+    firstname: { type: String, required: true, index: true },
+    surname: { type: String, required: true, index: true },
+    email: { type: String, required: true, index: true },
+
 }, { timestamps: true });
 
-export default mongoose.models.Helptask ||
-  mongoose.model("Helptask", HelptaskSchema, "helptasks"); // Use existing model if exists, otherwise create a new one + collection name
+// Public area used for privacy-safe map display.
+HelptaskSchema.index({ public_loc: '2dsphere' });
+
+// In Next.js dev/hot-reload, reusing mongoose.models.Helptask can keep an old
+// schema shape alive. Recreate the model so schema changes (e.g. start/end)
+// take effect immediately.
+if (mongoose.models.Helptask) {
+    mongoose.deleteModel('Helptask');
+}
+
+export default mongoose.model("Helptask", HelptaskSchema);
+

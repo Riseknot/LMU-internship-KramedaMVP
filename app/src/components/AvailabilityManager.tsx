@@ -1,20 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AvailabilitySlot } from '../types';
 import { Clock, Plus, Trash2 } from 'lucide-react';
 
 interface AvailabilityManagerProps {
   userId: string;
-  slots: AvailabilitySlot[];
+  slots?: AvailabilitySlot[];
   onSave: (slots: AvailabilitySlot[]) => void;
 }
 
 const DAYS = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
 
 export function AvailabilityManager({ userId, slots, onSave }: AvailabilityManagerProps) {
-  const [localSlots, setLocalSlots] = useState<AvailabilitySlot[]>(slots);
+  const [localSlots, setLocalSlots] = useState<AvailabilitySlot[]>(slots ?? []);
   const [selectedDay, setSelectedDay] = useState<number>(1);
   const [startTime, setStartTime] = useState('09:00');
   const [endTime, setEndTime] = useState('17:00');
+
+  useEffect(() => {
+    setLocalSlots(slots ?? []);
+  }, [slots]);
 
   const addSlot = () => {
     if (startTime >= endTime) {
@@ -49,11 +53,11 @@ export function AvailabilityManager({ userId, slots, onSave }: AvailabilityManag
   }));
 
   return (
-    <div className="bg-white rounded-xl border border-neutral-200 p-6">
-      <h2 className="text-xl font-semibold mb-6">Verfügbarkeit verwalten</h2>
+    <div className="bg-white/85 rounded-xl border border-neutral-200 p-6">
+      <h2 className="text-xl font-semibold mb-2">Verfügbarkeit verwalten</h2>
 
       {/* Add new slot */}
-      <div className="mb-6 p-4 bg-neutral-50 rounded-lg">
+      <div className="mb-6 p-4 bg-neutral-50 rounded-lg border border-neutral-200">
         <h3 className="font-medium mb-4 flex items-center gap-2">
           <Plus className="w-5 h-5" />
           Neue Verfügbarkeit hinzufügen
@@ -86,7 +90,7 @@ export function AvailabilityManager({ userId, slots, onSave }: AvailabilityManag
 
           <button
             onClick={addSlot}
-            className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors"
+            className="px-4 py-2 btn-base btn-primary rounded-lg font-semibold transition-colors"
           >
             Hinzufügen
           </button>
@@ -104,17 +108,17 @@ export function AvailabilityManager({ userId, slots, onSave }: AvailabilityManag
             {daySlots.length > 0 ? (
               <div className="p-3 space-y-2">
                 {daySlots.map(slot => (
-                  <div key={slot.id} className="flex items-center justify-between p-2 bg-primary-50 rounded">
+                  <div key={slot.id} className="flex items-center justify-between p-2 bg-primary-50 rounded border border-primary-100">
                     <div className="flex items-center gap-2 text-sm">
                       <Clock className="w-4 h-4 text-primary-600" />
                       <span>{slot.startTime} - {slot.endTime}</span>
                     </div>
                     <button
                       onClick={() => removeSlot(slot.id)}
-                      className="p-1 hover:bg-red-100 rounded transition-colors"
+                      className="p-1 hover:bg-error/10 rounded transition-colors"
                       aria-label="Entfernen"
                     >
-                      <Trash2 className="w-4 h-4 text-red-600" />
+                      <Trash2 className="w-4 h-4 text-error" />
                     </button>
                   </div>
                 ))}
@@ -130,10 +134,12 @@ export function AvailabilityManager({ userId, slots, onSave }: AvailabilityManag
 
       <button
         onClick={handleSave}
-        className="w-full px-6 py-3 bg-accent-500 hover:bg-accent-600 text-white rounded-lg font-medium transition-colors"
+        className="w-full px-6 py-3 btn-base btn-secondary rounded-lg font-semibold transition-colors"
       >
         Verfügbarkeit speichern
       </button>
     </div>
   );
 }
+
+

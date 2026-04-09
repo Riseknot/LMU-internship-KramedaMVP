@@ -1,12 +1,22 @@
 import mongoose from "mongoose";
 
 const UserSchema = new mongoose.Schema({
-  name: { type: String, required: true },
+  firstname: { type: String, required: true },
+  surname: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   role: { type: String, required: true, enum: ["helper", "coordinator"] },
   phone: { type: String },
-  zipCode: { type: String },
+  address: {
+    zipCode: { type: String },
+    city: { type: String },
+    street: { type: String },
+    streetNumber: { type: String },
+  },
+  coordinates: {
+    lat: { type: Number },
+    lng: { type: Number },
+  },
   languages: [{ type: String }],
   bio: { type: String },
   avatarUrl: { type: String },

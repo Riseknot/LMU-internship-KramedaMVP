@@ -34,11 +34,17 @@ export type CareGrade = 1 | 2 | 3 | 4 | 5;
  */
 export interface User {
   id: string;
-  name: string;
+  firstname: string;
+  surname: string;
   role: UserRole;
   email: string;
   phone?: string;
-  zipCode?: string;
+  address?: {
+    zipCode?: string;
+    city?: string;
+    street?: string;
+    streetNumber?: string;
+  };
   languages?: string[];
   skills?: string[];
   avatarUrl?: string;
@@ -96,9 +102,14 @@ export interface Assignment {
   helperId?: string;
   helperName?: string;
   status: AssignmentStatus;
-  startTime: string;
-  endTime: string;
-  zipCode: string;
+  start: string;
+  end: string;
+  address: {
+    zipCode: string;
+    city: string;
+    street: string;
+    streetNumber: string;
+  };
   requiredSkills: string[];
   createdAt: string;
   rating?: Rating;

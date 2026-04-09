@@ -8,8 +8,6 @@ import { findOneUser } from "@/lib/services/user.service";
 
 export async function GET(req: NextRequest) {
   try {
-    await connectDB();
-
     const token = req.cookies.get(SESSION_COOKIE_NAME)?.value;
     if (!token) {
       return NextResponse.json({ message: "Nicht authentifiziert." }, { status: 401 });
@@ -20,6 +18,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ message: "Sitzung ist ungültig oder abgelaufen." }, { status: 401 });
     }
 
+    await connectDB();
+
     const user = await findOneUser({ email: payload.email, _id: payload.sub });
     if (!user || !user.emailVerified) {
       return NextResponse.json({ message: "Benutzer nicht gefunden." }, { status: 401 });
@@ -29,11 +29,13 @@ export async function GET(req: NextRequest) {
       {
         user: {
           id: String(user._id),
-          name: user.name,
+          firstname: user.firstname,
+          surname: user.surname,
           email: user.email,
           role: user.role,
           phone: user.phone,
-          zipCode: user.zipCode,
+          address: user.address,
+          coordinates: user.coordinates,
           languages: user.languages,
           skills: user.skills,
           bio: user.bio,

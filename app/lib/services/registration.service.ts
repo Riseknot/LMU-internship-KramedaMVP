@@ -6,12 +6,18 @@ type PendingRegistration = {
   attempts: number;
   expiresAt: number;
   payload: {
-    name: string;
+    firstname: string;
+    surname: string;
     email: string;
     password: string;
     role: "helper" | "coordinator";
     phone?: string;
-    zipCode?: string;
+    address?: {
+      zipCode?: string;
+      city?: string;
+      street?: string;
+      streetNumber?: string;
+    };
     skills?: string[];
   };
 };

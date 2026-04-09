@@ -1,12 +1,45 @@
 import { useState } from 'react';
 import { User, Assignment, AvailabilitySlot, ChatMessage, TodoItem, CareFinance, CostEntry, HelperEarning, SocialFundContribution, BuddyRelationship } from '../types';
-import { mockUsers, mockAssignments, mockAvailabilitySlots, mockChatMessages, mockTodos, mockHelperEarnings, mockSocialFundContributions, mockBuddyRelationships } from '../services/mockData';
+import { mockUsers, mockAvailabilitySlots, mockChatMessages, mockTodos, mockHelperEarnings, mockSocialFundContributions, mockBuddyRelationships } from '../services/mockData';
+
+const AUTH_USER_STORAGE_KEY = 'mvpkrameda.auth.user';
+
+function readCachedUser(): User | null {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  const rawUser = window.localStorage.getItem(AUTH_USER_STORAGE_KEY);
+  if (!rawUser) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(rawUser) as User;
+  } catch {
+    window.localStorage.removeItem(AUTH_USER_STORAGE_KEY);
+    return null;
+  }
+}
+
+function persistCachedUser(user: User | null) {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  if (!user) {
+    window.localStorage.removeItem(AUTH_USER_STORAGE_KEY);
+    return;
+  }
+
+  window.localStorage.setItem(AUTH_USER_STORAGE_KEY, JSON.stringify(user));
+}
 
 export function useAppState() {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(() => readCachedUser());
+  const [isAuthenticated, setIsAuthenticated] = useState(() => Boolean(readCachedUser()));
   const [users, setUsers] = useState<User[]>(mockUsers);
-  const [assignments, setAssignments] = useState<Assignment[]>(mockAssignments);
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [availabilitySlots, setAvailabilitySlots] = useState<AvailabilitySlot[]>(mockAvailabilitySlots);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>(mockChatMessages);
   const [todos, setTodos] = useState<TodoItem[]>(mockTodos);
@@ -17,17 +50,20 @@ export function useAppState() {
   const [buddyRelationships, setBuddyRelationships] = useState<BuddyRelationship[]>(mockBuddyRelationships);
 
   const login = (user: User) => {
+    persistCachedUser(user);
     setCurrentUser(user);
     setIsAuthenticated(true);
   };
 
   const restoreSession = (user: User | null) => {
     if (!user) {
+      persistCachedUser(null);
       setCurrentUser(null);
       setIsAuthenticated(false);
       return;
     }
 
+    persistCachedUser(user);
     setCurrentUser(user);
     setIsAuthenticated(true);
   };
@@ -50,6 +86,7 @@ export function useAppState() {
         },
       });
     } finally {
+      persistCachedUser(null);
       setCurrentUser(null);
       setIsAuthenticated(false);
       }
@@ -58,11 +95,23 @@ export function useAppState() {
 
   const switchUser = (userId: string) => {
     const user = users.find(u => u.id === userId);
-    if (user) setCurrentUser(user);
+    if (user) {
+      persistCachedUser(user);
+      setCurrentUser(user);
+      setIsAuthenticated(true);
+    }
   };
 
   const updateCurrentUser = (updates: Partial<User>) => {
-    setCurrentUser(prev => (prev ? { ...prev, ...updates } : prev));
+    setCurrentUser(prev => {
+      if (!prev) {
+        return prev;
+      }
+
+      const nextUser = { ...prev, ...updates };
+      persistCachedUser(nextUser);
+      return nextUser;
+    });
   };
 
   const updateAssignment = (id: string, updates: Partial<Assignment>) => {
@@ -97,7 +146,7 @@ export function useAppState() {
       text,
       completed: false,
       createdBy: currentUser.id,
-      createdByName: currentUser.name,
+      createdByName: `${currentUser.firstname} ${currentUser.surname}`,
       createdAt: new Date().toISOString(),
     };
     setTodos(prev => [...prev, newTodo]);
@@ -142,7 +191,7 @@ export function useAppState() {
     if (helper) {
       updateAssignment(assignmentId, {
         helperId,
-        helperName: helper.name,
+        helperName: `${helper.firstname} ${helper.surname}`,
         status: 'ASSIGNED',
       });
     }

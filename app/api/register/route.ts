@@ -5,13 +5,19 @@ import { createRegistrationChallenge, consumeRateLimit } from "@/lib/services/re
 import { sendVerificationCodeEmail } from "@/lib/services/email.service";
 
 type RegisterRequest = {
-  name?: string;
+  firstname?: string;
+  surname?: string;
   email?: string;
   password?: string;
   confirmPassword?: string;
   role?: "helper" | "coordinator";
   phone?: string;
-  zipCode?: string;
+  address?: {
+    zipCode?: string;
+    city?: string;
+    street?: string;
+    streetNumber?: string;
+  };
   skills?: string[];
   acceptTerms?: boolean;
 };
@@ -47,18 +53,26 @@ function getClientIp(req: NextRequest) {
 function validateRegistrationInput(body: RegisterRequest) {
   const fieldErrors: Record<string, string> = {};
 
-  const name = (body.name ?? "").trim();
+  const firstname = (body.firstname ?? "").trim();
+  const surname = (body.surname ?? "").trim();
   const email = (body.email ?? "").trim().toLowerCase();
   const password = body.password ?? "";
   const confirmPassword = body.confirmPassword ?? "";
   const role = body.role;
   const phone = (body.phone ?? "").trim();
-  const zipCode = (body.zipCode ?? "").trim();
+  const zipCode = (body.address?.zipCode ?? "").trim();
+  const city = (body.address?.city ?? "").trim();
+  const street = (body.address?.street ?? "").trim();
+  const streetNumber = (body.address?.streetNumber ?? "").trim();
   const skills = Array.isArray(body.skills) ? body.skills.filter(Boolean) : [];
   const acceptTerms = Boolean(body.acceptTerms);
 
-  if (name.length < 2) {
-    fieldErrors.name = "Bitte geben Sie Ihren vollständigen Namen an.";
+  if (firstname.length < 2) {
+    fieldErrors.firstname = "Bitte geben Sie Ihren Vornamen an.";
+  }
+
+  if (surname.length < 2) {
+    fieldErrors.surname = "Bitte geben Sie Ihren Nachnamen an.";
   }
 
   if (!isValidEmail(email)) {
@@ -86,6 +100,18 @@ function validateRegistrationInput(body: RegisterRequest) {
       fieldErrors.zipCode = "Bitte geben Sie eine 5-stellige Postleitzahl ein.";
     }
 
+    if (city.length < 2) {
+      fieldErrors.city = "Bitte geben Sie die Stadt an.";
+    }
+
+    if (street.length < 2) {
+      fieldErrors.street = "Bitte geben Sie die Straße an.";
+    }
+
+    if (streetNumber.length < 1) {
+      fieldErrors.streetNumber = "Bitte geben Sie die Hausnummer an.";
+    }
+
     if (!skills.length) {
       fieldErrors.skills = "Bitte wählen Sie mindestens eine Fähigkeit aus.";
     }
@@ -98,12 +124,18 @@ function validateRegistrationInput(body: RegisterRequest) {
   return {
     fieldErrors,
     data: {
-      name,
+      firstname,
+      surname,
       email,
       password,
       role,
       phone: phone || undefined,
-      zipCode: zipCode || undefined,
+      address: {
+        zipCode: zipCode || undefined,
+        city: city || undefined,
+        street: street || undefined,
+        streetNumber: streetNumber || undefined,
+      },
       skills,
       acceptTerms,
     },
@@ -179,18 +211,19 @@ export async function POST(req: NextRequest) {
     }
 
     const challenge = createRegistrationChallenge({
-      name: data.name,
+      firstname: data.firstname,
+      surname: data.surname,
       email: data.email,
       password: data.password,
       role: data.role as "helper" | "coordinator",
       phone: data.phone,
-      zipCode: data.zipCode,
+      address: data.address,
       skills: data.skills,
     });
 
     await sendVerificationCodeEmail({
       to: data.email,
-      name: data.name,
+      firstname: data.firstname,
       code: challenge.code,
       expiresAt: challenge.expiresAt,
     });

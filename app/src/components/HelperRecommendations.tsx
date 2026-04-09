@@ -61,7 +61,7 @@ export function HelperRecommendations({
               >
                 <div className="flex items-start gap-4">
                   {/* Rank Badge */}
-                  <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${
+                  <div className={`shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${
                     index === 0 ? 'bg-accent-100 text-accent-700' : 'bg-neutral-100 text-neutral-600'
                   }`}>
                     #{index + 1}
@@ -74,7 +74,7 @@ export function HelperRecommendations({
                         <h4 className="font-semibold text-neutral-900 mb-1">{rec.helperName}</h4>
                         <div className="flex items-center gap-2 text-sm text-neutral-600">
                           <MapPin className="w-4 h-4" />
-                          <span>{helper.zipCode || 'Keine PLZ'}</span>
+                          <span>{helper.address?.zipCode || 'Keine PLZ'}</span>
                           <span className="text-neutral-400">•</span>
                           <span>~{rec.distance} km entfernt</span>
                         </div>
@@ -156,7 +156,7 @@ export function HelperRecommendations({
                     {/* Assign Button */}
                     <button
                       onClick={() => onAssignHelper(assignment.id, rec.helperId)}
-                      className="w-full px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors"
+                      className="w-full px-4 py-2.5 btn-base btn-secondary rounded-lg font-medium transition-colors"
                     >
                       Helper zuweisen
                     </button>
@@ -181,3 +181,5 @@ export function HelperRecommendations({
     </div>
   );
 }
+
+

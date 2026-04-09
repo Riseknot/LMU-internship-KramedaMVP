@@ -1,6 +1,7 @@
 import React from 'react';
 import { Assignment, User } from '../types';
-import { Calendar, Clock, MapPin, CheckCircle, XCircle, MessageSquare, ClipboardList } from 'lucide-react';
+import { Calendar, Clock, MapPin, CheckCircle, XCircle, MessageSquare, ClipboardList, Star } from 'lucide-react';
+import { motion } from 'motion/react';
 
 interface AssignmentCardProps {
   assignment: Assignment;
@@ -19,21 +20,24 @@ export function AssignmentCard({
   onOpenChat,
   onOpenTodo,
 }: AssignmentCardProps) {
-  const startDate = new Date(assignment.startTime);
-  const endDate = new Date(assignment.endTime);
+  const startDate = new Date(assignment.start);
+  const endDate = new Date(assignment.end);
+  const durationHours = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60);
+  const hourlyRate = assignment.hourlyRate || 25;
+  const totalEarning = durationHours * hourlyRate;
   
-  const statusColors = {
-    OPEN: 'bg-blue-100 text-blue-800',
-    ASSIGNED: 'bg-yellow-100 text-yellow-800',
-    IN_PROGRESS: 'bg-green-100 text-green-800',
-    DONE: 'bg-neutral-200 text-neutral-700',
+  const statusPillStyles = {
+    OPEN: 'bg-secondary-500/20 text-secondary-200 border-secondary-500/40',
+    ASSIGNED: 'bg-primary-500/20 text-primary-200 border-primary-500/40',
+    IN_PROGRESS: 'bg-success/20 text-success border-success/30',
+    DONE: 'bg-accent-500/20 text-accent-200 border-accent-500/40',
   };
 
   const statusLabels = {
-    OPEN: 'Offen',
+    OPEN: 'Verfügbar',
     ASSIGNED: 'Zugewiesen',
-    IN_PROGRESS: 'In Bearbeitung',
-    DONE: 'Abgeschlossen',
+    IN_PROGRESS: 'Im Einsatz',
+    DONE: 'Erledigt',
   };
 
   const isHelper = currentUser.role === 'helper';
@@ -43,93 +47,151 @@ export function AssignmentCard({
                       (isOwnAssignment || currentUser.role === 'coordinator');
 
   return (
-    <div className="bg-white rounded-xl border border-neutral-200 p-4 sm:p-6 hover:shadow-md transition-shadow">
-      <div className="flex items-start justify-between mb-4">
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      whileHover={{ translateY: -4 }}
+      className="rounded-2xl border border-neutral-700 bg-neutral-900/85 p-5 sm:p-6 shadow-lg transition-all duration-300"
+    >
+      {/* Header with status badge */}
+      <div className="flex items-start justify-between gap-3 mb-4">
         <div className="flex-1 min-w-0">
-          <h3 className="text-base sm:text-lg font-semibold text-neutral-900 mb-1 truncate">{assignment.title}</h3>
-          <p className="text-sm text-neutral-600 line-clamp-2">{assignment.description}</p>
+          <h3 className="text-lg sm:text-xl font-bold text-white mb-1">
+            {assignment.title}
+          </h3>
+          <p className="text-sm text-neutral-300 line-clamp-1">
+            {assignment.description}
+          </p>
+          <p className="mt-2 text-xs font-medium text-neutral-400">
+            {startDate.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}
+            {' - '}
+            {endDate.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}
+            {' · PLZ '}
+            {assignment.address.zipCode}
+          </p>
         </div>
-        <span className={`ml-2 px-2 sm:px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${statusColors[assignment.status]}`}>
+        <span className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap border ${statusPillStyles[assignment.status]}`}>
           {statusLabels[assignment.status]}
         </span>
       </div>
 
-      <div className="space-y-2 mb-4">
-        <div className="flex items-center gap-2 text-sm text-neutral-600">
-          <Calendar className="w-4 h-4 flex-shrink-0" />
-          <span className="truncate">{startDate.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: 'short' })}</span>
+      {/* Main Info Grid */}
+      <div className="grid grid-cols-2 gap-4 mb-5 p-4 bg-neutral-950 rounded-lg border border-neutral-700">
+        <div className="flex items-center gap-2">
+          <Calendar className="w-5 h-5 text-primary-600 shrink-0" />
+          <div>
+            <p className="text-xs text-neutral-400 font-medium">DATUM</p>
+            <p className="text-sm font-semibold text-neutral-100">
+              {startDate.toLocaleDateString('de-DE', { weekday: 'short', month: 'short', day: 'numeric' })}
+            </p>
+          </div>
         </div>
         
-        <div className="flex items-center gap-2 text-sm text-neutral-600">
-          <Clock className="w-4 h-4 flex-shrink-0" />
-          <span className="truncate">{startDate.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })} - {endDate.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}</span>
+        <div className="flex items-center gap-2">
+          <Clock className="w-5 h-5 text-secondary-600 shrink-0" />
+          <div>
+            <p className="text-xs text-neutral-400 font-medium">DAUER</p>
+            <p className="text-sm font-semibold text-neutral-100">
+              {durationHours.toFixed(1)}h ({startDate.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })})
+            </p>
+          </div>
         </div>
         
-        <div className="flex items-center gap-2 text-sm text-neutral-600">
-          <MapPin className="w-4 h-4 flex-shrink-0" />
-          <span className="truncate">{assignment.coordinatorName} · PLZ {assignment.zipCode}</span>
+        <div className="flex items-center gap-2">
+          <MapPin className="w-5 h-5 text-accent-600 shrink-0" />
+          <div>
+            <p className="text-xs text-neutral-400 font-medium">PLZ</p>
+            <p className="text-sm font-semibold text-neutral-100">
+              {assignment.address.zipCode}
+            </p>
+          </div>
         </div>
+
+        {isHelper && canAcceptReject && (
+          <div className="flex items-center gap-2">
+            <Star className="w-5 h-5 text-accent-500 shrink-0 fill-accent-500" />
+            <div>
+              <p className="text-xs text-neutral-400 font-medium">VERDIENST</p>
+              <p className="text-sm font-bold text-accent-700">
+                €{totalEarning.toFixed(0)}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
+      {/* Skills */}
       {assignment.requiredSkills.length > 0 && (
         <div className="mb-4">
+          <p className="text-xs font-medium text-neutral-400 mb-2">ERFORDERLICHE FÄHIGKEITEN</p>
           <div className="flex flex-wrap gap-2">
             {assignment.requiredSkills.map(skill => (
-              <span key={skill} className="px-2 py-1 bg-primary-50 text-primary-700 rounded text-xs">
-                {skill}
+              <span key={skill} className="px-3 py-1.5 bg-primary-100 text-primary-700 rounded-full text-xs font-medium border border-primary-200">
+                ✓ {skill}
               </span>
             ))}
           </div>
         </div>
       )}
 
+      {/* Assistant info */}
       {assignment.helperName && (
-        <div className="mb-4 p-3 bg-neutral-50 rounded-lg">
-          <span className="text-sm text-neutral-700">
-            <strong>Helper:</strong> {assignment.helperName}
-          </span>
+        <div className="mb-4 p-3 bg-primary-950/50 rounded-lg border border-primary-800/50">
+          <p className="text-sm text-primary-100">
+            <strong>Zugeordneter Helper:</strong> {assignment.helperName}
+          </p>
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row gap-2">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {canAcceptReject && (
           <>
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => onAccept?.(assignment.id)}
-              className="flex-1 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+              className="col-span-1 sm:col-span-2 px-4 py-3.5 btn-base btn-primary rounded-lg font-bold transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 text-sm sm:text-base"
             >
-              <CheckCircle className="w-4 h-4" />
-              Annehmen
-            </button>
-            <button
+              <CheckCircle className="w-5 h-5" />
+              <span className="hidden sm:inline">Annehmen</span>
+              <span className="sm:hidden">Ja</span>
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => onReject?.(assignment.id)}
-              className="flex-1 px-4 py-2.5 bg-neutral-200 hover:bg-neutral-300 text-neutral-700 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+              className="btn-base btn-dark-ghost col-span-1 px-4 py-3.5 font-bold transition-all flex items-center justify-center gap-2 text-sm sm:text-base"
             >
-              <XCircle className="w-4 h-4" />
-              Ablehnen
-            </button>
+              <XCircle className="w-5 h-5" />
+              <span className="hidden sm:inline">Pass</span>
+            </motion.button>
           </>
         )}
         
         {canInteract && (
           <>
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => onOpenChat?.(assignment.id)}
-              className="flex-1 px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+              className="px-4 py-3 btn-base btn-secondary rounded-lg font-bold transition-all flex items-center justify-center gap-2"
             >
               <MessageSquare className="w-4 h-4" />
               <span className="hidden sm:inline">Chat</span>
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => onOpenTodo?.(assignment.id)}
-              className="flex-1 px-4 py-2.5 bg-accent-600 hover:bg-accent-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+              className="btn-base btn-primary px-4 py-3 font-bold transition-all flex items-center justify-center gap-2"
             >
               <ClipboardList className="w-4 h-4" />
-              <span className="hidden sm:inline">Tagebuch</span>
-            </button>
+              <span className="hidden sm:inline">Log</span>
+            </motion.button>
           </>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }

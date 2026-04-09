@@ -1,42 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
+/*
+ * COLOR SYSTEM (single source of truth)
+ *
+ * Use only these semantic families in components:
+ * 1) neutral-* : surfaces, page backgrounds, text hierarchy, borders
+ * 2) primary-* : core brand/navigation, selected states, key info actions
+ * 3) secondary-* : primary CTA actions (book/create/continue)
+ * 4) accent-* : highlights, positive emphasis, supporting visual accents
+ * 5) success / warning / error : state feedback only (status, alerts, validation)
+ *
+ * UX usage guide:
+ * - Canvas/Page background: neutral-50
+ * - Card/module background: white or neutral-50
+ * - Standard border: neutral-200
+ * - Primary text: neutral-900
+ * - Secondary text: neutral-600
+ * - Main CTA: secondary-500/600
+ * - Selected nav/tab: primary-600 with white text
+ * - Success state: success (+ subtle tint via /10-/20)
+ * - Warning state: warning (+ subtle tint via /10-/20)
+ * - Error state: error (+ subtle tint via /10-/20)
+ */
 @theme {
-  --color-primary-50: #e6f0ff;
-  --color-primary-100: #cce0ff;
-  --color-primary-200: #99c2ff;
-  --color-primary-300: #66a3ff;
-  --color-primary-400: #3385ff;
-  --color-primary-500: #0066ff;
-  --color-primary-600: #0052cc;
-  --color-primary-700: #003d99;
-  --color-primary-800: #002966;
-  --color-primary-900: #001433;
+  /* ─────────────────────────────
+   * MAP DESIGN TOKENS
+   * Central source for all map area + marker colors.
+   * Adjust these values once to update all map views.
+   * ───────────────────────────── */
 
-  --color-accent-50: #fff5e6;
-  --color-accent-100: #ffebcc;
-  --color-accent-200: #ffd699;
-  --color-accent-300: #ffc266;
-  --color-accent-400: #ffad33;
-  --color-accent-500: #ff9900;
-  --color-accent-600: #cc7a00;
-  --color-accent-700: #995c00;
-  --color-accent-800: #663d00;
-  --color-accent-900: #331f00;
+  /* ─────────────────────────────
+   * BRAND COLORS
+   * Nur diese 2 Werte anpassen.
+   * Der Rest leitet sich automatisch davon ab.
+   * ───────────────────────────── */
+  --brand-blue: #2563eb;
+  --brand-wine: #872847;
+  --brand-accent: color-mix(in srgb, var(--brand-blue) 55%, var(--brand-wine));
 
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
+  /* Current user / own position */
+  --map-user-area-stroke: var(--brand-wine);
+  --map-user-area-fill: color-mix(in srgb, var(--brand-wine) 88%, white);
 
-  --color-neutral-50: #f9fafb;
-  --color-neutral-100: #f3f4f6;
-  --color-neutral-200: #e5e7eb;
-  --color-neutral-300: #d1d5db;
-  --color-neutral-400: #9ca3af;
-  --color-neutral-500: #6b7280;
-  --color-neutral-600: #4b5563;
-  --color-neutral-700: #374151;
-  --color-neutral-800: #1f2937;
-  --color-neutral-900: #111827;
+  /* Helptasks / public task areas */
+  --map-helptask-area-stroke: color-mix(in srgb, var(--brand-blue) 55%, black);
+  --map-helptask-area-fill: color-mix(in srgb, var(--brand-blue) 72%, black);
+
+  /* Helpers / nearby people */
+  --map-helper-area-stroke: var(--brand-blue);
+  --map-helper-area-fill: color-mix(in srgb, var(--brand-blue) 70%, white);
+  --map-helper-area-selected-stroke: color-mix(in srgb, var(--brand-blue) 55%, black);
+
+  /* Neutral map elements / assignment badges */
+  --map-assignment-marker-color: color-mix(in srgb, var(--brand-blue) 12%, #d4d4d8);
+
+  --color-primary-50: color-mix(in srgb, var(--brand-blue) 6%, white);
+  --color-primary-100: color-mix(in srgb, var(--brand-blue) 12%, white);
+  --color-primary-200: color-mix(in srgb, var(--brand-blue) 22%, white);
+  --color-primary-300: color-mix(in srgb, var(--brand-blue) 36%, white);
+  --color-primary-400: color-mix(in srgb, var(--brand-blue) 58%, white);
+  --color-primary-500: var(--brand-blue);
+  --color-primary-600: color-mix(in srgb, var(--brand-blue) 88%, black);
+  --color-primary-700: color-mix(in srgb, var(--brand-blue) 74%, black);
+  --color-primary-800: color-mix(in srgb, var(--brand-blue) 62%, black);
+  --color-primary-900: color-mix(in srgb, var(--brand-blue) 50%, black); 
+  --color-primary-950: color-mix(in srgb, var(--brand-blue) 36%, black);
+
+  --color-accent-50: color-mix(in srgb, var(--brand-accent) 6%, white);
+  --color-accent-100: color-mix(in srgb, var(--brand-accent) 12%, white);
+  --color-accent-200: color-mix(in srgb, var(--brand-accent) 22%, white);
+  --color-accent-400: color-mix(in srgb, var(--brand-accent) 58%, white);
+  --color-accent-500: var(--brand-accent);
+  --color-accent-600: color-mix(in srgb, var(--brand-accent) 86%, black);
+  --color-accent-700: color-mix(in srgb, var(--brand-accent) 72%, black);
+  --color-accent-800: color-mix(in srgb, var(--brand-accent) 60%, black);
+  --color-accent-900: color-mix(in srgb, var(--brand-accent) 48%, black);
+
+  --color-secondary-50: color-mix(in srgb, var(--brand-wine) 6%, white);
+  --color-secondary-100: color-mix(in srgb, var(--brand-wine) 12%, white);
+  --color-secondary-200: color-mix(in srgb, var(--brand-wine) 22%, white);
+  --color-secondary-300: color-mix(in srgb, var(--brand-wine) 38%, white);
+  --color-secondary-500: var(--brand-wine);
+  --color-secondary-600: color-mix(in srgb, var(--brand-wine) 88%, black);
+  --color-secondary-700: color-mix(in srgb, var(--brand-wine) 74%, black);
+  --color-secondary-800: color-mix(in srgb, var(--brand-wine) 60%, black);
+
+  --color-success: var(--brand-blue);
+  --color-warning: color-mix(in srgb, var(--brand-blue) 58%, white);
+  --color-error: var(--brand-wine);
+
+  --color-neutral-50: color-mix(in srgb, var(--brand-blue) 2%, white);
+  --color-neutral-100: color-mix(in srgb, var(--brand-blue) 4%, white);
+  --color-neutral-200: color-mix(in srgb, var(--brand-blue) 8%, white);
+  --color-neutral-300: color-mix(in srgb, var(--brand-blue) 16%, white);
+  --color-neutral-400: color-mix(in srgb, var(--brand-blue) 28%, white);
+  --color-neutral-500: color-mix(in srgb, var(--brand-blue) 40%, #64748b);
+  --color-neutral-600: color-mix(in srgb, var(--brand-blue) 28%, #475569);
+  --color-neutral-700: color-mix(in srgb, var(--brand-blue) 20%, #334155);
+  --color-neutral-800: color-mix(in srgb, var(--brand-blue) 16%, #1f2937);
+  --color-neutral-900: color-mix(in srgb, var(--brand-blue) 12%, #111827);
+  --color-neutral-950: color-mix(in srgb, var(--brand-blue) 8%, #030712);
 }
 
 * {
@@ -44,25 +108,226 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: var(--color-neutral-50);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--color-secondary-500) 10%, transparent) 0%, transparent 24%),
+    radial-gradient(circle at top right, color-mix(in srgb, var(--color-accent-500) 8%, transparent) 0%, transparent 18%),
+    linear-gradient(
+      180deg,
+      var(--color-neutral-50) 0%,
+      color-mix(in srgb, var(--color-primary-50) 24%, white) 52%,
+      color-mix(in srgb, var(--color-neutral-100) 88%, var(--color-primary-50)) 100%
+    );
   color: var(--color-neutral-900);
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
-  line-height: 1.3;
+  line-height: 1.2;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  letter-spacing: -0.03em;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-secondary-500) 18%, white);
 }
 
 button {
   font-family: inherit;
 }
 
+.btn-reset {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+.btn-base {
+  border-radius: 0.875rem;
+  font-weight: 700;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease,
+    opacity 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.btn-base:hover {
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-secondary-500) 0%, var(--color-secondary-600) 100%);
+  color: #fff;
+  box-shadow: 0 12px 26px color-mix(in srgb, var(--color-secondary-500) 28%, transparent);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--color-secondary-600) 0%, var(--color-secondary-700) 100%);
+}
+
+.btn-primary:disabled {
+  background: var(--color-secondary-300);
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.btn-secondary {
+  background: var(--color-secondary-800);
+  color: #fff;
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--color-secondary-800) 24%, transparent);
+}
+
+.btn-secondary:hover {
+  background: var(--color-secondary-700);
+}
+
+.btn-secondary:disabled {
+  background: var(--color-secondary-300);
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.btn-ghost {
+  border: 1px solid var(--color-secondary-200);
+  background: color-mix(in srgb, var(--color-secondary-50) 52%, white);
+  color: var(--color-secondary-700);
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--color-secondary-500) 8%, transparent);
+}
+
+.btn-ghost:hover {
+  background: var(--color-secondary-50);
+  border-color: var(--color-secondary-300);
+}
+
+.btn-link {
+  color: var(--color-secondary-600);
+}
+
+.btn-link:hover {
+  color: var(--color-secondary-500);
+}
+
+.btn-dark-ghost {
+  border: 1px solid color-mix(in srgb, var(--color-secondary-700) 70%, white);
+  background: color-mix(in srgb, var(--color-secondary-900, var(--color-secondary-800)) 70%, black);
+  color: color-mix(in srgb, var(--color-secondary-100) 75%, white);
+}
+
+.btn-dark-ghost:hover {
+  background: color-mix(in srgb, var(--color-secondary-800) 86%, black);
+  color: #fff;
+}
+
 input, textarea, select {
   font-family: inherit;
+}
+
+.page-shell {
+  margin: 0 auto;
+  max-width: 78rem;
+  padding: 0.75rem;
+}
+
+.page-header-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(230, 232, 238, 0.95);
+  border-radius: 1.6rem;
+  padding: 0.9rem;
+  background:
+    radial-gradient(circle at top right, rgba(34, 160, 107, 0.09) 0%, transparent 20%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(247, 249, 246, 0.95) 100%);
+  box-shadow: 0 12px 30px rgba(12, 13, 12, 0.06);
+  backdrop-filter: blur(10px);
+}
+
+.page-header-card::after {
+  content: '';
+  position: absolute;
+  inset: auto -1.5rem -1.5rem auto;
+  width: 7rem;
+  height: 7rem;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(22, 163, 74, 0.14) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.page-eyebrow {
+  margin-bottom: 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-secondary-700);
+}
+
+.page-title {
+  font-size: clamp(2.5rem, 4.8vw, 4.4rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.055em;
+  color: var(--color-neutral-950);
+}
+
+.page-description {
+  margin-top: 0.6rem;
+  max-width: 38rem;
+  font-size: 0.95rem;
+  color: var(--color-neutral-600);
+}
+
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.surface-card {
+  border: 1px solid rgba(230, 232, 238, 0.95);
+  border-radius: 1rem;
+  padding: 0.85rem;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 8px 22px rgba(12, 13, 12, 0.05);
+}
+
+.surface-card-muted {
+  border: 1px solid rgba(230, 232, 238, 0.9);
+  border-radius: 1rem;
+  background: rgba(247, 249, 246, 0.92);
+}
+
+.mini-bar-track {
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: rgba(230, 232, 238, 0.95);
+  overflow: hidden;
+}
+
+.mini-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--color-primary-950), var(--color-secondary-500));
+}
+
+@media (min-width: 768px) {
+  .page-shell {
+    padding: 1.15rem;
+  }
+
+  .page-header-card,
+  .surface-card {
+    padding: 1rem;
+  }
 }
 
 @keyframes slide-in-from-bottom {
@@ -72,17 +337,6 @@ input, textarea, select {
   }
   to {
     transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slide-in-from-left {
-  from {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
     opacity: 1;
   }
 }
@@ -107,20 +361,76 @@ input, textarea, select {
   animation-name: slide-in-from-bottom;
 }
 
-.slide-in-from-left {
-  animation-name: slide-in-from-left;
-  animation-duration: 300ms;
-}
-
 .zoom-in-95 {
   animation-name: zoom-in-95;
 }
 
+.auth-shell {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background:
+    radial-gradient(circle at 14% 12%, rgba(100, 141, 221, 0.16) 0%, transparent 34%),
+    radial-gradient(circle at 84% 86%, rgba(8, 148, 230, 0.14) 0%, transparent 32%),
+    linear-gradient(165deg, #0a101d 0%, #111a2d 45%, #0f1827 100%);
+}
+
+.auth-shell-inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+.auth-card {
+  color: var(--color-neutral-200);
+  background: rgba(10, 16, 29, 0.86);
+  border: 1px solid rgba(131, 146, 177, 0.3);
+  box-shadow: 0 28px 60px rgba(7, 13, 25, 0.55);
+  backdrop-filter: blur(10px);
+}
+
+.auth-loader-card {
+  background: rgba(10, 16, 29, 0.75);
+  border: 1px solid rgba(131, 146, 177, 0.25);
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
+}
+
+.auth-animation-shell {
+  background:
+    radial-gradient(circle at 20% 18%, rgba(77, 120, 208, 0.2) 0%, transparent 35%),
+    radial-gradient(circle at 80% 82%, rgba(8, 148, 230, 0.16) 0%, transparent 30%),
+    linear-gradient(165deg, #0a101d 0%, #101a2d 52%, #0c1423 100%);
+}
+
+.auth-animation-card {
+  background: rgba(245, 247, 251, 0.98);
+  border: 1px solid rgba(207, 217, 235, 0.95);
+  border-radius: 1.25rem;
+  padding: 1.75rem;
+  box-shadow: 0 24px 54px rgba(7, 13, 25, 0.45);
+}
+
 @media (max-width: 640px) {
   .line-clamp-2 {
+    line-clamp: 2;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

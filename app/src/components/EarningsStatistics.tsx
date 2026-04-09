@@ -193,7 +193,7 @@ export function EarningsStatistics({ earnings, helperId }: EarningsStatisticsPro
       </div>
 
       {/* Current Month Highlight */}
-      <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl p-6 border border-primary-200">
+      <div className="bg-linear-to-br from-primary-50 to-primary-100 rounded-xl p-6 border border-primary-200">
         <div className="flex items-center gap-3 mb-2">
           <Calendar className="w-6 h-6 text-primary-600" />
           <h3 className="text-lg font-bold text-primary-900">Aktueller Monat</h3>
@@ -314,3 +314,4 @@ export function EarningsStatistics({ earnings, helperId }: EarningsStatisticsPro
     </div>
   );
 }
+

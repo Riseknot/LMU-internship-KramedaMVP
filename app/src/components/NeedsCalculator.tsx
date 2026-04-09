@@ -90,7 +90,7 @@ export function NeedsCalculator({ careGrade, onApplyAllocation }: NeedsCalculato
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-br from-accent-400 to-accent-500 text-white rounded-xl p-6">
+      <div className="bg-linear-to-br from-accent-400 to-accent-500 text-white rounded-xl p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-3 bg-white/20 rounded-xl">
             <Calculator className="w-7 h-7" />
@@ -108,7 +108,7 @@ export function NeedsCalculator({ careGrade, onApplyAllocation }: NeedsCalculato
         
         {!careGrade && (
           <div className="mb-4 flex items-start gap-3 p-4 bg-warning/10 rounded-lg border border-warning/30">
-            <AlertCircle className="w-5 h-5 text-warning flex-shrink-0 mt-0.5" />
+            <AlertCircle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
             <div className="text-sm text-warning-dark">
               <p className="font-medium">Bitte wählen Sie zuerst Ihren Pflegegrad aus</p>
             </div>
@@ -203,7 +203,7 @@ export function NeedsCalculator({ careGrade, onApplyAllocation }: NeedsCalculato
               {allocation.map((item, index) => (
                 <div 
                   key={item.service.id}
-                  className="p-5 bg-gradient-to-br from-neutral-50 to-white rounded-xl border border-neutral-200"
+                  className="p-5 bg-linear-to-br from-neutral-50 to-white rounded-xl border border-neutral-200"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
@@ -255,7 +255,7 @@ export function NeedsCalculator({ careGrade, onApplyAllocation }: NeedsCalculato
             {onApplyAllocation && (
               <button
                 onClick={() => onApplyAllocation(allocation)}
-                className="mt-6 w-full py-4 bg-gradient-to-r from-primary-600 to-primary-700 text-white rounded-xl font-bold hover:shadow-lg transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
+                className="mt-6 w-full py-4 bg-linear-to-r from-primary-600 to-primary-700 text-white rounded-xl font-bold hover:shadow-lg transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
               >
                 Diese Aufteilung verwenden
               </button>
@@ -270,19 +270,19 @@ export function NeedsCalculator({ careGrade, onApplyAllocation }: NeedsCalculato
             </h3>
             <ul className="space-y-2 text-sm text-primary-800">
               <li className="flex items-start gap-2">
-                <span className="font-bold text-primary-600 flex-shrink-0">1.</span>
+                <span className="font-bold text-primary-600 shrink-0">1.</span>
                 <span>Das System nutzt zuerst die Leistungen mit der <strong>höchsten Priorität</strong> (niedrigste Nummer)</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="font-bold text-primary-600 flex-shrink-0">2.</span>
+                <span className="font-bold text-primary-600 shrink-0">2.</span>
                 <span>Jede Leistung wird bis zu ihrem <strong>Maximum</strong> ausgeschöpft</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="font-bold text-primary-600 flex-shrink-0">3.</span>
+                <span className="font-bold text-primary-600 shrink-0">3.</span>
                 <span>Übrige Stunden werden als <strong>Selbstzahler</strong> markiert</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="font-bold text-primary-600 flex-shrink-0">4.</span>
+                <span className="font-bold text-primary-600 shrink-0">4.</span>
                 <span>Sie können die Aufteilung jederzeit <strong>manuell anpassen</strong></span>
               </li>
             </ul>
@@ -292,3 +292,4 @@ export function NeedsCalculator({ careGrade, onApplyAllocation }: NeedsCalculato
     </div>
   );
 }
+

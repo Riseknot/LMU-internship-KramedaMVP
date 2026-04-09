@@ -109,17 +109,17 @@ export function CertificationManager({
           <h4 className="mt-1 text-xl font-bold tracking-tight text-neutral-900 sm:text-2xl">{firstName} bringt folgende Qualifikationen mit:</h4>
 
     {verifiedCount > 0 && (
-      <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+      <span className="px-2 py-0.5 bg-success/15 text-success text-xs font-medium rounded-full">
         {verifiedCount} verifiziert
       </span>
     )}
   {/* Linie unter der Überschrift */}
-  <div className="h-1.5 w-36 rounded-full bg-gradient-to-r from-primary-800 via-primary-600 to-primary-300" />
+  <div className="h-1.5 w-36 rounded-full bg-linear-to-r from-primary-800 via-primary-600 to-primary-300" />
 </div>
         {isOwnProfile && onUpload && (
           <button
             onClick={() => setShowUploadModal(true)}
-            className="flex items-center gap-2 px-3 py-1.5 bg-primary-600 hover:bg-primary-700 text-white text-sm rounded-lg transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 btn-base btn-secondary text-sm rounded-lg transition-colors"
           >
             <Upload className="w-4 h-4" />
             Hochladen
@@ -149,7 +149,7 @@ export function CertificationManager({
                 className={`
                   bg-white rounded-lg p-4 border-2 transition-all
                   ${cert.verified
-                    ? 'border-green-200 bg-green-50/50'
+                    ? 'border-success/25 bg-success/10'
                     : 'border-neutral-200'
                   }
                 `}
@@ -162,7 +162,7 @@ export function CertificationManager({
                     <div className="flex items-start justify-between gap-2 mb-1">
                       <h4 className="font-medium text-neutral-900">{cert.name}</h4>
                       {cert.verified && (
-                        <div className="flex items-center gap-1 text-green-600 shrink-0">
+                        <div className="flex items-center gap-1 text-success shrink-0">
                           <CheckCircle className="w-4 h-4" />
                           <span className="text-xs font-medium">Verifiziert</span>
                         </div>
@@ -189,7 +189,7 @@ export function CertificationManager({
                       </a>
                     )}
                     {!cert.verified && (
-                      <div className="flex items-center gap-1 text-amber-600 mt-2">
+                      <div className="flex items-center gap-1 text-warning mt-2">
                         <AlertCircle className="w-3 h-3" />
                         <span className="text-xs">Wird geprüft</span>
                       </div>
@@ -300,11 +300,11 @@ export function CertificationManager({
                 </div>
 
                 {uploadError && (
-                  <p className="text-xs font-medium text-red-600">{uploadError}</p>
+                  <p className="text-xs font-medium text-error">{uploadError}</p>
                 )}
 
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                  <p className="text-xs text-blue-800">
+                <div className="bg-primary-50 border border-primary-200 rounded-lg p-3">
+                  <p className="text-xs text-primary-800">
                     <strong>Hinweis:</strong> Ihre Zertifizierung wird von unserem Team geprüft. 
                     Dies kann 1-2 Werktage dauern.
                   </p>
@@ -313,14 +313,14 @@ export function CertificationManager({
                 <div className="flex gap-3 pt-2">
                   <button
                     onClick={() => setShowUploadModal(false)}
-                    className="flex-1 px-4 py-2 border border-neutral-300 text-neutral-700 rounded-lg hover:bg-neutral-50 transition-colors"
+                    className="flex-1 px-4 py-2 btn-base btn-ghost"
                   >
                     Abbrechen
                   </button>
                   <button
                     onClick={handleUpload}
                     disabled={!newCertName.trim() || !newCertFileUrl || isUploading}
-                    className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:bg-neutral-300 disabled:cursor-not-allowed transition-colors"
+                    className="btn-base btn-secondary flex-1 px-4 py-2 disabled:bg-neutral-300 disabled:cursor-not-allowed"
                   >
                     {isUploading ? 'Laedt hoch...' : 'Hochladen'}
                   </button>
@@ -333,3 +333,5 @@ export function CertificationManager({
     </div>
   );
 }
+
+
