@@ -69,7 +69,7 @@ export function AssignmentsPage({
         street: data.street,
         streetNumber: data.streetNumber,
       },
-      requiredSkills: data.requiredSkills,
+      requiredSkills: data.requirements.skills,
       createdAt: new Date().toISOString(),
     };
 
