@@ -4,6 +4,7 @@ import { Calendar, MapPin, Navigation } from 'lucide-react';
 import { PageLoadingState } from '../../../../loadingpage/components/PageLoadingState';
 import { GoogleAreaMap, MapArea, MapMarker } from '../../../../helptasks/components/GoogleAreaMap';
 import { DEFAULT_CENTER, GeoSource, createCurrentUserMarker, distanceByZip, escapeHtml, formatAddress, resolveUserCenter } from '../../../../helptasks/components/utils';
+import { ShortPageLoadingState } from '../../../../loadingpage/components/ShortPageLoadingState';
 
 interface MapViewProps {
   currentUser: User;
@@ -126,13 +127,15 @@ export function MapView({ currentUser, helpers, assignments, loadingHelpers }: M
             </div>
           )}
 
-          {loadingHelpers && (
+          {loadingHelpers && 
+          (
             <div className="pointer-events-none absolute inset-0 overflow-hidden bg-neutral-950/70">
               <div className="flex h-full items-center justify-center px-3 py-4 scale-[0.78] origin-center md:scale-[0.88]">
-                <PageLoadingState fullScreen={false} subtitle="Wir suchen gerade passende Helfer:innen in deiner Nähe." />
+                <ShortPageLoadingState fullScreen={false} status="Die Karte ist gleich bereit!" />
               </div>
             </div>
-          )}
+          )
+          }
         </div>
 
         <div className="flex flex-wrap gap-4 text-sm">
