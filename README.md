@@ -1,83 +1,61 @@
+# Lumi – Alltagshilfe digital organisieren
 
-# MVP Funktionen fuer Helfer-App
+Webbasierte Plattform zur Vermittlung von Alltagshilfe. Verbindet hilfesuchende Personen und deren Koordinatoren mit qualifizierten Helfern über ein automatisiertes Matching-System.
 
-This is a code bundle for MVP Funktionen fuer Helfer-App.
-The original project is available at [Figma](https://www.figma.com/design/E5iAhksWBCC4AAqLS58vAq/MVP-Funktionen-f%C3%BCr-Helfer-App).
+**Live:** [mvpkrameda.vercel.app](https://mvpkrameda.vercel.app)
 
-## Running the code
+## Stack
 
-Run `npm i` to install the dependencies.
+Next.js 16 (App Router) · React 18 · TypeScript · MongoDB Atlas · Mongoose · Tailwind CSS v4 · Radix UI / shadcn
 
-Create a `.env` file with at least:
+## Features
 
-- `MONGO_URI=<your_mongodb_connection_string>`
-- `RESEND_API_KEY=<your_resend_api_key>`
-- `RESEND_FROM="onboarding@resend.dev"`
-- `APP_NAME=CareConnect`
+- Rollenbasiertes Auth-System (Koordinator / Helfer) mit E-Mail-Verifikation
+- Helptask-Verwaltung mit Karten- und Listenansicht (Google Maps)
+- Datenschutzmaske: Standorte werden nur als anonymisierter Radius angezeigt
+- 5-phasige NLP-Pipeline zur semantischen Analyse von Aufgabenbeschreibungen
+- Matching-Algorithmus mit gewichtetem Scoring (Verfügbarkeit, Qualifikation, Entfernung)
+- Badge-System (Bronze → Platin) zur Anerkennung aktiver Helfer
+- NLP-Monitoring-Dashboard mit Drift-Erkennung
+- Swagger-API-Dokumentation unter `/api-docs`
 
-Run `npm run dev` to start the development server.
+## Lokaler Start
 
-Notes:
-
-- In development, registration works without Resend and exposes a test code in the API response.
-- In production, Resend is required for registration email verification.
-
-## Project structure (where to code)
-
-Use this as the default map for new work:
-
-- `app/src/App.tsx`: auth flow + app bootstrapping
-- `app/src/pages/RootView.tsx`: main shell + page routing after login
-- `app/src/components/Sidebar.tsx`: primary navigation (single source)
-- `app/src/pages/signIn & signUp/*`: login/register/auth animation
-- `app/src/pages/*`: page-level containers and orchestration
-- `app/src/components/*`: reusable UI/domain components
-- `app/src/hooks/*`: data/state hooks for frontend features
-- `app/src/services/*`: frontend API clients
-- `app/api/*`: Next.js API routes
-- `app/lib/*`: backend/shared services (DB, models, server logic)
-
-## Conventions for simpler development
-
-- Add new feature behavior first in `pages`, then extract to `components` only when reused.
-- Keep one navigation system (`Sidebar.tsx`) to avoid parallel UI paths.
-- Keep colors centralized in `app/globals.css` semantic tokens/classes.
-- Prefer extending existing `services` and `hooks` over creating parallel fetch logic.
-- Delete dead files immediately when replacing flows.
-
-## Adding a new route/page
-
-This project uses the **Next.js App Router** under `app/` and the authenticated in-app navigation via `app/src/pages/RootView.tsx`.
-
-### Example: Helptask detail page
-
-1. Create a route file such as `app/helptasks/[id]/page.tsx`.
-2. Read the route parameter (`id`) and load the matching data, e.g. via `GET /api/helptasks?id=<id>`.
-3. Link to the page:
-   - in real JSX with `Link` from `next/link`
-   - in plain HTML strings (for example Google Maps info windows) with a normal `<a href="/helptasks/...">`, because `Link` only works inside React/JSX.
-4. If the page should also be reachable from the logged-in shell navigation, add the page key in `Sidebar.tsx` and render it in `RootView.tsx`.
-
-Example link patterns:
-
-```tsx
-import Link from 'next/link';
-
-<Link href={`/helptasks/${task._id}`}>Details ansehen</Link>
+```bash
+npm install
 ```
 
-```ts
-content: `
-  <a href="/helptasks/${task._id}">Details ansehen</a>
-`;
+`.env` anlegen:
+
+```env
+MONGO_URI=<mongodb-connection-string>
+RESEND_API_KEY=<resend-api-key>
+RESEND_FROM="onboarding@resend.dev"
+JWT_SECRET=<beliebiger-geheimer-string>
+GOOGLE_MAPS_API_KEY=<google-maps-api-key>
 ```
 
-## Recent cleanup
+```bash
+npm run dev
+```
 
-Removed legacy/unreferenced UI files and stale assets to reduce cognitive load:
+> Im Dev-Modus funktioniert die Registrierung ohne Resend – der Verifikationscode wird direkt in der API-Response zurückgegeben.
 
-- old helper/coordinator legacy views
-- old duplicate sidebar variants
-- old standalone dashboard component
-- unused API stub file
-- unused backup logo assets
+## Weitere Scripts
+
+| Befehl | Zweck |
+|---|---|
+| `npm run build` | Produktions-Build |
+| `npm run nlp:goldenset` | NLP-Qualitätstest (304 Testfälle) |
+| `npm run seed:helpers` | 20 realistische Helfer-Profile für München einspielen |
+
+## Projektstruktur
+
+```
+app/api/          REST-API (Auth, Helptasks, Users, NLP-Metrics)
+app/lib/          Backend: DB-Verbindung, Models, Services, NLP-Pipeline
+app/src/          Frontend: Pages, Components, Hooks, Services, Types
+app/src/pages/    Seitencontainer (RootView als App-Shell)
+public/api-docs/  Statisches swagger.json
+scripts/          CLI-Tools: NLP-Tests, Seeding
+```
